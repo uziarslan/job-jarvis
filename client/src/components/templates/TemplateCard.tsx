@@ -7,7 +7,7 @@ import {
   CardContent,
   styled,
 } from "@mui/material";
-import type { Template } from "../types";
+import type { Template } from "../../types";
 
 interface IProps {
   template?: Template;

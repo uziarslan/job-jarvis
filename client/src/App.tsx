@@ -3,8 +3,7 @@ import "./styles.css";
 import Sidebar from "./components/Sidebar";
 import { useMemo, useState } from "react";
 import type { Route } from "./types";
-import TemplateCard from "./components/TemplateCard";
-import TemplatesPage from "./components/TemplatesPage";
+import TemplatesPage from "./components/templates/TemplatesPage";
 
 let theme = createTheme({
   palette: {

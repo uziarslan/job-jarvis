@@ -18,9 +18,11 @@ interface IProps {
   onSelectRoute: Dispatch<SetStateAction<Route>>;
 }
 
+export const SIDEBAR_WIDTH_PX = 75;
+
 const PaperWithStyle = styled(Paper)`
   position: fixed;
-  width: 75px;
+  width: ${SIDEBAR_WIDTH_PX}px;
   height: 100vh;
   background-color: ${(props) => props.theme.palette.primary.main};
   right: 0;
