@@ -34,12 +34,32 @@ export default function TemplatesPage() {
           content: "Content of the new template",
         }),
       });
+      if (!response.ok) {
+        throw new Error("Network response was not ok: " + response.statusText);
+      }
       const data = await response.json();
-      setTemplates(data);
+      setTemplates([...templates!, data]);
     } catch (error) {
       console.error("Error fetching templates: ", error);
     }
   };
+
+  const handleDeleteTemplate = async (id: number) => {
+    try {
+      const response = await fetch(API_URL + "templates/" + id, {
+        method: "DELETE",
+      });
+      if (response.ok) {
+        setTemplates(templates?.filter((template) => template.id !== id));
+      } else {
+        console.error("Error deleting template: ", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error deleting template: ", error);
+    }
+  };
+
+  console.log("Templates: ", templates);
 
   return !templates ? (
     <CenteredCircularProgress />
@@ -55,7 +75,9 @@ export default function TemplatesPage() {
           key={template.id}
           template={template}
           onSelectEdit={() => {}}
-          onSelectDelete={() => {}}
+          onSelectDelete={async (template) =>
+            await handleDeleteTemplate(template.id)
+          }
         />
       ))}
     </>
