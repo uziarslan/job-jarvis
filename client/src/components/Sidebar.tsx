@@ -19,10 +19,11 @@ interface IProps {
 }
 
 const PaperWithStyle = styled(Paper)`
+  position: fixed;
   width: 75px;
   height: 100vh;
   background-color: ${(props) => props.theme.palette.primary.main};
-  margin-left: auto;
+  right: 0;
 `;
 
 export default function Sidebar({ onSelectRoute }: IProps) {
