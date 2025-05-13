@@ -5,5 +5,9 @@ export const AppDataSource = new DataSource({
   url: process.env.MONGO_URL,
   synchronize: true,
   logging: true,
-  entities: ["src/models/**/*.ts"],
+  entities: [
+    process.env.NODE_ENV === "dev"
+      ? "dist/models/**/*.ts"
+      : "src/models/**/*.js",
+  ],
 });

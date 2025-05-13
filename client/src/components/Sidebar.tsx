@@ -17,7 +17,6 @@ import IconReviews from "../assets/icon_reviews.svg";
 import IconSavedSearches from "../assets/icon_saved_searches.svg";
 import IconSettings from "../assets/icon_settings.svg";
 import IconTemplates from "../assets/icon_templates.svg";
-import { COLOR_WHITE } from "../constants";
 
 interface IProps {
   routeSelected: Route;

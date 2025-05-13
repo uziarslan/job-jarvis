@@ -2,7 +2,6 @@ import {
   Entity,
   Column,
   UpdateDateColumn,
-  Unique,
   ObjectId,
   ObjectIdColumn,
 } from "typeorm";
