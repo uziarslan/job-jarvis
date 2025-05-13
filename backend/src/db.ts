@@ -2,7 +2,7 @@ import { DataSource } from "typeorm";
 
 export const AppDataSource = new DataSource({
   type: "mongodb",
-  url: process.env.MONGO_URL,
+  host: process.env.MONGOHOST,
   database: process.env.MONGODB,
   username: process.env.MONGOUSER,
   password: process.env.MONGOPASSWORD,
