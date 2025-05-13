@@ -4,6 +4,7 @@ import Sidebar from "./components/Sidebar";
 import { useMemo, useState } from "react";
 import type { Route } from "./types";
 import TemplatesPage from "./components/templates/TemplatesPage";
+import JobsPage from "./components/jobs/JobsPage";
 
 let theme = createTheme({
   palette: {
@@ -38,7 +39,7 @@ function App() {
       case "Templates":
         return <TemplatesPage />;
       case "Jobs":
-        return <div>Jobs</div>;
+        return <JobsPage />;
       case "Saved Searches":
         return <div>Saved Searches</div>;
       case "Manual Job Proposal":
