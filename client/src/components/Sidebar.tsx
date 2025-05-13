@@ -1,4 +1,11 @@
-import { Box, IconButton, Paper, styled, Tooltip } from "@mui/material";
+import {
+  Box,
+  IconButton,
+  Paper,
+  styled,
+  Tooltip,
+  useTheme,
+} from "@mui/material";
 import { useCallback, type Dispatch, type SetStateAction } from "react";
 import type { Route } from "../types";
 import IconDashboard from "../assets/icon_dashboard.svg";
@@ -10,8 +17,10 @@ import IconReviews from "../assets/icon_reviews.svg";
 import IconSavedSearches from "../assets/icon_saved_searches.svg";
 import IconSettings from "../assets/icon_settings.svg";
 import IconTemplates from "../assets/icon_templates.svg";
+import { COLOR_WHITE } from "../constants";
 
 interface IProps {
+  routeSelected: Route;
   onSelectRoute: Dispatch<SetStateAction<Route>>;
 }
 
@@ -30,18 +39,60 @@ const BoxWithStyle = styled(Box)`
   margin-bottom: 25px;
 `;
 
-export default function Sidebar({ onSelectRoute }: IProps) {
-  const renderItem = useCallback((icon: string, route: Route) => {
-    return (
-      <BoxWithStyle key={route}>
-        <Tooltip title={route}>
-          <IconButton size="large" onClick={() => onSelectRoute(route)}>
-            <img src={icon} alt={route} />
-          </IconButton>
-        </Tooltip>
-      </BoxWithStyle>
-    );
-  }, []);
+const IconButtonWithStyle = styled(IconButton)<{
+  routeSelected: Route;
+  route: Route;
+}>`
+  width: 51px;
+  height: 51px;
+  border-radius: 56px !important;
+  background-color: ${({ routeSelected, route, ...props }) =>
+    routeSelected === route
+      ? props.theme.palette.primary.main
+      : props.theme.palette.secondary.dark};
+`;
+
+const ImageWithStyle = styled("img")<{
+  routeSelected: Route;
+  route: Route;
+}>`
+  width: 30px;
+  height: 30px;
+  filter: ${({ routeSelected, route }) =>
+    routeSelected === route ? "brightness(0) invert(1)" : undefined};
+`;
+
+export default function Sidebar({ routeSelected, onSelectRoute }: IProps) {
+  const theme = useTheme();
+  const renderItem = useCallback(
+    (icon: string, route: Route) => {
+      return (
+        <BoxWithStyle key={route}>
+          <Tooltip title={route}>
+            <IconButtonWithStyle
+              sx={{
+                "&:hover": {
+                  backgroundColor: theme.palette.primary.main,
+                },
+              }}
+              size="large"
+              onClick={() => onSelectRoute(route)}
+              route={route}
+              routeSelected={routeSelected}
+            >
+              <ImageWithStyle
+                src={icon}
+                alt={route}
+                route={route}
+                routeSelected={routeSelected}
+              />
+            </IconButtonWithStyle>
+          </Tooltip>
+        </BoxWithStyle>
+      );
+    },
+    [routeSelected]
+  );
 
   return (
     <PaperWithStyle>

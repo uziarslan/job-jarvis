@@ -14,7 +14,7 @@ let theme = createTheme({
     },
     secondary: {
       main: "#F5F5F5",
-      dark: "#BDBDBD",
+      dark: "#E2E2E2",
       light: "#FAFAFA",
     },
   },
@@ -51,7 +51,7 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       {renderPage}
-      <Sidebar onSelectRoute={setRoute} />
+      <Sidebar onSelectRoute={setRoute} routeSelected={route} />
     </ThemeProvider>
   );
 }
