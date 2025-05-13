@@ -2,7 +2,7 @@ import { DataSource } from "typeorm";
 
 export const AppDataSource = new DataSource({
   type: "mongodb",
-  host: "localhost",
+  host: "${{ MongoDB.MONGO_URL }}",
   port: 27017,
   database: "job-jarvis-dev",
   synchronize: true, // ⚠️ dev only
