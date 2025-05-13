@@ -1,18 +1,15 @@
-import type { JSX } from "@emotion/react/jsx-runtime";
-import { IconButton, Paper, styled, Tooltip } from "@mui/material";
+import { Box, IconButton, Paper, styled, Tooltip } from "@mui/material";
 import { useCallback, type Dispatch, type SetStateAction } from "react";
 import type { Route } from "../types";
-import {
-  ContentCopy,
-  Dashboard,
-  Face,
-  HistoryEdu,
-  SaveAs,
-  Settings,
-  Visibility,
-  Work,
-  WorkHistory,
-} from "@mui/icons-material";
+import IconDashboard from "../assets/icon_dashboard.svg";
+import IconHistory from "../assets/icon_history.svg";
+import IconJobs from "../assets/icon_jobs.svg";
+import IconManualJobProposal from "../assets/icon_manual_job_proposal.svg";
+import IconProfile from "../assets/icon_profile.svg";
+import IconReviews from "../assets/icon_reviews.svg";
+import IconSavedSearches from "../assets/icon_saved_searches.svg";
+import IconSettings from "../assets/icon_settings.svg";
+import IconTemplates from "../assets/icon_templates.svg";
 
 interface IProps {
   onSelectRoute: Dispatch<SetStateAction<Route>>;
@@ -24,32 +21,39 @@ const PaperWithStyle = styled(Paper)`
   position: fixed;
   width: ${SIDEBAR_WIDTH_PX}px;
   height: 100vh;
-  background-color: ${(props) => props.theme.palette.primary.main};
+  background-color: ${(props) => props.theme.palette.secondary.main};
   right: 0;
 `;
 
+const BoxWithStyle = styled(Box)`
+  margin-top: 25px;
+  margin-bottom: 25px;
+`;
+
 export default function Sidebar({ onSelectRoute }: IProps) {
-  const renderItem = useCallback((icon: JSX.Element, route: Route) => {
+  const renderItem = useCallback((icon: string, route: Route) => {
     return (
-      <Tooltip title={route} key={route}>
-        <IconButton size="large" onClick={() => onSelectRoute(route)}>
-          {icon}
-        </IconButton>
-      </Tooltip>
+      <BoxWithStyle key={route}>
+        <Tooltip title={route}>
+          <IconButton size="large" onClick={() => onSelectRoute(route)}>
+            <img src={icon} alt={route} />
+          </IconButton>
+        </Tooltip>
+      </BoxWithStyle>
     );
   }, []);
 
   return (
     <PaperWithStyle>
-      {renderItem(<Dashboard />, "Dashboard")}
-      {renderItem(<Face />, "Profile")}
-      {renderItem(<HistoryEdu />, "History")}
-      {renderItem(<ContentCopy />, "Templates")}
-      {renderItem(<Work />, "Jobs")}
-      {renderItem(<WorkHistory />, "Saved Searches")}
-      {renderItem(<SaveAs />, "Manual Job Proposal")}
-      {renderItem(<Settings />, "Settings")}
-      {renderItem(<Visibility />, "Reviews")}
+      {renderItem(IconDashboard, "Dashboard")}
+      {renderItem(IconProfile, "Profile")}
+      {renderItem(IconHistory, "History")}
+      {renderItem(IconTemplates, "Templates")}
+      {renderItem(IconJobs, "Jobs")}
+      {renderItem(IconSavedSearches, "Saved Searches")}
+      {renderItem(IconManualJobProposal, "Manual Job Proposal")}
+      {renderItem(IconSettings, "Settings")}
+      {renderItem(IconReviews, "Reviews")}
     </PaperWithStyle>
   );
 }

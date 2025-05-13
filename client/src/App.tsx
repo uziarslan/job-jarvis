@@ -8,14 +8,14 @@ import TemplatesPage from "./components/templates/TemplatesPage";
 let theme = createTheme({
   palette: {
     primary: {
-      main: "#1E88E5",
-      dark: "#1976D2",
-      light: "#2196F3",
+      main: "#01A76F",
+      dark: "#43A047",
+      light: "#66BB6A",
     },
     secondary: {
-      main: "#8E24AA",
-      dark: "#7B1FA2",
-      light: "#9C27B0",
+      main: "#F5F5F5",
+      dark: "#BDBDBD",
+      light: "#FAFAFA",
     },
   },
 });

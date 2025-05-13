@@ -8,6 +8,12 @@ import {
   styled,
 } from "@mui/material";
 import type { Template } from "../../types";
+import {
+  COLOR_DARK_GREY,
+  COLOR_DEEP_BLACK,
+  COLOR_LIGHT_GREEN,
+} from "../../constants";
+import IconCode from "../../assets/icon_code.svg";
 
 interface IProps {
   template?: Template;
@@ -18,14 +24,35 @@ interface IProps {
   showGenerateButton?: boolean;
 }
 
+const TitleWithStyle = styled("h2")`
+  font-weight: 600;
+  font-size: 16px;
+  margin: 0;
+`;
+
+const ParagraphWithStyle = styled("p")`
+  display: -webkit-box;
+  font-weight: 400;
+  font-size: 14px;
+  color: ${COLOR_DARK_GREY};
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
 const CardWithStyle = styled(Card)`
-  width: 375px;
-  height: 250px;
+  width: 373px;
+  height: 163px;
+  border-radius: 16px;
   margin: 20px;
+  text-align: left;
 `;
 
 const ButtonWithStyle = styled(Button)`
-  margin: 20px;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-top: 10px;
 `;
 
 export default function TemplateCard({
@@ -51,28 +78,35 @@ export default function TemplateCard({
   }
 
   return (
-    <CardWithStyle>
-      <CardContent>
-        <h2>{isFakeCardForAdding ? "Add a new template" : template!.title}</h2>
-        <p>
+    <CardWithStyle
+      style={{
+        backgroundColor: isFakeCardForAdding ? COLOR_LIGHT_GREEN : undefined,
+      }}
+    >
+      <CardContent style={{ paddingBottom: "0px" }}>
+        <TitleWithStyle>
+          {isFakeCardForAdding ? "Add a new template" : template!.title}
+        </TitleWithStyle>
+        <ParagraphWithStyle>
           {isFakeCardForAdding
             ? "Create a new template from the template library or create a new from scratch"
             : template!.description}
-        </p>
+        </ParagraphWithStyle>
       </CardContent>
-      <CardActions>
+      <CardActions style={{ padding: "0px" }}>
         <Box display="flex" justifyContent="center" width="100%">
           {(showGenerateButton || isFakeCardForAdding) && (
             <ButtonWithStyle
               variant="contained"
-              color="success"
+              style={{ backgroundColor: COLOR_DEEP_BLACK }}
               onClick={onSelectAction}
+              fullWidth
             >
               {!isFakeCardForAdding ? (
                 "Generate"
               ) : (
                 <>
-                  <Add /> <span>&nbsp;</span> Add Template
+                  <Add /> <span>&nbsp;</span> Add New Template
                 </>
               )}
             </ButtonWithStyle>
@@ -81,15 +115,17 @@ export default function TemplateCard({
             <>
               <ButtonWithStyle
                 variant="contained"
-                color="primary"
+                color="secondary"
                 onClick={() => onSelectEdit!(template!)}
+                fullWidth
               >
-                <Code />
+                <img src={IconCode} alt="Code Icon" />
               </ButtonWithStyle>
               <ButtonWithStyle
                 color="error"
                 variant="contained"
                 onClick={() => onSelectDelete!(template!)}
+                fullWidth
               >
                 <Delete />
               </ButtonWithStyle>

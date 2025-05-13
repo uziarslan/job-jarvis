@@ -15,6 +15,7 @@ const BoxWithStyle = styled(Box)`
   margin: auto;
   width: 50%;
   position: relative;
+  text-align: left;
   left: -${SIDEBAR_WIDTH_PX}px;
 `;
 
