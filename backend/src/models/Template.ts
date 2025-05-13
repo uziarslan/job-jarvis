@@ -2,18 +2,17 @@
 
 import {
   Entity,
-  PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
-  ManyToOne,
   UpdateDateColumn,
+  ObjectId,
+  ObjectIdColumn,
 } from "typeorm";
-import { User } from "./User";
 
 @Entity()
 export class Template {
-  @PrimaryGeneratedColumn()
-  id!: number;
+  @ObjectIdColumn()
+  id!: ObjectId;
 
   @Column()
   title!: string;
@@ -30,8 +29,6 @@ export class Template {
   @UpdateDateColumn()
   updatedAt!: Date;
 
-  @ManyToOne(() => User, (user) => user.templates, {
-    onDelete: "CASCADE",
-  })
-  user!: User;
+  @Column(() => ObjectId)
+  userId!: ObjectId;
 }

@@ -1,19 +1,16 @@
 import {
   Entity,
-  PrimaryGeneratedColumn,
   Column,
-  OneToOne,
-  JoinColumn,
   UpdateDateColumn,
   Unique,
+  ObjectId,
+  ObjectIdColumn,
 } from "typeorm";
-import { User } from "./User";
 
 @Entity()
-@Unique(["user"])
 export class AIProfile {
-  @PrimaryGeneratedColumn()
-  id!: number;
+  @ObjectIdColumn()
+  id!: ObjectId;
 
   @Column()
   title!: string;
@@ -24,7 +21,6 @@ export class AIProfile {
   @UpdateDateColumn()
   updatedAt!: Date;
 
-  @OneToOne(() => User, (user) => user.aiProfile, { onDelete: "CASCADE" })
-  @JoinColumn()
-  user!: User;
+  @Column(() => ObjectId)
+  userId!: ObjectId;
 }
