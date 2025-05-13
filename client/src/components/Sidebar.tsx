@@ -40,26 +40,26 @@ const BoxWithStyle = styled(Box)`
 `;
 
 const IconButtonWithStyle = styled(IconButton)<{
-  routeSelected: Route;
+  route_selected: Route;
   route: Route;
 }>`
   width: 51px;
   height: 51px;
   border-radius: 56px !important;
-  background-color: ${({ routeSelected, route, ...props }) =>
-    routeSelected === route
+  background-color: ${({ route_selected, route, ...props }) =>
+    route_selected === route
       ? props.theme.palette.primary.main
       : props.theme.palette.secondary.dark};
 `;
 
 const ImageWithStyle = styled("img")<{
-  routeSelected: Route;
+  route_selected: Route;
   route: Route;
 }>`
   width: 30px;
   height: 30px;
-  filter: ${({ routeSelected, route }) =>
-    routeSelected === route ? "brightness(0) invert(1)" : undefined};
+  filter: ${({ route_selected, route }) =>
+    route_selected === route ? "brightness(0) invert(1)" : undefined};
 `;
 
 export default function Sidebar({ routeSelected, onSelectRoute }: IProps) {
@@ -78,13 +78,13 @@ export default function Sidebar({ routeSelected, onSelectRoute }: IProps) {
               size="large"
               onClick={() => onSelectRoute(route)}
               route={route}
-              routeSelected={routeSelected}
+              route_selected={routeSelected}
             >
               <ImageWithStyle
                 src={icon}
                 alt={route}
                 route={route}
-                routeSelected={routeSelected}
+                route_selected={routeSelected}
               />
             </IconButtonWithStyle>
           </Tooltip>

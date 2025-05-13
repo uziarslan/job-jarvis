@@ -2,6 +2,7 @@ import { Box, Button, styled, TextField, Typography } from "@mui/material";
 import type { Template } from "../../types";
 import { SIDEBAR_WIDTH_PX } from "../Sidebar";
 import { useState } from "react";
+import RichTextArea from "../ui/RichTextArea";
 
 interface IProps {
   template: Template;
@@ -43,7 +44,6 @@ export default function TemplateCardEdit({
       <TextField
         fullWidth
         value={editingTemplate.title}
-        placeholder="Title"
         onChange={(e) =>
           setEditingTemplate({
             ...editingTemplate,
@@ -56,7 +56,6 @@ export default function TemplateCardEdit({
         multiline
         fullWidth
         value={editingTemplate.description}
-        placeholder="Description"
         rows={3}
         onChange={(e) =>
           setEditingTemplate({
@@ -66,17 +65,10 @@ export default function TemplateCardEdit({
         }
       />
       <TypographyWithStyle>Content</TypographyWithStyle>
-      <TextField
-        multiline
-        fullWidth
-        value={editingTemplate.content}
-        placeholder="Content"
-        rows={6}
-        onChange={(e) =>
-          setEditingTemplate({
-            ...editingTemplate,
-            content: e.target.value,
-          })
+      <RichTextArea
+        content={editingTemplate.content}
+        setContent={(content) =>
+          setEditingTemplate({ ...editingTemplate, content })
         }
       />
       <Box display="flex" justifyContent="center" marginTop={2}>
