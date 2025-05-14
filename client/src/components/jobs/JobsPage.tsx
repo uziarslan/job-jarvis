@@ -6,11 +6,11 @@ import ArchivedIcon from "../../assets/icon_archived.svg";
 import { SIDEBAR_WIDTH_PX } from "../Sidebar";
 import { useEffect, useState } from "react";
 import type { Job } from "../../types";
-import { API_URL, COLOR_DEEP_GREY } from "../../constants";
+import { API_URL, COLOR_DEEP_GREY, getScrollbarWidth } from "../../constants";
 import CenteredCircularProgress from "../ui/CenteredCircularProgress";
 
 const TabsWithStyle = styled(Tabs)`
-  width: calc(100vw - ${SIDEBAR_WIDTH_PX}px);
+  width: calc(100vw - ${SIDEBAR_WIDTH_PX}px - ${getScrollbarWidth()}px);
 `;
 
 const ContainerWithStyle = styled(Box)`
@@ -20,7 +20,7 @@ const ContainerWithStyle = styled(Box)`
 
 const BoxWithEmptyStyle = styled(Box)`
   text-align: center;
-  width: calc(100vw - ${SIDEBAR_WIDTH_PX}px);
+  width: calc(100vw - ${SIDEBAR_WIDTH_PX}px - ${getScrollbarWidth()}px);
 `;
 
 const TypographyWithEmptyStyle = styled(Typography)`

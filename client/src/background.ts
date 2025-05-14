@@ -1,6 +1,51 @@
 import { API_URL } from "./constants";
 import { Job } from "./types";
 
+// Activating the side panel
+// This is a workaround to activate the side panel on all tabs
+
+chrome.runtime.onInstalled.addListener(() => {
+  chrome.tabs.query({}, (tabs) => {
+    tabs.forEach((tab) => {
+      if (tab.id) {
+        chrome.sidePanel.setOptions({
+          tabId: tab.id,
+          path: "popup.html",
+          enabled: true,
+        });
+      }
+    });
+  });
+});
+
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  if (tabId) {
+    chrome.sidePanel.setOptions({
+      tabId,
+      path: "popup.html",
+      enabled: true,
+    });
+  }
+});
+
+chrome.action.onClicked.addListener(async (tab) => {
+  chrome.sidePanel
+    .open({ windowId: tab.windowId })
+    .then(() => {
+      chrome.sidePanel.setOptions({
+        tabId: tab.id,
+        path: "popup.html",
+        enabled: true,
+      });
+    })
+    .catch((err) => {
+      console.error("Unable to open side panel:", err);
+    });
+});
+
+// Function to scrape job data from Upwork and send it to the backend
+// This function is called every 3 minutes
+
 function scrapeAndSendToBackend() {
   chrome.tabs.query({ url: "*://www.upwork.com/*" }, (tabs) => {
     const tab = tabs[0];

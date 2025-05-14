@@ -1,10 +1,11 @@
 import { Box, CircularProgress, styled } from "@mui/material";
 import { SIDEBAR_WIDTH_PX } from "../Sidebar";
+import { getScrollbarWidth } from "../../constants";
 
 const BoxWithStyle = styled(Box)`
   display: flex;
   justify-content: center;
-  width: calc(100vw - ${SIDEBAR_WIDTH_PX}px);
+  width: calc(100vw - ${SIDEBAR_WIDTH_PX}px - ${getScrollbarWidth()}px);
 `;
 
 const CircularProgressWithStyle = styled(CircularProgress)`

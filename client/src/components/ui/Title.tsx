@@ -1,5 +1,7 @@
 import { Box, styled } from "@mui/material";
 import type { JSX } from "react";
+import { SIDEBAR_WIDTH_PX } from "../Sidebar";
+import { getScrollbarWidth } from "../../constants";
 
 interface IProps {
   value: JSX.Element | string;
@@ -8,7 +10,7 @@ interface IProps {
 const BoxWithStyle = styled(Box)`
   text-align: left;
   margin: 30px;
-  width: 100vw;
+  width: calc(100vw - ${SIDEBAR_WIDTH_PX}px - ${getScrollbarWidth()}px);
 `;
 
 export default function Title({ value }: IProps) {

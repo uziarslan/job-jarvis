@@ -3,8 +3,11 @@
   "name": "Job Jarvis",
   "version": "1.0",
   "description": "An extension to help you in your job search.",
+  "side_panel": {
+    "default_path": "popup.html"
+  },
   "action": {
-    "default_popup": "popup.html",
+    "default_title": "Job Jarvis",
     "default_icon": {
       "16": "icons/icon16.png",
       "48": "icons/icon48.png",
@@ -14,7 +17,7 @@
   "background": {
     "service_worker": "background.js"
   },
-  "permissions": ["storage", "tabs", "scripting"],
+  "permissions": ["storage", "tabs", "scripting", "sidePanel"],
   "host_permissions": ["https://www.upwork.com/*"],
   "content_scripts": [
     {
