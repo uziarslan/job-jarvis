@@ -4,7 +4,7 @@
   "version": "1.0",
   "description": "An extension to help you in your job search.",
   "action": {
-    "default_popup": "src/popup/popup.html",
+    "default_popup": "popup.html",
     "default_icon": {
       "16": "icons/icon16.png",
       "48": "icons/icon48.png",
@@ -14,5 +14,13 @@
   "background": {
     "service_worker": "background.js"
   },
-  "permissions": ["storage", "tabs"]
+  "permissions": ["storage", "tabs", "scripting"],
+  "host_permissions": ["https://www.upwork.com/*"],
+  "content_scripts": [
+    {
+      "matches": ["https://www.upwork.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
 }

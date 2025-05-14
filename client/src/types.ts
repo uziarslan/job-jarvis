@@ -21,3 +21,21 @@ export interface Template extends BusinessObject {
   content: string;
   userId: number;
 }
+
+export type Job = {
+  title: string;
+  description: string;
+  budget: string;
+  duration: string;
+  location: string;
+  postedAt: string;
+  skills: string[];
+  jobType: string;
+  contractorTier: string;
+  proposals: string;
+  clientInfo: {
+    rating?: string;
+    totalSpent?: string;
+    jobsPosted?: string;
+  };
+};

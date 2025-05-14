@@ -26,9 +26,9 @@ interface IProps {
 export const SIDEBAR_WIDTH_PX = 75;
 
 const PaperWithStyle = styled(Paper)`
-  position: fixed;
+  position: absolute;
   width: ${SIDEBAR_WIDTH_PX}px;
-  height: 100vh;
+  height: fit-content;
   background-color: ${(props) => props.theme.palette.secondary.main};
   right: 0;
 `;
