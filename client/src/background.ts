@@ -1,35 +1,39 @@
+import { API_URL } from "./constants";
 import { Job } from "./types";
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.type === "SCRAPE_UPWORK_JOBS") {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      const tab = tabs[0];
-      if (!tab?.id) {
-        sendResponse({ error: "No active tab found." });
-        return;
-      }
+function scrapeAndSendToBackend() {
+  chrome.tabs.query({ url: "*://www.upwork.com/*" }, (tabs) => {
+    const tab = tabs[0];
+    if (!tab?.id) return;
 
-      chrome.scripting.executeScript(
-        {
-          target: { tabId: tab.id },
-          func: scrapeJobsFromDOM,
-        },
-        (results) => {
-          if (chrome.runtime.lastError) {
-            sendResponse({ error: chrome.runtime.lastError.message });
-            return;
-          }
-          chrome.runtime.sendMessage({
-            type: "SCRAPE_UPWORK_JOBS",
-            payload: results[0]?.result,
-          });
+    chrome.scripting.executeScript(
+      {
+        target: { tabId: tab.id },
+        func: scrapeJobsFromDOM,
+      },
+      async (results) => {
+        if (chrome.runtime.lastError) {
+          console.error("Scraping error:", chrome.runtime.lastError.message);
+          return;
         }
-      );
-    });
 
-    return true; // Keep the message channel open
-  }
-});
+        const jobs = results[0]?.result as Job[];
+
+        await Promise.all(
+          jobs.map((job) =>
+            fetch(API_URL + "jobs", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(job),
+            })
+          )
+        );
+      }
+    );
+  });
+}
 
 async function scrapeJobsFromDOM() {
   const waitForJobsToLoad = async (): Promise<NodeListOf<Element>> => {
@@ -44,10 +48,6 @@ async function scrapeJobsFromDOM() {
       '[data-ev-label="visible_job_tile_impression"]'
     );
   };
-
-  // Forcing scroll to load more jobs
-  window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
-  await new Promise((r) => setTimeout(r, 1500));
 
   const jobSections = await waitForJobsToLoad();
   const jobs: Job[] = [];
@@ -111,6 +111,9 @@ async function scrapeJobsFromDOM() {
       .find((text) => /job posted/i.test(text ?? ""));
 
     jobs.push({
+      id: -1,
+      createdAt: new Date(),
+      updatedAt: new Date(),
       title,
       postedAt,
       description,
@@ -131,3 +134,6 @@ async function scrapeJobsFromDOM() {
 
   return jobs;
 }
+
+scrapeAndSendToBackend();
+setInterval(scrapeAndSendToBackend, 3 * 60 * 1000);

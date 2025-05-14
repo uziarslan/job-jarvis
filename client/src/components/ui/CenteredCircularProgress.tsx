@@ -1,10 +1,20 @@
-import { CircularProgress, styled } from "@mui/material";
+import { Box, CircularProgress, styled } from "@mui/material";
+import { SIDEBAR_WIDTH_PX } from "../Sidebar";
+
+const BoxWithStyle = styled(Box)`
+  display: flex;
+  justify-content: center;
+  width: calc(100vw - ${SIDEBAR_WIDTH_PX}px);
+`;
 
 const CircularProgressWithStyle = styled(CircularProgress)`
   align-self: center;
-  margin-left: auto;
 `;
 
 export default function CenteredCircularProgress() {
-  return <CircularProgressWithStyle />;
+  return (
+    <BoxWithStyle>
+      <CircularProgressWithStyle />
+    </BoxWithStyle>
+  );
 }

@@ -22,7 +22,7 @@ export interface Template extends BusinessObject {
   userId: number;
 }
 
-export type Job = {
+export interface Job extends BusinessObject {
   title: string;
   description: string;
   budget: string;
@@ -38,4 +38,4 @@ export type Job = {
     totalSpent?: string;
     jobsPosted?: string;
   };
-};
+}
