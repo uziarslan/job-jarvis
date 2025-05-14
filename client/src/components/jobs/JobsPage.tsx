@@ -1,13 +1,27 @@
-import { Box, styled, Tab, Tabs, Typography } from "@mui/material";
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Box,
+  Divider,
+  List,
+  ListItem,
+  styled,
+  Tab,
+  Tabs,
+  Typography,
+} from "@mui/material";
 import Title from "../ui/Title";
 import InboxIcon from "../../assets/icon_inbox.svg";
 import SavedIcon from "../../assets/icon_saved.svg";
 import ArchivedIcon from "../../assets/icon_archived.svg";
 import { SIDEBAR_WIDTH_PX } from "../Sidebar";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import type { Job } from "../../types";
 import { API_URL, COLOR_DEEP_GREY, getScrollbarWidth } from "../../constants";
 import CenteredCircularProgress from "../ui/CenteredCircularProgress";
+import { ExpandMore } from "@mui/icons-material";
+import JobCard from "./JobCard";
 
 const TabsWithStyle = styled(Tabs)`
   width: calc(100vw - ${SIDEBAR_WIDTH_PX}px - ${getScrollbarWidth()}px);
@@ -16,6 +30,10 @@ const TabsWithStyle = styled(Tabs)`
 const ContainerWithStyle = styled(Box)`
   display: flex;
   flex-direction: column;
+`;
+
+const ListWithStyle = styled(List)`
+  width: calc(100vw - ${SIDEBAR_WIDTH_PX}px - ${getScrollbarWidth()}px);
 `;
 
 const BoxWithEmptyStyle = styled(Box)`
@@ -27,9 +45,10 @@ const TypographyWithEmptyStyle = styled(Typography)`
   font-weight: 500;
   font-size: 14px;
   color: ${COLOR_DEEP_GREY};
+  margin-top: 20px;
 `;
 
-const TypographyParagraphWithStyle = styled(Typography)`
+const TypographyParagraphWithEmptyStyle = styled(Typography)`
   font-weight: 400;
   font-size: 14px;
   color: ${COLOR_DEEP_GREY};
@@ -46,7 +65,7 @@ export default function JobsPage() {
           const response = await fetch(API_URL + "jobs");
           if (!response.ok) {
             throw new Error(
-              "Network response wast not ok: " + response.statusText
+              "Network response was not ok: " + response.statusText
             );
           }
           const data: Job[] = await response.json();
@@ -87,9 +106,9 @@ export default function JobsPage() {
               {tab === 0 && (
                 <>
                   No jobs yet ! <br />{" "}
-                  <TypographyParagraphWithStyle>
+                  <TypographyParagraphWithEmptyStyle>
                     Start tracking a search to see new jobs here.
-                  </TypographyParagraphWithStyle>{" "}
+                  </TypographyParagraphWithEmptyStyle>{" "}
                 </>
               )}
               {tab === 1 && "No saved jobs"}
@@ -97,13 +116,16 @@ export default function JobsPage() {
             </TypographyWithEmptyStyle>
           </BoxWithEmptyStyle>
         ) : (
-          jobs.map((job) => (
-            <div key={job.id}>
-              <Typography>{job.title}</Typography>
-              <Typography>{job.description}</Typography>
-              <Typography>{job.postedAt}</Typography>
-            </div>
-          ))
+          <ListWithStyle>
+            {jobs.map((job) => (
+              <Fragment key={job.id}>
+                <ListItem>
+                  <JobCard job={job} />
+                </ListItem>
+                <Divider />
+              </Fragment>
+            ))}
+          </ListWithStyle>
         )}
       </Box>
     </ContainerWithStyle>
