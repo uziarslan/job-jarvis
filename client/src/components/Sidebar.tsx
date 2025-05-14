@@ -26,16 +26,17 @@ interface IProps {
 export const SIDEBAR_WIDTH_PX = 75;
 
 const PaperWithStyle = styled(Paper)`
-  position: absolute;
+  position: fixed;
   width: ${SIDEBAR_WIDTH_PX}px;
-  height: fit-content;
+  height: 100vh;
+  overflow-y: auto;
   background-color: ${(props) => props.theme.palette.secondary.main};
   right: 0;
 `;
 
 const BoxWithStyle = styled(Box)`
-  margin-top: 25px;
-  margin-bottom: 25px;
+  margin-top: 20px;
+  margin-bottom: 20px;
 `;
 
 const IconButtonWithStyle = styled(IconButton)<{
