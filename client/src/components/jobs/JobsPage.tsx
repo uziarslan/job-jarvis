@@ -1,7 +1,4 @@
 import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
   Box,
   Divider,
   List,
@@ -20,7 +17,6 @@ import { Fragment, useEffect, useState } from "react";
 import type { Job } from "../../types";
 import { API_URL, COLOR_DEEP_GREY, getScrollbarWidth } from "../../constants";
 import CenteredCircularProgress from "../ui/CenteredCircularProgress";
-import { ExpandMore } from "@mui/icons-material";
 import JobCard from "./JobCard";
 
 const TabsWithStyle = styled(Tabs)`

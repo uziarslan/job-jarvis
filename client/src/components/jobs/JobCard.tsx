@@ -8,14 +8,16 @@ interface IProps {
   job: Job;
 }
 
-const BoxWithStyle = styled(Box)<{ isHovered: boolean }>`
+const BoxWithStyle = styled(Box, {
+  shouldForwardProp: (prop) => prop !== "is_hovered",
+})<{ is_hovered: boolean }>`
   width: calc(100vw - ${SIDEBAR_WIDTH_PX}px - ${getScrollbarWidth()}px);
   word-break: break-word;
   overflow-wrap: break-word;
   white-space: normal;
   cursor: pointer;
-  background-color: ${({ isHovered }) =>
-    isHovered ? COLOR_LIGHT_GREY : "white"};
+  background-color: ${({ is_hovered }) =>
+    is_hovered ? COLOR_LIGHT_GREY : "white"};
 `;
 
 export default function JobCard({ job }: IProps) {
@@ -23,7 +25,7 @@ export default function JobCard({ job }: IProps) {
 
   return (
     <BoxWithStyle
-      isHovered={isHovered}
+      is_hovered={isHovered}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >

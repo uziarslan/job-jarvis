@@ -1,14 +1,14 @@
 import {
   Entity,
-  PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  ObjectIdColumn,
 } from "typeorm";
 
 @Entity("jobs")
 export class Job {
-  @PrimaryGeneratedColumn("uuid")
+  @ObjectIdColumn()
   id!: string;
 
   @Column({ unique: true })
