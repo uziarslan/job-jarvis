@@ -21,6 +21,7 @@ const ParagraphWithStyle = styled(Typography)`
   color: #979797;
   font-size: 14px;
   font-weight: 400;
+  margin-bottom: 10px;
 `;
 
 const TitleWithStyle = styled("h2")`
@@ -42,6 +43,33 @@ export default function SavedSearchesPage() {
     );
   }, []);
 
+  const handleMonitoringClick = (savedSearch: SavedSearch) => {
+    setSavedSearches((prev) => {
+      const old = prev?.find((search) => search.name === savedSearch.name);
+      if (old) {
+        old.enabled = !old.enabled;
+        chrome.storage.sync.set({
+          [SAVED_SEARCHES_KEY]: prev,
+        });
+        return [...prev!];
+      }
+      return prev;
+    });
+  };
+
+  const handleStartMonitoringAllClick = () => {
+    setSavedSearches((prev) => {
+      const newSavedSearches = prev?.map((search) => ({
+        ...search,
+        enabled: true,
+      }));
+      chrome.storage.sync.set({
+        [SAVED_SEARCHES_KEY]: newSavedSearches,
+      });
+      return newSavedSearches;
+    });
+  };
+
   return (
     <ContainerWithStyle>
       <Title value="Saved Searches" />
@@ -52,7 +80,13 @@ export default function SavedSearchesPage() {
       <List>
         {DEFAULT_SAVED_SEARCHES.map((search) => (
           <ListItem key={search.name}>
-            <SavedSearchCard savedSearch={search} />
+            <SavedSearchCard
+              savedSearch={
+                savedSearches?.find((other) => other.name === search.name) ||
+                search
+              }
+              onClickMonitoring={handleMonitoringClick}
+            />
           </ListItem>
         ))}
       </List>
@@ -68,7 +102,10 @@ export default function SavedSearchesPage() {
             )
             .map((search) => (
               <ListItem key={search.name}>
-                <SavedSearchCard savedSearch={search} />
+                <SavedSearchCard
+                  savedSearch={search}
+                  onClickMonitoring={handleMonitoringClick}
+                />
               </ListItem>
             ))}
         </List>
@@ -78,7 +115,10 @@ export default function SavedSearchesPage() {
       <Box>
         <Button variant="text">Import Saved Searches from Upwork</Button>
       </Box>
-      <BottomButtonWithStyle variant="contained">
+      <BottomButtonWithStyle
+        variant="contained"
+        onClick={handleStartMonitoringAllClick}
+      >
         Start all monitoring
       </BottomButtonWithStyle>
     </ContainerWithStyle>

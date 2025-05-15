@@ -90,8 +90,8 @@ export default function JobsPage({ onStartTrackingClick }: IProps) {
   useEffect(() => {
     chrome.storage.sync.get(SAVED_SEARCHES_KEY, (result) =>
       setHasMonitoredSearches(
-        (result[SAVED_SEARCHES_KEY] as SavedSearch[]).every(
-          (search) => !search.enabled
+        (result[SAVED_SEARCHES_KEY] as SavedSearch[]).some(
+          (search) => search.enabled
         )
       )
     );
