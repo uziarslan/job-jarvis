@@ -6,6 +6,7 @@ const BoxWithStyle = styled(Box)`
   display: flex;
   justify-content: center;
   width: calc(100vw - ${SIDEBAR_WIDTH_PX}px - ${getScrollbarWidth()}px);
+  margin-top: 20vh;
 `;
 
 const CircularProgressWithStyle = styled(CircularProgress)`

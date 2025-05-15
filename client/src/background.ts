@@ -144,16 +144,22 @@ async function scrapeJobsFromDOM() {
     const ratingMatch = ratingStyle?.match(/width:\s*([\d.]+)px/);
     const rating = ratingMatch
       ? ((parseFloat(ratingMatch[1]) / 76) * 5).toFixed(1)
-      : undefined;
+      : "0.0";
 
     const totalSpent =
       section
         .querySelector('[data-test="formatted-amount"]')
         ?.textContent?.trim() ?? "";
 
-    const jobsPosted = Array.from(section.querySelectorAll("small"))
-      .map((el) => el.textContent?.trim())
-      .find((text) => /job posted/i.test(text ?? ""));
+    const jobsPosted =
+      Array.from(section.querySelectorAll("small"))
+        .map((el) => el.textContent?.trim())
+        .find((text) => /job posted/i.test(text ?? "")) ?? "";
+
+    const paymentVerified =
+      section
+        .querySelector('[data-test="payment-verification-status"] strong')
+        ?.textContent?.trim() ?? "";
 
     jobs.push({
       id: -1,
@@ -172,7 +178,7 @@ async function scrapeJobsFromDOM() {
       clientInfo: {
         rating,
         totalSpent,
-        jobsPosted,
+        paymentVerified,
       },
     });
   });

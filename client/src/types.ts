@@ -34,8 +34,8 @@ export interface Job extends BusinessObject {
   contractorTier: string;
   proposals: string;
   clientInfo: {
-    rating?: string;
-    totalSpent?: string;
-    jobsPosted?: string;
+    rating: string;
+    totalSpent: string;
+    paymentVerified: string;
   };
 }

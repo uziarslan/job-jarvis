@@ -44,12 +44,6 @@ const TypographyWithEmptyStyle = styled(Typography)`
   margin-top: 20px;
 `;
 
-const TypographyParagraphWithEmptyStyle = styled(Typography)`
-  font-weight: 400;
-  font-size: 14px;
-  color: ${COLOR_DEEP_GREY};
-`;
-
 export default function JobsPage() {
   const [jobs, setJobs] = useState<Job[]>();
   const [tab, setTab] = useState<number>(0);
@@ -101,10 +95,8 @@ export default function JobsPage() {
             <TypographyWithEmptyStyle>
               {tab === 0 && (
                 <>
-                  No jobs yet ! <br />{" "}
-                  <TypographyParagraphWithEmptyStyle>
-                    Start tracking a search to see new jobs here.
-                  </TypographyParagraphWithEmptyStyle>{" "}
+                  No jobs yet ! <br /> Start tracking a search to see new jobs
+                  here.
                 </>
               )}
               {tab === 1 && "No saved jobs"}

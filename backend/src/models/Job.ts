@@ -45,7 +45,7 @@ export class Job {
   clientInfo!: {
     rating?: string;
     totalSpent?: string;
-    jobsPosted?: string;
+    paymentVerified?: string;
   };
 
   @CreateDateColumn()
