@@ -2,7 +2,7 @@ import { Box, Chip, Collapse, Rating, styled, Typography } from "@mui/material";
 import { Job } from "../../types";
 import { SIDEBAR_WIDTH_PX } from "../Sidebar";
 import { COLOR_LIGHT_GREY, getScrollbarWidth } from "../../constants";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { NewReleases, Place, Verified } from "@mui/icons-material";
 
 const COLLAPSE_ANIMATION_DURATION_MS = 250;
@@ -84,6 +84,7 @@ const ContainerClientInfos = styled(Box)`
   font-size: 14px;
   font-weight: 400;
   color: #676767;
+  flex-wrap: wrap;
 `;
 
 const ContainerProposals = styled(Box)`

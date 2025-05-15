@@ -1,5 +1,7 @@
 import {
+  Alert,
   Box,
+  Button,
   Divider,
   List,
   ListItem,
@@ -14,10 +16,19 @@ import SavedIcon from "../../assets/icon_saved.svg";
 import ArchivedIcon from "../../assets/icon_archived.svg";
 import { SIDEBAR_WIDTH_PX } from "../Sidebar";
 import { Fragment, useEffect, useState } from "react";
-import type { Job } from "../../types";
-import { API_URL, COLOR_DEEP_GREY, getScrollbarWidth } from "../../constants";
+import type { Job, SavedSearch } from "../../types";
+import {
+  API_URL,
+  COLOR_DEEP_GREY,
+  getScrollbarWidth,
+  SAVED_SEARCHES_KEY,
+} from "../../constants";
 import CenteredCircularProgress from "../ui/CenteredCircularProgress";
 import JobCard from "./JobCard";
+
+interface IProps {
+  onStartTrackingClick: () => void;
+}
 
 const TabsWithStyle = styled(Tabs)`
   width: calc(100vw - ${SIDEBAR_WIDTH_PX}px - ${getScrollbarWidth()}px);
@@ -25,6 +36,7 @@ const TabsWithStyle = styled(Tabs)`
 
 const ContainerWithStyle = styled(Box)`
   display: flex;
+  width: calc(100vw - ${SIDEBAR_WIDTH_PX}px - ${getScrollbarWidth()}px);
   flex-direction: column;
 `;
 
@@ -42,13 +54,17 @@ const TypographyWithEmptyStyle = styled(Typography)`
   font-size: 14px;
   color: ${COLOR_DEEP_GREY};
   margin-top: 20px;
+  margin-bottom: 20px;
 `;
 
-export default function JobsPage() {
+export default function JobsPage({ onStartTrackingClick }: IProps) {
   const [jobs, setJobs] = useState<Job[]>();
   const [tab, setTab] = useState<number>(0);
+  const [hasMonitoredSearches, setHasMonitoredSearches] =
+    useState<boolean>(false);
 
   useEffect(() => {
+    setJobs(undefined);
     const fetchJobs = async () => {
       switch (tab) {
         case 0:
@@ -71,8 +87,21 @@ export default function JobsPage() {
     fetchJobs();
   }, [tab]);
 
+  useEffect(() => {
+    chrome.storage.sync.get(SAVED_SEARCHES_KEY, (result) =>
+      setHasMonitoredSearches(
+        (result[SAVED_SEARCHES_KEY] as SavedSearch[]).every(
+          (search) => !search.enabled
+        )
+      )
+    );
+  }, []);
+
   return (
     <ContainerWithStyle>
+      {!hasMonitoredSearches && (
+        <Alert severity="warning">No active job tracking</Alert>
+      )}
       <Title value="Jobs" />
       <TabsWithStyle
         variant="fullWidth"
@@ -102,6 +131,11 @@ export default function JobsPage() {
               {tab === 1 && "No saved jobs"}
               {tab === 2 && "No archived jobs"}
             </TypographyWithEmptyStyle>
+            {tab === 0 && (
+              <Button variant="contained" onClick={onStartTrackingClick}>
+                Start tracking
+              </Button>
+            )}
           </BoxWithEmptyStyle>
         ) : (
           <ListWithStyle>

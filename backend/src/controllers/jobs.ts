@@ -11,6 +11,7 @@ export const getAllJobs = async (req: Request, res: Response) => {
 
 export const addJob = async (req: Request, res: Response) => {
   const {
+    id,
     title,
     description,
     budget,
@@ -25,6 +26,7 @@ export const addJob = async (req: Request, res: Response) => {
   } = req.body;
 
   const job = jobRepository.create({
+    upworkId: id,
     title,
     description,
     budget,

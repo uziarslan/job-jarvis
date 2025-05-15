@@ -9,8 +9,13 @@ export type Route =
   | "Manual Job Proposal"
   | "Reviews";
 
+export type SavedSearch = {
+  name: string;
+  enabled: boolean;
+};
+
 export interface BusinessObject {
-  id: number;
+  id: number | string;
   createdAt: Date;
   updatedAt: Date;
 }

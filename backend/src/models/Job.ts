@@ -12,6 +12,9 @@ export class Job {
   id!: string;
 
   @Column({ unique: true })
+  upworkId!: string;
+
+  @Column()
   title!: string;
 
   @Column("text")

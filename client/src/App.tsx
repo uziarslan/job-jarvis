@@ -1,10 +1,12 @@
 import { createTheme, responsiveFontSizes, ThemeProvider } from "@mui/material";
 import "./styles.css";
 import Sidebar from "./components/Sidebar";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { Route } from "./types";
 import TemplatesPage from "./components/templates/TemplatesPage";
 import JobsPage from "./components/jobs/JobsPage";
+import SavedSearchesPage from "./components/savedSearches/SavedSearchesPage";
+import { DEFAULT_SAVED_SEARCHES, SAVED_SEARCHES_KEY } from "./constants";
 
 let theme = createTheme({
   palette: {
@@ -26,6 +28,19 @@ theme = responsiveFontSizes(theme);
 function App() {
   const [route, setRoute] = useState<Route>("Dashboard");
 
+  useEffect(() => {
+    // Initializing default saved searches in storage
+    // All disabled by default
+    chrome.storage.sync.get(SAVED_SEARCHES_KEY, (result) => {
+      const existing = result[SAVED_SEARCHES_KEY];
+      if (!Array.isArray(existing) || existing.length === 0) {
+        chrome.storage.sync.set({
+          [SAVED_SEARCHES_KEY]: DEFAULT_SAVED_SEARCHES,
+        });
+      }
+    });
+  }, []);
+
   const renderPage = useMemo(() => {
     switch (route) {
       case "Dashboard":
@@ -39,9 +54,11 @@ function App() {
       case "Templates":
         return <TemplatesPage />;
       case "Jobs":
-        return <JobsPage />;
+        return (
+          <JobsPage onStartTrackingClick={() => setRoute("Saved Searches")} />
+        );
       case "Saved Searches":
-        return <div>Saved Searches</div>;
+        return <SavedSearchesPage />;
       case "Manual Job Proposal":
         return <div>Manual Job Proposal</div>;
       case "Reviews":

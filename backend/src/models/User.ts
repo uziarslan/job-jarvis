@@ -17,6 +17,9 @@ export class User {
   @Column({ type: "jsonb", nullable: true })
   stripeData?: any;
 
+  @Column({ default: 10 })
+  freeProposalsLeft!: number;
+
   @CreateDateColumn()
   createdAt!: Date;
 

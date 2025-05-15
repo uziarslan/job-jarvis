@@ -81,23 +81,18 @@ function scrapeAndSendToBackend() {
 }
 
 async function scrapeJobsFromDOM() {
-  const waitForJobsToLoad = async (): Promise<NodeListOf<Element>> => {
-    for (let i = 0; i < 10; i++) {
-      const elements = document.querySelectorAll(
-        '[data-ev-label="visible_job_tile_impression"]'
-      );
-      if (elements.length >= 5) return elements;
-      await new Promise((resolve) => setTimeout(resolve, 500));
-    }
-    return document.querySelectorAll(
-      '[data-ev-label="visible_job_tile_impression"]'
-    );
-  };
-
-  const jobSections = await waitForJobsToLoad();
+  const jobSections = document.querySelectorAll(
+    '[data-ev-label="visible_job_tile_impression"]'
+  );
   const jobs: Job[] = [];
 
   jobSections.forEach((section) => {
+    const link =
+      section.querySelector("h3.job-tile-title a")?.getAttribute("href") ?? "";
+    const match = link.match(/_~([0-9a-z]+)/i);
+    const upworkId = match ? "~" + match[1] : null;
+    if (!upworkId) return;
+
     const title =
       section.querySelector("h3.job-tile-title a")?.textContent?.trim() ?? "";
     const postedAt =
@@ -127,10 +122,10 @@ async function scrapeJobsFromDOM() {
     let duration = "";
     const infoText =
       section.querySelector("small.text-caption")?.textContent ?? "";
-    const match = infoText.match(
+    const matchDuration = infoText.match(
       /(Less than 1 month|1 to 3 months|3 to 6 months|More than 6 months)/i
     );
-    if (match) duration = match[1];
+    if (matchDuration) duration = matchDuration[1];
 
     const skills: string[] = [];
     section.querySelectorAll('[data-test="attr-item"]').forEach((el) => {
@@ -151,18 +146,13 @@ async function scrapeJobsFromDOM() {
         .querySelector('[data-test="formatted-amount"]')
         ?.textContent?.trim() ?? "";
 
-    const jobsPosted =
-      Array.from(section.querySelectorAll("small"))
-        .map((el) => el.textContent?.trim())
-        .find((text) => /job posted/i.test(text ?? "")) ?? "";
-
     const paymentVerified =
       section
         .querySelector('[data-test="payment-verification-status"] strong')
         ?.textContent?.trim() ?? "";
 
     jobs.push({
-      id: -1,
+      id: upworkId,
       createdAt: new Date(),
       updatedAt: new Date(),
       title,
@@ -187,4 +177,4 @@ async function scrapeJobsFromDOM() {
 }
 
 scrapeAndSendToBackend();
-setInterval(scrapeAndSendToBackend, 3 * 60 * 1000);
+setInterval(scrapeAndSendToBackend, 1000);

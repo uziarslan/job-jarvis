@@ -1,3 +1,5 @@
+import { SavedSearch } from "./types";
+
 export const API_URL = "http://localhost:3000/api/";
 
 export const COLOR_LIGHT_GREY = "#F1F1F1";
@@ -32,3 +34,23 @@ export function getScrollbarWidth(): number {
 
   return cachedScrollbarWidth;
 }
+
+// Saved searches are stored in the browser's google storage
+// We adopted this behaviour to be consistent with the rest of the app :
+// It could be stored in the database, but the default searches behaviour,
+// is mostly carried by the browser extension (scrapping).
+// ------------------------------------------------------------------------
+// Then, it would be too heavy to have saved searches in the database, with
+// a "is_system" field and specifics behaviours to re-implement in the frontend.
+// This way, we can store until 2600 objects so it is fine, and shared by Google account.
+// ------------------------------------------------------------------------
+// NOTE : Updating the structure would decrease the storage performances so be careful
+// with that.
+// ------------------------------------------------------------------------
+export const SAVED_SEARCHES_KEY = "savedSearches";
+export const DEFAULT_SAVED_SEARCHES: SavedSearch[] = [
+  { name: "My Feed", enabled: false },
+  { name: "Best Matches", enabled: false },
+  { name: "Most Recent", enabled: false },
+  { name: "U.S Only", enabled: false },
+];
