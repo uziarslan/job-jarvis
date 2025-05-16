@@ -140,7 +140,7 @@ export default function JobsPage({ onStartTrackingClick }: IProps) {
         ) : (
           <ListWithStyle>
             {jobs.map((job) => (
-              <Fragment key={job.id}>
+              <Fragment key={job._id}>
                 <ListItem>
                   <JobCard job={job} />
                 </ListItem>

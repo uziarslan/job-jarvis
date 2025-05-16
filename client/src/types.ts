@@ -15,7 +15,7 @@ export type SavedSearch = {
 };
 
 export interface BusinessObject {
-  id: number | string;
+  _id: number | string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -28,6 +28,7 @@ export interface Template extends BusinessObject {
 }
 
 export interface Job extends BusinessObject {
+  upworkId: string;
   title: string;
   description: string;
   budget: string;

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import TemplateCard from "./TemplateCard";
 import type { Template } from "../../types";
 import { API_URL } from "../../constants";
@@ -34,6 +34,7 @@ export default function TemplateCards() {
           title: "New Template",
           description: "Description of the new template",
           content: "Content of the new template",
+          userId: "userId", // TODO : replace with actual userId
         }),
       });
       if (!response.ok) {
@@ -48,7 +49,7 @@ export default function TemplateCards() {
 
   const handleEditTemplate = async (template: Template) => {
     try {
-      const response = await fetch(API_URL + "templates/" + template.id, {
+      const response = await fetch(API_URL + "templates/" + template._id, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -60,7 +61,7 @@ export default function TemplateCards() {
       }
       const data = await response.json();
       setTemplates(
-        templates!.map((t) => (t.id === data.id ? { ...t, ...data } : t))
+        templates!.map((t) => (t._id === data._id ? { ...t, ...data } : t))
       );
     } catch (error) {
       console.error("Error editing template: ", error);
@@ -73,7 +74,7 @@ export default function TemplateCards() {
         method: "DELETE",
       });
       if (response.ok) {
-        setTemplates(templates?.filter((template) => template.id !== id));
+        setTemplates(templates?.filter((template) => template._id !== id));
       } else {
         console.error("Error deleting template: ", response.statusText);
       }
@@ -102,11 +103,11 @@ export default function TemplateCards() {
       />
       {templates.map((template) => (
         <TemplateCard
-          key={template.id}
+          key={template._id}
           template={template}
           onSelectEdit={(template) => setEditingTemplate(template)}
           onSelectDelete={async (template) =>
-            await handleDeleteTemplate(template.id)
+            await handleDeleteTemplate(template._id)
           }
         />
       ))}

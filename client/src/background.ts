@@ -152,7 +152,8 @@ async function scrapeJobsFromDOM() {
         ?.textContent?.trim() ?? "";
 
     jobs.push({
-      id: upworkId,
+      _id: -1,
+      upworkId,
       createdAt: new Date(),
       updatedAt: new Date(),
       title,
