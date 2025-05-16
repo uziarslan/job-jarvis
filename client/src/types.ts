@@ -24,7 +24,7 @@ export interface Template extends BusinessObject {
   title: string;
   description: string;
   content: string;
-  userId: number;
+  userId: number | string;
 }
 
 export interface Job extends BusinessObject {

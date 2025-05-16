@@ -110,9 +110,9 @@ export default function JobsPage({ onStartTrackingClick }: IProps) {
         onChange={(_, newValue) => setTab(newValue)}
       >
         <Tab icon={<img src={InboxIcon} alt="Inbox Icon" />} label="Inbox" />
-        <Tab icon={<img src={SavedIcon} alt="Inbox Icon" />} label="Saved" />
+        <Tab icon={<img src={SavedIcon} alt="Saved Icon" />} label="Saved" />
         <Tab
-          icon={<img src={ArchivedIcon} alt="Inbox Icon" />}
+          icon={<img src={ArchivedIcon} alt="Archived Icon" />}
           label="Archived"
         />
       </TabsWithStyle>
