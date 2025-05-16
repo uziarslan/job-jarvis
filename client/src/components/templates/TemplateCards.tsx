@@ -67,7 +67,7 @@ export default function TemplateCards() {
     }
   };
 
-  const handleDeleteTemplate = async (id: number) => {
+  const handleDeleteTemplate = async (id: number | string) => {
     try {
       const response = await fetch(API_URL + "templates/" + id, {
         method: "DELETE",

@@ -1,59 +1,29 @@
-import {
-  Entity,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-  ObjectIdColumn,
-} from "typeorm";
+import { Schema, model } from "mongoose";
 
-@Entity("jobs")
-export class Job {
-  @ObjectIdColumn()
-  id!: string;
+const jobSchema = new Schema({
+  upworkId: { type: String, unique: true, required: true },
+  title: { type: String, required: true },
+  description: { type: String, required: true },
+  budget: String,
+  duration: String,
+  location: { type: String, required: true },
+  postedAt: { type: String, required: true },
+  skills: [{ type: String }],
+  jobType: { type: String, required: true },
+  contractorTier: { type: String, required: true },
+  proposals: { type: String, required: true },
+  clientInfo: {
+    rating: String,
+    totalSpent: String,
+    paymentVerified: String,
+  },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
+});
 
-  @Column({ unique: true })
-  upworkId!: string;
+jobSchema.pre("save", function (next) {
+  this.updatedAt = new Date();
+  next();
+});
 
-  @Column()
-  title!: string;
-
-  @Column("text")
-  description!: string;
-
-  @Column({ nullable: true })
-  budget?: string;
-
-  @Column({ nullable: true })
-  duration?: string;
-
-  @Column()
-  location!: string;
-
-  @Column()
-  postedAt!: string;
-
-  @Column("simple-array")
-  skills!: string[];
-
-  @Column()
-  jobType!: string;
-
-  @Column()
-  contractorTier!: string;
-
-  @Column()
-  proposals!: string;
-
-  @Column("jsonb")
-  clientInfo!: {
-    rating?: string;
-    totalSpent?: string;
-    paymentVerified?: string;
-  };
-
-  @CreateDateColumn()
-  createdAt!: Date;
-
-  @UpdateDateColumn()
-  updatedAt!: Date;
-}
+export const Job = model("Job", jobSchema);

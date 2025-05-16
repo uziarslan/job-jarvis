@@ -1,34 +1,17 @@
-// src/features/template/template.entity.ts
+import { Schema, model, Types } from "mongoose";
 
-import {
-  Entity,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-  ObjectId,
-  ObjectIdColumn,
-} from "typeorm";
+const templateSchema = new Schema({
+  title: { type: String, required: true },
+  description: { type: String, required: true },
+  content: { type: String, required: true },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
+  userId: { type: Types.ObjectId, required: true, ref: "User" },
+});
 
-@Entity()
-export class Template {
-  @ObjectIdColumn()
-  id!: ObjectId;
+templateSchema.pre("save", function (next) {
+  this.updatedAt = new Date();
+  next();
+});
 
-  @Column()
-  title!: string;
-
-  @Column({ type: "text" })
-  description!: string;
-
-  @Column({ type: "text" })
-  content!: string;
-
-  @CreateDateColumn()
-  createdAt!: Date;
-
-  @UpdateDateColumn()
-  updatedAt!: Date;
-
-  @Column(() => ObjectId)
-  userId!: ObjectId;
-}
+export const Template = model("Template", templateSchema);

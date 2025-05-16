@@ -1,16 +1,7 @@
-import { DataSource } from "typeorm";
-import { AIProfile } from "./models/AIProfile";
-import { Template } from "./models/Template";
-import { User } from "./models/User";
-import { Job } from "./models/Job";
+import mongoose from "mongoose";
 
-export const AppDataSource = new DataSource({
-  type: "mongodb",
-  url: process.env.MONGO_URL,
-  synchronize: true,
-  logging: true,
-  entities: [AIProfile, Template, User, Job],
-  extra: {
+export const connectDB = async () => {
+  await mongoose.connect(process.env.MONGO_URL!, {
     dbName: "job-jarvis-dev",
-  },
-});
+  });
+};

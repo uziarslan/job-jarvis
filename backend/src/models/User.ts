@@ -1,28 +1,16 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  ObjectIdColumn,
-  UpdateDateColumn,
-} from "typeorm";
+import { Schema, model } from "mongoose";
 
-@Entity()
-export class User {
-  @ObjectIdColumn()
-  id!: number;
+const userSchema = new Schema({
+  isPremium: { type: Boolean, default: false },
+  stripeData: { type: Schema.Types.Mixed, default: null },
+  freeProposalsLeft: { type: Number, default: 10 },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
+});
 
-  @Column({ default: false })
-  isPremium!: boolean;
+userSchema.pre("save", function (next) {
+  this.updatedAt = new Date();
+  next();
+});
 
-  @Column({ type: "jsonb", nullable: true })
-  stripeData?: any;
-
-  @Column({ default: 10 })
-  freeProposalsLeft!: number;
-
-  @CreateDateColumn()
-  createdAt!: Date;
-
-  @UpdateDateColumn()
-  updatedAt!: Date;
-}
+export const User = model("User", userSchema);

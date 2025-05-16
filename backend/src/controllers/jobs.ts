@@ -1,11 +1,8 @@
-import { Request, Response, Router } from "express";
-import { AppDataSource } from "../db";
+import { Request, Response } from "express";
 import { Job } from "../models/Job";
 
-const jobRepository = AppDataSource.getRepository(Job);
-
 export const getAllJobs = async (req: Request, res: Response) => {
-  const jobs = await jobRepository.find();
+  const jobs = await Job.find();
   res.json(jobs);
 };
 
@@ -25,7 +22,7 @@ export const addJob = async (req: Request, res: Response) => {
     clientInfo,
   } = req.body;
 
-  const job = jobRepository.create({
+  const job = await Job.create({
     upworkId: id,
     title,
     description,
@@ -40,7 +37,5 @@ export const addJob = async (req: Request, res: Response) => {
     clientInfo,
   });
 
-  const savedJob = await jobRepository.save(job);
-
-  res.status(201).json(savedJob);
+  res.status(201).json(job);
 };

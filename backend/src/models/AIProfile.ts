@@ -1,25 +1,15 @@
-import {
-  Entity,
-  Column,
-  UpdateDateColumn,
-  ObjectId,
-  ObjectIdColumn,
-} from "typeorm";
+import { Schema, model, Types } from "mongoose";
 
-@Entity()
-export class AIProfile {
-  @ObjectIdColumn()
-  id!: ObjectId;
+const aiProfileSchema = new Schema({
+  title: { type: String, required: true },
+  summary: { type: String, required: true },
+  updatedAt: { type: Date, default: Date.now },
+  userId: { type: Types.ObjectId, required: true, ref: "User" },
+});
 
-  @Column()
-  title!: string;
+aiProfileSchema.pre("save", function (next) {
+  this.updatedAt = new Date();
+  next();
+});
 
-  @Column("text")
-  summary!: string;
-
-  @UpdateDateColumn()
-  updatedAt!: Date;
-
-  @Column(() => ObjectId)
-  userId!: ObjectId;
-}
+export const AIProfile = model("AIProfile", aiProfileSchema);
