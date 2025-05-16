@@ -2,7 +2,7 @@ import { Box, Button, styled, TextField, Typography } from "@mui/material";
 import type { Template } from "../../types";
 import { SIDEBAR_WIDTH_PX } from "../Sidebar";
 import { useState } from "react";
-import RichTextArea from "../ui/RichTextArea";
+import RichTextArea from "../ui/forms/RichTextArea";
 
 interface IProps {
   template: Template;

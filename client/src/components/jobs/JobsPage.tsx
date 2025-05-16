@@ -77,8 +77,8 @@ export default function JobsPage({ onStartTrackingClick }: IProps) {
           const data: Job[] = await response.json();
           setJobs(data);
           break;
-        case 1: // Fetch saved jobs
-        case 2: // Fetch archived jobs
+        case 1: // TODO : Fetch saved jobs
+        case 2: // TODO : Fetch archived jobs
         default:
           setJobs([]);
       }

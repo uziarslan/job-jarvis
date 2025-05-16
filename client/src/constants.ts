@@ -49,7 +49,7 @@ export function getScrollbarWidth(): number {
 // ------------------------------------------------------------------------
 // NOTE (bis) : We should reserve this space for the saved searches only.
 // For the settings for example, this is not mandatory to share them using Google
-// account. You can use database for that.
+// account and you can use database for that.
 // ------------------------------------------------------------------------
 export const SAVED_SEARCHES_KEY = "savedSearches";
 export const DEFAULT_SAVED_SEARCHES: SavedSearch[] = [
