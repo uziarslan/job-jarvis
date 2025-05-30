@@ -17,13 +17,34 @@
   "background": {
     "service_worker": "background.js"
   },
-  "permissions": ["storage", "tabs", "scripting", "sidePanel"],
-  "host_permissions": ["https://www.upwork.com/*"],
+  "permissions": [
+    "storage",
+    "tabs",
+    "scripting",
+    "sidePanel"
+  ],
+  "host_permissions": [
+    "https://www.upwork.com/*"
+  ],
+  "externally_connectable": {
+    "matches": [
+      "http://localhost:3000/*",
+      "https://*.upwork.com/*"
+    ]
+  },
   "content_scripts": [
     {
-      "matches": ["https://www.upwork.com/*"],
-      "js": ["content.js"],
+      "matches": [
+        "https://www.upwork.com/*",
+        "http://localhost:3000/*"
+      ],
+      "js": [
+        "content.js"
+      ],
       "run_at": "document_idle"
     }
-  ]
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self';"
+  }
 }

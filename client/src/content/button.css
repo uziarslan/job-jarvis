@@ -1,0 +1,41 @@
+.job-jarvis-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10.5px 0px;
+    border-radius: 8px;
+    border: none;
+    background: linear-gradient(90deg, #00AEEF 0%, #19CCED 100%);
+    color: #fff;
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: 235px;
+    margin-top: 15px;
+    text-decoration: none !important;
+}
+
+.job-jarvis-button:hover,
+.job-jarvis-button:focus,
+.job-jarvis-button:active {
+    color: #000000;
+    transform: scale(1.02);
+    text-decoration: none !important;
+    outline: none;
+}
+
+.job-jarvis-button svg path {
+    transition: all 0.2s ease;
+}
+
+.job-jarvis-button:hover svg path,
+.job-jarvis-button:focus svg path,
+.job-jarvis-button:active svg path {
+    fill: black;
+}
+
+.job-jarvis-button svg {
+    flex-shrink: 0;
+}

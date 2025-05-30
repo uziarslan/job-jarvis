@@ -12,6 +12,8 @@ export type Route =
 export type SavedSearch = {
   name: string;
   enabled: boolean;
+  url?: string;
+  tabId?: number;
 };
 
 export interface BusinessObject {
@@ -28,7 +30,7 @@ export interface Template extends BusinessObject {
 }
 
 export interface Job extends BusinessObject {
-  upworkId: string;
+  link: string;
   title: string;
   description: string;
   budget: string;
@@ -44,4 +46,10 @@ export interface Job extends BusinessObject {
     totalSpent: string;
     paymentVerified: string;
   };
+}
+
+export interface ActiveSearch {
+  name: string;
+  url: string;
+  tabId: number;
 }

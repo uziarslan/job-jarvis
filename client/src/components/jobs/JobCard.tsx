@@ -1,27 +1,28 @@
-import { Box, Chip, Collapse, Rating, styled, Typography } from "@mui/material";
+import { Box, Button, Chip, Collapse, Rating, styled, Typography } from "@mui/material";
 import { Job } from "../../types";
 import { SIDEBAR_WIDTH_PX } from "../Sidebar";
 import { COLOR_LIGHT_GREY, getScrollbarWidth } from "../../constants";
 import { useState } from "react";
 import { NewReleases, Place, Verified } from "@mui/icons-material";
+import saveIcon from "../../assets/icon_saved.svg";
+import archiveIcon from "../../assets/icon_archived.svg";
 
 const COLLAPSE_ANIMATION_DURATION_MS = 250;
 
 interface IProps {
   job: Job;
+  onSaveJob?: (jobId: string) => void;
+  onArchiveJob?: (jobId: string) => void;
 }
 
-const BoxWithStyle = styled(Box, {
-  shouldForwardProp: (prop) => prop !== "is_hovered",
-})<{ is_hovered: boolean }>`
+const BoxWithStyle = styled(Box)`
   width: calc(100vw - ${SIDEBAR_WIDTH_PX}px - ${getScrollbarWidth()}px);
   word-break: break-word;
   overflow-wrap: break-word;
   white-space: normal;
   cursor: pointer;
-  background-color: ${({ is_hovered }) =>
-    is_hovered ? COLOR_LIGHT_GREY : "white"};
-  padding: 16px;
+  background-color: white;
+  padding: 0px;
 `;
 
 const TypographyPostedAt = styled(Typography)`
@@ -32,7 +33,7 @@ const TypographyPostedAt = styled(Typography)`
 
 const TypographyTitle = styled("h3", {
   shouldForwardProp: (prop) => prop !== "is_hovered",
-})<{ is_hovered: boolean }>`
+}) <{ is_hovered: boolean }>`
   font-size: 16px;
   font-weight: 500;
   margin-top: 0px;
@@ -50,7 +51,7 @@ const TypographyJobType = styled(Typography)`
 
 const TypographyDescription = styled(Typography, {
   shouldForwardProp: (prop) => prop !== "is_text_collapsed",
-})<{ is_text_collapsed: boolean }>`
+}) <{ is_text_collapsed: boolean }>`
   font-weight: 400;
   font-size: 16px;
   margin-top: 16px;
@@ -71,11 +72,14 @@ const LinkWithStyle = styled("a")`
 `;
 
 const ContainerChips = styled(Box)`
-  margin-top: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0px;
 `;
 
 const ChipWithStyle = styled(Chip)`
-  margin: 12px;
+  margin: 0px;
 `;
 
 const ContainerClientInfos = styled(Box)`
@@ -94,19 +98,27 @@ const ContainerProposals = styled(Box)`
   font-weight: 400;
 `;
 
-export default function JobCard({ job }: IProps) {
+const ButtonWithStyle = styled(Button)`
+  font-size: 12px;
+  padding: 4px 8px;
+  min-width: 80px;
+`;
+
+export default function JobCard({ job, onSaveJob, onArchiveJob }: IProps) {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [isTextCollapsed, setIsTextCollapsed] = useState<boolean>(true);
   const [isHovered, setIsHovered] = useState<boolean>(false);
 
   return (
-    <BoxWithStyle
-      is_hovered={isHovered}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
+    <BoxWithStyle>
       <TypographyPostedAt>Posted {job.postedAt}</TypographyPostedAt>
-      <TypographyTitle is_hovered={isHovered}>{job.title}</TypographyTitle>
+      <TypographyTitle
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        is_hovered={isHovered}
+      >
+        {job.title}
+      </TypographyTitle>
       <TypographyJobType>
         {job.jobType} - {job.contractorTier} -{" "}
         {job.jobType.toLowerCase().includes("fixed")
@@ -166,17 +178,54 @@ export default function JobCard({ job }: IProps) {
           <Rating value={Number(job.clientInfo.rating)} readOnly />
         </Box>
         <Box>{job.clientInfo.totalSpent} spent</Box>
-        <Box>
-          <Place
-            fontSize={"small"}
-            style={{ marginRight: "7px", position: "relative", top: "3px" }}
-          />{" "}
-          {job.location}
+        <Box className="d-flex align-items-center">
+          <Place fontSize={"small"} /> {job.location}
         </Box>
       </ContainerClientInfos>
       <ContainerProposals>
         Proposals: <strong>{job.proposals}</strong>
       </ContainerProposals>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginTop: "10px",
+          gap: "8px",
+        }}
+      >
+        <Button
+          target="_blank"
+          href={job.link}
+          size="small"
+          variant="contained"
+          sx={{
+            fontSize: "12px",
+          }}
+        >
+          View Job
+        </Button>
+        <Button
+          size="small"
+          variant="outlined"
+          sx={{
+            fontSize: "12px",
+          }}
+          onClick={() => onSaveJob?.(String(job._id))}
+        >
+          Save
+        </Button>
+        <Button
+          size="small"
+          variant="outlined"
+          sx={{
+            fontSize: "12px",
+          }}
+          onClick={() => onArchiveJob?.(String(job._id))}
+        >
+          Archive
+        </Button>
+      </Box>
     </BoxWithStyle>
   );
 }

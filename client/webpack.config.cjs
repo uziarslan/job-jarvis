@@ -1,6 +1,8 @@
 const path = require("path");
 const CopyPlugin = require("copy-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const webpack = require("webpack");
+const Dotenv = require('dotenv-webpack');
 
 /** @type {import('webpack').Configuration} */
 module.exports = {
@@ -18,7 +20,7 @@ module.exports = {
     clean: true,
   },
   resolve: {
-    extensions: [".ts", ".tsx", ".js"],
+    extensions: [".ts", ".tsx", ".js"], // ✅ Already resolves .js
   },
   module: {
     rules: [
@@ -41,6 +43,7 @@ module.exports = {
     ],
   },
   plugins: [
+    new Dotenv(),
     new CopyPlugin({
       patterns: [
         { from: "public/manifest.json", to: "manifest.json" },
@@ -52,6 +55,10 @@ module.exports = {
       template: "src/popup/popup.html",
       chunks: ["popup"],
       inject: "body",
+    }),
+    new webpack.DefinePlugin({
+      'process.env.REACT_APP_API_URL': JSON.stringify(process.env.REACT_APP_API_URL || 'http://localhost:4000'),
+      'process.env.REACT_APP_FRONTEND_URL': JSON.stringify(process.env.REACT_APP_FRONTEND_URL || 'http://localhost:3000')
     }),
   ],
 };

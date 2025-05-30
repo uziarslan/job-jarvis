@@ -1,6 +1,5 @@
-import { Box, styled } from "@mui/material";
+import { Box, styled, Button } from "@mui/material";
 import { SavedSearch } from "../../types";
-import IconMonitorJobSearch from "../../assets/icon_saved_searches_monitor.svg";
 import { COLOR_LIGHT_GREY, getScrollbarWidth } from "../../constants";
 import { SIDEBAR_WIDTH_PX } from "../Sidebar";
 import { useState } from "react";
@@ -12,30 +11,39 @@ interface IProps {
 
 const ContainerWithStyle = styled(Box, {
   shouldForwardProp: (prop) => prop !== "is_hovered",
-})<{ is_hovered: boolean }>`
+}) <{ is_hovered: boolean }>`
   display: flex;
-  width: calc(100vw - ${SIDEBAR_WIDTH_PX}px - ${getScrollbarWidth()}px);
+  width: 100%;
   justify-content: space-between;
+  align-items: center;
   cursor: pointer;
   background-color: ${({ is_hovered }) =>
     is_hovered ? COLOR_LIGHT_GREY : undefined};
-  padding: 16px;
+  padding: 10px;
+  border-radius: 5px;
 `;
 
 const BoxWithStyle = styled(Box)`
   display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
 `;
 
 const Indicator = styled("div", {
   shouldForwardProp: (prop) => prop !== "is_enabled",
-})<{ is_enabled: boolean }>`
+}) <{ is_enabled: boolean }>`
   width: 7px;
   height: 7px;
   border-radius: 50px;
-  align-self: center;
-  margin-right: 5px;
   background-color: ${(props) =>
     props.is_enabled ? props.theme.palette.primary.main : "#919EAB"};
+`;
+
+const ToggleButton = styled(Button)`
+  font-size: 12px;
+  padding: 4px 8px;
+  text-transform: capitalize;
 `;
 
 export default function SavedSearchCard({
@@ -49,22 +57,21 @@ export default function SavedSearchCard({
       is_hovered={isHovered}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      onClick={() => onClickMonitoring(savedSearch)}
     >
       <BoxWithStyle>
         <Indicator is_enabled={savedSearch.enabled} />{" "}
-        <h3>{savedSearch.name}</h3>
+        <h3 className="searchName">{savedSearch.name}</h3>
       </BoxWithStyle>
-      <Box>
-        <img
-          style={{
-            position: "relative",
-            top: "10px",
-          }}
-          src={IconMonitorJobSearch}
-          alt="Icon Monitor Job Search"
-        />
-      </Box>
+      <ToggleButton
+        variant={savedSearch.enabled ? "outlined" : "contained"}
+        color={savedSearch.enabled ? "secondary" : "primary"}
+        onClick={() => {
+          console.log("Track button clicked for:", savedSearch.name, "URL:", savedSearch.url);
+          onClickMonitoring(savedSearch);
+        }}
+      >
+        {savedSearch.enabled ? "Stop Tracking" : "Track"}
+      </ToggleButton>
     </ContainerWithStyle>
   );
 }

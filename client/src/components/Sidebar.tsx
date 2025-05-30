@@ -26,12 +26,13 @@ interface IProps {
 export const SIDEBAR_WIDTH_PX = 75;
 
 const PaperWithStyle = styled(Paper)`
-  position: fixed;
   width: ${SIDEBAR_WIDTH_PX}px;
   height: 100vh;
   overflow-y: auto;
   background-color: ${(props) => props.theme.palette.secondary.main};
-  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 
 const BoxWithStyle = styled(Box)`
@@ -64,8 +65,28 @@ const ImageWithStyle = styled("img")<{
 
 export default function Sidebar({ routeSelected, onSelectRoute }: IProps) {
   const theme = useTheme();
+  const frontendUrl = process.env.REACT_APP_FRONTEND_URL || "http://localhost:3000";
+
+  const getRouteUrl = (route: Route): string => {
+    switch (route) {
+      case "Profile":
+        return `${frontendUrl}/profiles`;
+      case "History":
+        return `${frontendUrl}/history`;
+      case "Templates":
+        return `${frontendUrl}/templates`;
+      case "Manual Job Proposal":
+        return `${frontendUrl}`;
+      case "Reviews":
+        return `${frontendUrl}/reviews`;
+      default:
+        return "#";
+    }
+  };
+
   const renderItem = useCallback(
     (icon: string, route: Route) => {
+      const url = getRouteUrl(route);
       return (
         <BoxWithStyle key={route}>
           <Tooltip title={route}>
@@ -76,7 +97,13 @@ export default function Sidebar({ routeSelected, onSelectRoute }: IProps) {
                 },
               }}
               size="large"
-              onClick={() => onSelectRoute(route)}
+              onClick={() => {
+                if (url !== "#") {
+                  window.open(url, "_blank");
+                } else {
+                  onSelectRoute(route);
+                }
+              }}
               route={route}
               route_selected={routeSelected}
             >
@@ -91,7 +118,7 @@ export default function Sidebar({ routeSelected, onSelectRoute }: IProps) {
         </BoxWithStyle>
       );
     },
-    [routeSelected]
+    [routeSelected, frontendUrl]
   );
 
   return (

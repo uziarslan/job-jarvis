@@ -1,4 +1,6 @@
 import { createTheme, responsiveFontSizes, ThemeProvider } from "@mui/material";
+import "bootstrap/dist/css/bootstrap.min.css";
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import "./styles.css";
 import Sidebar from "./components/Sidebar";
 import { useEffect, useMemo, useState } from "react";
@@ -7,6 +9,10 @@ import TemplatesPage from "./components/templates/TemplatesPage";
 import JobsPage from "./components/jobs/JobsPage";
 import SavedSearchesPage from "./components/savedSearches/SavedSearchesPage";
 import { DEFAULT_SAVED_SEARCHES, SAVED_SEARCHES_KEY } from "./constants";
+import Dashboard from "./components/dashboard/dashboard";
+import AuthProvider from "./Context/AuthContext";
+import { useAuth } from "./hooks/useAuth";
+import LoginPage from "./components/auth/LoginPage";
 
 let theme = createTheme({
   palette: {
@@ -25,12 +31,11 @@ let theme = createTheme({
 
 theme = responsiveFontSizes(theme);
 
-function App() {
+function AppContent() {
   const [route, setRoute] = useState<Route>("Dashboard");
+  const { user, isLoading } = useAuth();
 
   useEffect(() => {
-    // Initializing default saved searches in storage
-    // All disabled by default
     chrome.storage.sync.get(SAVED_SEARCHES_KEY, (result) => {
       const existing = result[SAVED_SEARCHES_KEY];
       if (!Array.isArray(existing) || existing.length === 0) {
@@ -42,9 +47,17 @@ function App() {
   }, []);
 
   const renderPage = useMemo(() => {
+    if (isLoading) {
+      return <div className="loading-container">Loading...</div>;
+    }
+
+    if (!user) {
+      return <LoginPage />;
+    }
+
     switch (route) {
       case "Dashboard":
-        return <div>Dashboard</div>;
+        return <Dashboard />;
       case "Settings":
         return <div>Settings</div>;
       case "Profile":
@@ -63,14 +76,28 @@ function App() {
         return <div>Manual Job Proposal</div>;
       case "Reviews":
         return <div>Reviews</div>;
+      default:
+        return <Dashboard />;
     }
-  }, [route]);
+  }, [route, user, isLoading]);
 
   return (
-    <ThemeProvider theme={theme}>
-      {renderPage}
-      <Sidebar onSelectRoute={setRoute} routeSelected={route} />
-    </ThemeProvider>
+    <div className="extension-container">
+      <div className={`${user ? 'main-content' : 'max-extension-width'}`}>
+        {renderPage}
+      </div>
+      {user && <Sidebar onSelectRoute={setRoute} routeSelected={route} />}
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <ThemeProvider theme={theme}>
+        <AppContent />
+      </ThemeProvider>
+    </AuthProvider>
   );
 }
 

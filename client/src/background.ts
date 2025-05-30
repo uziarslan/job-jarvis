@@ -1,8 +1,4 @@
-import { API_URL } from "./constants";
-import { Job } from "./types";
-
-// Activating the side panel
-// This is a workaround to activate the side panel on all tabs
+import { Job, ActiveSearch } from "./types";
 
 chrome.runtime.onInstalled.addListener(() => {
   chrome.tabs.query({}, (tabs) => {
@@ -43,44 +39,8 @@ chrome.action.onClicked.addListener(async (tab) => {
     });
 });
 
-// Function to scrape job data from Upwork and send it to the backend
-// This function is called every 3 minutes
-
-function scrapeAndSendToBackend() {
-  chrome.tabs.query({ url: "*://www.upwork.com/*" }, (tabs) => {
-    const tab = tabs[0];
-    if (!tab?.id) return;
-
-    chrome.scripting.executeScript(
-      {
-        target: { tabId: tab.id },
-        func: scrapeJobsFromDOM,
-      },
-      async (results) => {
-        if (chrome.runtime.lastError) {
-          console.error("Scraping error:", chrome.runtime.lastError.message);
-          return;
-        }
-
-        const jobs = results[0]?.result as Job[];
-
-        await Promise.all(
-          jobs.map((job) =>
-            fetch(API_URL + "jobs", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(job),
-            })
-          )
-        );
-      }
-    );
-  });
-}
-
-async function scrapeJobsFromDOM() {
+function scrapeJobsFromDOM() {
+  console.log("Executing scrapeJobsFromDOM in tab");
   const jobSections = document.querySelectorAll(
     '[data-ev-label="visible_job_tile_impression"]'
   );
@@ -152,30 +112,27 @@ async function scrapeJobsFromDOM() {
         ?.textContent?.trim() ?? "";
 
     jobs.push({
-      _id: -1,
-      upworkId,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      _id: upworkId,
+      link: `https://www.upwork.com${link}`,
       title,
+      location,
       postedAt,
-      description,
-      budget,
       jobType,
       contractorTier,
-      location,
-      proposals,
+      budget,
       duration,
+      description,
       skills,
       clientInfo: {
+        paymentVerified,
         rating,
         totalSpent,
-        paymentVerified,
       },
+      proposals,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     });
   });
 
   return jobs;
 }
-
-scrapeAndSendToBackend();
-setInterval(scrapeAndSendToBackend, 1000);

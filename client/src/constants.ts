@@ -1,12 +1,15 @@
 import { SavedSearch } from "./types";
 
-export const API_URL = "http://localhost:3000/api/";
+export const API_URL = process.env.REACT_APP_FRONTEND_URL || "http://localhost:3000";
 
 export const COLOR_LIGHT_GREY = "#F1F1F1";
 export const COLOR_DARK_GREY = "#637381";
 export const COLOR_DEEP_GREY = "#979797";
 export const COLOR_LIGHT_GREEN = "#22C55E1A";
 export const COLOR_DEEP_BLACK = "#1B2632";
+
+// Add SIDEBAR_WIDTH_PX
+export const SIDEBAR_WIDTH_PX = 250; // Adjust this value based on your sidebar design
 
 let cachedScrollbarWidth: number | null = null;
 
@@ -35,26 +38,9 @@ export function getScrollbarWidth(): number {
   return cachedScrollbarWidth;
 }
 
-// Saved searches are stored in the browser's google storage
-// We adopted this behaviour to be consistent with the rest of the app :
-// It could be stored in the database, but the default searches behaviour,
-// is mostly carried by the browser extension (scrapping).
-// ------------------------------------------------------------------------
-// Then, it would be too heavy to have saved searches in the database, with
-// a "is_system" field and specifics behaviours to re-implement in the frontend.
-// This way, we can store until 2600 objects so it is fine, and shared by Google account.
-// ------------------------------------------------------------------------
-// NOTE : Updating the structure would decrease the storage performances so be careful
-// with that.
-// ------------------------------------------------------------------------
-// NOTE (bis) : We should reserve this space for the saved searches only.
-// For the settings for example, this is not mandatory to share them using Google
-// account and you can use database for that.
-// ------------------------------------------------------------------------
 export const SAVED_SEARCHES_KEY = "savedSearches";
 export const DEFAULT_SAVED_SEARCHES: SavedSearch[] = [
-  { name: "My Feed", enabled: false },
-  { name: "Best Matches", enabled: false },
-  { name: "Most Recent", enabled: false },
-  { name: "U.S Only", enabled: false },
+  { name: "My Feed", enabled: false, url: "https://www.upwork.com/nx/find-work/" },
+  { name: "Best Matches", enabled: false, url: "https://www.upwork.com/nx/find-work/best-matches" },
+  { name: "Most Recent", enabled: false, url: "https://www.upwork.com/nx/find-work/most-recent" },
 ];
