@@ -230,7 +230,7 @@ function injectJobDetailsButton() {
     if (buttonContainer.querySelector('.job-jarvis-button')) return;
 
     const jobHref = window.location.href;
-    const jobIdMatch = jobHref.match(/~([^?]+)/);
+    const jobIdMatch = jobHref.match(/~([^?/]+)/);
     const jobId = jobIdMatch ? jobIdMatch[1] : '';
     const jobLink = `https://www.upwork.com/nx/proposals/job/~${jobId}/apply/`
 
@@ -301,7 +301,7 @@ function injectJobDetailsFullScreenButton() {
     if (buttonContainer.querySelector('.job-jarvis-button')) return;
 
     const jobHref = window.location.href;
-    const jobIdMatch = jobHref.match(/~([^?]+)/);
+    const jobIdMatch = jobHref.match(/~([^?/]+)/);
     const jobId = jobIdMatch ? jobIdMatch[1] : '';
     const jobLink = `https://www.upwork.com/nx/proposals/job/~${jobId}/apply/`
 
@@ -540,7 +540,7 @@ function handleUrlBasedInjection(url: string) {
     }, 100);
   }
   // Check if we are on the job details large page
-  else if (url.match(/^https:\/\/www\.upwork\.com\/jobs\/~[a-zA-Z0-9]+(\?.*)?$/)) {
+  else if (url.match(/^https:\/\/www\.upwork\.com\/jobs\/~[a-zA-Z0-9]+(\?.*)?$/) || url.match(/^https:\/\/www\.upwork\.com\/jobs\/[a-zA-Z0-9\-]+_~[a-zA-Z0-9]+\/?(\?.*)?$/)) {
     console.log('Job details large page detected');
     setTimeout(() => {
       injectJobDetailsFullScreenButton();
