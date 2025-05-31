@@ -2,10 +2,34 @@ import './button.css';
 
 console.log("📦 Content script running...");
 
+async function checkAuthentication(): Promise<boolean> {
+  try {
+    const result = await chrome.storage.local.get(['token']);
+    if (!result.token) return false;
+
+    // Fetch user data using the token
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/user`, {
+      headers: {
+        'Authorization': `Bearer ${result.token}`
+      }
+    });
+
+    if (!response.ok) {
+      return false;
+    }
+
+    const userData = await response.json();
+    return !!userData;
+  } catch (error) {
+    return false;
+  }
+}
+
 const frontendUrl = process.env.REACT_APP_FRONTEND_URL;
 
 function injectNavbarContent() {
   const observer = new MutationObserver((mutations, obs) => {
+    const body = document.querySelector("body");
     const navbar = document.querySelector("#nav-right > ul");
     if (navbar) {
       const customLi = document.createElement("li");
@@ -100,6 +124,21 @@ function injectNavbarContent() {
       });
 
       obs.disconnect();
+    }
+    if (body) {
+      const div = document.createElement("div");
+      div.className = "extensionButton";
+      div.innerHTML = `
+        <img src="https://res.cloudinary.com/uzairarslan/image/upload/v1748656700/PNG_logo_for_dark_bg_copy_w5cdbw.png" alt="Job Jarvis" />
+      `;
+
+      // Add click handler to open sidebar
+      div.addEventListener("click", () => {
+        // Send message to extension to open sidebar
+        chrome.runtime.sendMessage({ action: "toggleSidepanel" });
+      });
+
+      body.appendChild(div);
     }
   });
 
@@ -235,6 +274,77 @@ function injectJobDetailsButton() {
   findAndInjectButton();
 }
 
+
+function injectJobDetailsFullScreenButton() {
+  // Try to find the button container for up to 10 seconds
+  let attempts = 0;
+  const maxAttempts = 20; // 20 attempts * 500ms = 10 seconds
+
+  const findAndInjectButton = () => {
+    // Target the specific container using the exact path
+    const buttonContainer = document.querySelector('#main > div.container > div:nth-child(4) > div > div > div.job-details-card.d-flex.gap-0.air3-card.air3-card-outline.p-0 > div.sidebar.air3-card-sections > section > div.d-flex.flex-column.gap.air3-btn-block');
+    console.log('Attempting to find button container:', buttonContainer);
+
+    if (!buttonContainer) {
+      attempts++;
+      if (attempts < maxAttempts) {
+        setTimeout(findAndInjectButton, 500);
+      }
+      return;
+    }
+
+    // Get the first child element
+    const firstChild = buttonContainer.firstElementChild;
+    if (!firstChild) return;
+
+    // Check if our button already exists
+    if (buttonContainer.querySelector('.job-jarvis-button')) return;
+
+    const jobHref = window.location.href;
+    const jobIdMatch = jobHref.match(/~([^?]+)/);
+    const jobId = jobIdMatch ? jobIdMatch[1] : '';
+    const jobLink = `https://www.upwork.com/nx/proposals/job/~${jobId}/apply/`
+
+    const button = document.createElement('a');
+    button.className = 'job-jarvis-button mt-0';
+    button.href = jobLink;
+    button.target = '_blank';
+    button.innerHTML = `
+      <span class="button-text">Apply with Job Jarvis</span>
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g clip-path="url(#clip0_12_242)">
+          <path d="M3.92744 5.93982L3.72244 6.41148C3.6904 6.48829 3.63635 6.5539 3.5671 6.60004C3.49785 6.64619 3.41649 6.67082 3.33327 6.67082C3.25005 6.67082 3.16869 6.64619 3.09944 6.60004C3.03019 6.5539 2.97614 6.48829 2.9441 6.41148L2.7391 5.93982C2.37867 5.10542 1.71859 4.43642 0.889104 4.06482L0.256604 3.78232C0.179869 3.74702 0.114865 3.69046 0.069298 3.61934C0.0237309 3.54822 -0.000488281 3.46553 -0.000488281 3.38107C-0.000488281 3.2966 0.0237309 3.21391 0.069298 3.14279C0.114865 3.07168 0.179869 3.01512 0.256604 2.97982L0.854104 2.71398C1.70444 2.3318 2.37582 1.63805 2.72994 0.775651L2.9416 0.266484C2.97257 0.187612 3.02658 0.119899 3.09659 0.0721717C3.1666 0.0244443 3.24937 -0.00108337 3.3341 -0.00108337C3.41884 -0.00108337 3.5016 0.0244443 3.57162 0.0721717C3.64163 0.119899 3.69564 0.187612 3.7266 0.266484L3.93744 0.774818C4.29118 1.63738 4.96226 2.33143 5.81244 2.71398L6.41077 2.98065C6.48727 3.01605 6.55204 3.0726 6.59744 3.14363C6.64284 3.21466 6.66696 3.29719 6.66696 3.38148C6.66696 3.46578 6.64284 3.54831 6.59744 3.61934C6.55204 3.69037 6.48727 3.74692 6.41077 3.78232L5.77744 4.06398C4.94811 4.43596 4.28833 5.10525 3.92827 5.93982M2.55327 18.0107C3.40827 12.8515 5.25994 1.66398 17.4999 1.66398C16.2533 4.16398 15.4166 5.41398 14.5833 6.24732L13.7499 7.08065L14.9999 7.91398C14.1666 10.414 11.6666 13.3307 8.33327 13.7473C6.10938 14.0251 4.71994 15.5529 4.16494 18.3307H2.49994L2.55327 18.0107Z" fill="#fff"/>
+        </g>
+        <defs>
+          <clipPath id="clip0_12_242">
+            <rect width="20" height="20" fill="white"/>
+          </clipPath>
+        </defs>
+      </svg>
+    `;
+
+    // Insert before the first child
+    buttonContainer.insertBefore(button, firstChild);
+
+    // Set up observer only after we've found the container
+    const observer = new MutationObserver(() => {
+      // Check if our button already exists
+      if (!buttonContainer.querySelector('.job-jarvis-button')) {
+        buttonContainer.insertBefore(button.cloneNode(true), buttonContainer.firstElementChild);
+      }
+    });
+
+    // Observe changes to the button container
+    observer.observe(buttonContainer, {
+      childList: true,
+      subtree: true
+    });
+  };
+
+  // Start the first attempt
+  findAndInjectButton();
+}
+
 // Function to create the apply button
 function createApplyButton(jobLink: string) {
   const button = document.createElement('a');
@@ -256,6 +366,114 @@ function createApplyButton(jobLink: string) {
   `;
   return button;
 }
+
+const injectJobApplyButton = () => {
+  let attempts = 0;
+  const maxAttempts = 20; // 20 attempts * 500ms = 10 seconds
+
+  const findAndInjectButton = () => {
+    // Handle cover letter area
+    const coverLetterArea = document.querySelector('.cover-letter-area');
+    if (coverLetterArea && !coverLetterArea.querySelector('.upsale-button')) {
+      const button = document.createElement('a');
+      button.className = 'my-5 upsale-button';
+      button.innerHTML = `
+      <div>
+        <span class="button-text">Generate</span>
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g clip-path="url(#clip0_12_242)">
+            <path d="M3.92744 5.93982L3.72244 6.41148C3.6904 6.48829 3.63635 6.5539 3.5671 6.60004C3.49785 6.64619 3.41649 6.67082 3.33327 6.67082C3.25005 6.67082 3.16869 6.64619 3.09944 6.60004C3.03019 6.5539 2.97614 6.48829 2.9441 6.41148L2.7391 5.93982C2.37867 5.10542 1.71859 4.43642 0.889104 4.06482L0.256604 3.78232C0.179869 3.74702 0.114865 3.69046 0.069298 3.61934C0.0237309 3.54822 -0.000488281 3.46553 -0.000488281 3.38107C-0.000488281 3.2966 0.0237309 3.21391 0.069298 3.14279C0.114865 3.07168 0.179869 3.01512 0.256604 2.97982L0.854104 2.71398C1.70444 2.3318 2.37582 1.63805 2.72994 0.775651L2.9416 0.266484C2.97257 0.187612 3.02658 0.119899 3.09659 0.0721717C3.1666 0.0244443 3.24937 -0.00108337 3.3341 -0.00108337C3.41884 -0.00108337 3.5016 0.0244443 3.57162 0.0721717C3.64163 0.119899 3.69564 0.187612 3.7266 0.266484L3.93744 0.774818C4.29118 1.63738 4.96226 2.33143 5.81244 2.71398L6.41077 2.98065C6.48727 3.01605 6.55204 3.0726 6.59744 3.14363C6.64284 3.21466 6.66696 3.29719 6.66696 3.38148C6.66696 3.46578 6.64284 3.54831 6.59744 3.61934C6.55204 3.69037 6.48727 3.74692 6.41077 3.78232L5.77744 4.06398C4.94811 4.43596 4.28833 5.10525 3.92827 5.93982M2.55327 18.0107C3.40827 12.8515 5.25994 1.66398 17.4999 1.66398C16.2533 4.16398 15.4166 5.41398 14.5833 6.24732L13.7499 7.08065L14.9999 7.91398C14.1666 10.414 11.6666 13.3307 8.33327 13.7473C6.10938 14.0251 4.71994 15.5529 4.16494 18.3307H2.49994L2.55327 18.0107Z" fill="#fff"/>
+          </g>
+          <defs>
+            <clipPath id="clip0_12_242">
+              <rect width="20" height="20" fill="white"/>
+            </clipPath>
+          </defs>
+        </svg>
+        </div>
+      `;
+      const firstChild = coverLetterArea.firstElementChild;
+      if (firstChild) {
+        firstChild.appendChild(button);
+      }
+    }
+
+    // Handle questions area
+    const questionsArea = document.querySelector('.fe-proposal-job-questions.questions-area');
+    if (questionsArea) {
+      const questionElements = questionsArea.children;
+      Array.from(questionElements).forEach((questionElement) => {
+        if (!questionElement.querySelector('.job-jarvis-button')) {
+          const button = document.createElement('a');
+          button.className = 'job-jarvis-button my-5';
+          button.innerHTML = `
+            <span class="button-text">Generate</span>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <g clip-path="url(#clip0_12_242)">
+                <path d="M3.92744 5.93982L3.72244 6.41148C3.6904 6.48829 3.63635 6.5539 3.5671 6.60004C3.49785 6.64619 3.41649 6.67082 3.33327 6.67082C3.25005 6.67082 3.16869 6.64619 3.09944 6.60004C3.03019 6.5539 2.97614 6.48829 2.9441 6.41148L2.7391 5.93982C2.37867 5.10542 1.71859 4.43642 0.889104 4.06482L0.256604 3.78232C0.179869 3.74702 0.114865 3.69046 0.069298 3.61934C0.0237309 3.54822 -0.000488281 3.46553 -0.000488281 3.38107C-0.000488281 3.2966 0.0237309 3.21391 0.069298 3.14279C0.114865 3.07168 0.179869 3.01512 0.256604 2.97982L0.854104 2.71398C1.70444 2.3318 2.37582 1.63805 2.72994 0.775651L2.9416 0.266484C2.97257 0.187612 3.02658 0.119899 3.09659 0.0721717C3.1666 0.0244443 3.24937 -0.00108337 3.3341 -0.00108337C3.41884 -0.00108337 3.5016 0.0244443 3.57162 0.0721717C3.64163 0.119899 3.69564 0.187612 3.7266 0.266484L3.93744 0.774818C4.29118 1.63738 4.96226 2.33143 5.81244 2.71398L6.41077 2.98065C6.48727 3.01605 6.55204 3.0726 6.59744 3.14363C6.64284 3.21466 6.66696 3.29719 6.66696 3.38148C6.66696 3.46578 6.64284 3.54831 6.59744 3.61934C6.55204 3.69037 6.48727 3.74692 6.41077 3.78232L5.77744 4.06398C4.94811 4.43596 4.28833 5.10525 3.92827 5.93982M2.55327 18.0107C3.40827 12.8515 5.25994 1.66398 17.4999 1.66398C16.2533 4.16398 15.4166 5.41398 14.5833 6.24732L13.7499 7.08065L14.9999 7.91398C14.1666 10.414 11.6666 13.3307 8.33327 13.7473C6.10938 14.0251 4.71994 15.5529 4.16494 18.3307H2.49994L2.55327 18.0107Z" fill="#fff"/>
+              </g>
+              <defs>
+                <clipPath id="clip0_12_242">
+                  <rect width="20" height="20" fill="white"/>
+                </clipPath>
+              </defs>
+            </svg>
+          `;
+          questionElement.appendChild(button);
+        }
+      });
+    }
+
+    // If neither area is found, retry
+    if (!coverLetterArea && !questionsArea) {
+      attempts++;
+      if (attempts < maxAttempts) {
+        setTimeout(findAndInjectButton, 500);
+      }
+      return;
+    }
+
+    // Set up observers for both areas
+    const setupObserver = (element: Element) => {
+      const observer = new MutationObserver(() => {
+        if (!element.querySelector('.job-jarvis-button')) {
+          const button = document.createElement('a');
+          button.className = 'job-jarvis-button my-5';
+          button.innerHTML = `
+            <span class="button-text">Generate</span>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <g clip-path="url(#clip0_12_242)">
+                <path d="M3.92744 5.93982L3.72244 6.41148C3.6904 6.48829 3.63635 6.5539 3.5671 6.60004C3.49785 6.64619 3.41649 6.67082 3.33327 6.67082C3.25005 6.67082 3.16869 6.64619 3.09944 6.60004C3.03019 6.5539 2.97614 6.48829 2.9441 6.41148L2.7391 5.93982C2.37867 5.10542 1.71859 4.43642 0.889104 4.06482L0.256604 3.78232C0.179869 3.74702 0.114865 3.69046 0.069298 3.61934C0.0237309 3.54822 -0.000488281 3.46553 -0.000488281 3.38107C-0.000488281 3.2966 0.0237309 3.21391 0.069298 3.14279C0.114865 3.07168 0.179869 3.01512 0.256604 2.97982L0.854104 2.71398C1.70444 2.3318 2.37582 1.63805 2.72994 0.775651L2.9416 0.266484C2.97257 0.187612 3.02658 0.119899 3.09659 0.0721717C3.1666 0.0244443 3.24937 -0.00108337 3.3341 -0.00108337C3.41884 -0.00108337 3.5016 0.0244443 3.57162 0.0721717C3.64163 0.119899 3.69564 0.187612 3.7266 0.266484L3.93744 0.774818C4.29118 1.63738 4.96226 2.33143 5.81244 2.71398L6.41077 2.98065C6.48727 3.01605 6.55204 3.0726 6.59744 3.14363C6.64284 3.21466 6.66696 3.29719 6.66696 3.38148C6.66696 3.46578 6.64284 3.54831 6.59744 3.61934C6.55204 3.69037 6.48727 3.74692 6.41077 3.78232L5.77744 4.06398C4.94811 4.43596 4.28833 5.10525 3.92827 5.93982M2.55327 18.0107C3.40827 12.8515 5.25994 1.66398 17.4999 1.66398C16.2533 4.16398 15.4166 5.41398 14.5833 6.24732L13.7499 7.08065L14.9999 7.91398C14.1666 10.414 11.6666 13.3307 8.33327 13.7473C6.10938 14.0251 4.71994 15.5529 4.16494 18.3307H2.49994L2.55327 18.0107Z" fill="#fff"/>
+              </g>
+              <defs>
+                <clipPath id="clip0_12_242">
+                  <rect width="20" height="20" fill="white"/>
+                </clipPath>
+              </defs>
+            </svg>
+          `;
+          element.appendChild(button);
+        }
+      });
+
+      observer.observe(element, {
+        childList: true,
+        subtree: true
+      });
+    };
+
+    // Setup observers for both areas if they exist
+    if (coverLetterArea) {
+      setupObserver(coverLetterArea);
+    }
+    if (questionsArea) {
+      Array.from(questionsArea.children).forEach(setupObserver);
+    }
+  };
+
+  // Start the first attempt
+  findAndInjectButton();
+};
 
 // Function to process jobs
 function processJobs(jobs: NodeListOf<Element>) {
@@ -321,6 +539,20 @@ function handleUrlBasedInjection(url: string) {
       injectSearchPageButtons();
     }, 100);
   }
+  // Check if we are on the job details large page
+  else if (url.match(/^https:\/\/www\.upwork\.com\/jobs\/~[a-zA-Z0-9]+(\?.*)?$/)) {
+    console.log('Job details large page detected');
+    setTimeout(() => {
+      injectJobDetailsFullScreenButton();
+    }, 100);
+  }
+  // Check if we are on the job apply page
+  else if (url.match(/^https:\/\/www\.upwork\.com\/nx\/proposals\/job\/~[a-zA-Z0-9]+\/apply\/?$/)) {
+    console.log('Job apply page detected');
+    setTimeout(() => {
+      injectJobApplyButton();
+    }, 100);
+  }
   else {
     console.log('Other page detected');
     // Original behavior for job listings
@@ -331,17 +563,26 @@ function handleUrlBasedInjection(url: string) {
 }
 
 // Handle URL changes and tab switches
-let lastUrl = location.href;
-new MutationObserver(() => {
-  const currentUrl = location.href;
-  if (currentUrl !== lastUrl) {
-    lastUrl = currentUrl;
-    handleUrlBasedInjection(currentUrl);
-  }
-}).observe(document, { subtree: true, childList: true });
+function setUpUrlObserver() {
+  let lastUrl = location.href;
+  new MutationObserver(() => {
+    const currentUrl = location.href;
+    if (currentUrl !== lastUrl) {
+      lastUrl = currentUrl;
+      handleUrlBasedInjection(currentUrl);
+    }
+  }).observe(document, { subtree: true, childList: true });
+}
 
 // Handle initial page load
-handleUrlBasedInjection(location.href);
+// handleUrlBasedInjection(location.href);
+
+(async () => {
+  if (await checkAuthentication()) {
+    setUpUrlObserver();
+    handleUrlBasedInjection(location.href);
+  }
+})();
 
 // JWT Handler
 window.addEventListener("message", (event) => {

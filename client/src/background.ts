@@ -39,6 +39,30 @@ chrome.action.onClicked.addListener(async (tab) => {
     });
 });
 
+// Add message listener for sidebar toggle
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === "toggleSidepanel") {
+    const tab = sender.tab;
+    if (!tab || !tab.id || !tab.windowId) {
+      console.error("Invalid tab information");
+      return;
+    }
+
+    chrome.sidePanel
+      .open({ windowId: tab.windowId })
+      .then(() => {
+        chrome.sidePanel.setOptions({
+          tabId: tab.id,
+          path: "popup.html",
+          enabled: true,
+        });
+      })
+      .catch((err) => {
+        console.error("Unable to open side panel:", err);
+      });
+  }
+});
+
 function scrapeJobsFromDOM() {
   console.log("Executing scrapeJobsFromDOM in tab");
   const jobSections = document.querySelectorAll(
