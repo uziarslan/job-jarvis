@@ -11,7 +11,7 @@ module.exports = {
   watch: true,
   entry: {
     popup: "./src/popup/popup.tsx",
-    content: "./src/content/content.ts",
+    content: "./src/content/content.tsx",
     background: "./src/background.ts",
   },
   output: {
@@ -20,7 +20,11 @@ module.exports = {
     clean: true,
   },
   resolve: {
-    extensions: [".ts", ".tsx", ".js"], // ✅ Already resolves .js
+    extensions: [".ts", ".tsx", ".js"],
+    alias: {
+      'react': path.resolve(__dirname, 'node_modules/react'),
+      'react-dom': path.resolve(__dirname, 'node_modules/react-dom')
+    }
   },
   module: {
     rules: [
@@ -34,12 +38,9 @@ module.exports = {
         use: ["style-loader", "css-loader"],
       },
       {
-        test: /\.svg$/i,
-        type: "asset/resource",
-        generator: {
-          filename: "assets/[name][ext]",
-        },
-      },
+        test: /\.(png|jpg|jpeg|gif|svg)$/i,
+        type: 'asset/resource',
+      }
     ],
   },
   plugins: [
@@ -48,6 +49,11 @@ module.exports = {
       patterns: [
         { from: "public/manifest.json", to: "manifest.json" },
         { from: "public/icons", to: "icons" },
+        {
+          from: "src/assets",
+          to: "assets",
+          noErrorOnMissing: true
+        }
       ],
     }),
     new HtmlWebpackPlugin({
@@ -60,5 +66,8 @@ module.exports = {
       'process.env.REACT_APP_API_URL': JSON.stringify(process.env.REACT_APP_API_URL || 'http://localhost:4000'),
       'process.env.REACT_APP_FRONTEND_URL': JSON.stringify(process.env.REACT_APP_FRONTEND_URL || 'http://localhost:3000')
     }),
+    new webpack.ProvidePlugin({
+      'React': 'react'
+    })
   ],
 };
