@@ -5,6 +5,8 @@ interface User {
   id: string;
   email: string;
   name?: string;
+  upworkId?: string;
+  profile?: string;
 }
 
 interface AuthContextType {

@@ -13,6 +13,7 @@ import Dashboard from "./components/dashboard/dashboard";
 import AuthProvider from "./Context/AuthContext";
 import { useAuth } from "./hooks/useAuth";
 import LoginPage from "./components/auth/LoginPage";
+import ScrapeProfilePage from "./components/scrape/ScrapeProfilePage";
 
 let theme = createTheme({
   palette: {
@@ -34,6 +35,7 @@ theme = responsiveFontSizes(theme);
 function AppContent() {
   const [route, setRoute] = useState<Route>("Dashboard");
   const { user, isLoading } = useAuth();
+  const [showSidebar, setShowSidebar] = useState(true);
 
   useEffect(() => {
     chrome.storage.sync.get(SAVED_SEARCHES_KEY, (result) => {
@@ -48,11 +50,18 @@ function AppContent() {
 
   const renderPage = useMemo(() => {
     if (isLoading) {
+      setShowSidebar(false);
       return <div className="loading-container">Loading...</div>;
     }
 
     if (!user) {
+      setShowSidebar(false);
       return <LoginPage />;
+    }
+
+    if (user && !user.upworkId || !user.profile) {
+      setShowSidebar(false);
+      return <ScrapeProfilePage />;
     }
 
     switch (route) {
@@ -83,10 +92,10 @@ function AppContent() {
 
   return (
     <div className="extension-container">
-      <div className={`${user ? 'main-content' : 'max-extension-width'}`}>
+      <div className={`${showSidebar ? 'main-content' : 'max-extension-width'}`}>
         {renderPage}
       </div>
-      {user && <Sidebar onSelectRoute={setRoute} routeSelected={route} />}
+      {showSidebar && <Sidebar onSelectRoute={setRoute} routeSelected={route} />}
     </div>
   );
 }

@@ -220,3 +220,187 @@ button {
   text-align: center;
   margin-bottom: 20px;
 }
+
+.outerSpace {
+  padding: 14px 12.5px;
+  background-color: #00AEEF;
+  height: 100%;
+}
+
+.innerSpace {
+  border-radius: 12px;
+  backdrop-filter: blur(45px);
+  border: 1px solid #FFFFFF91;
+  height: 100%;
+  background: #FFFFFFED;
+  position: relative;
+  padding: 0px 24.5px;
+}
+
+.rippleBg {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 0;
+}
+
+.displayArea {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  margin: 47px 0px;
+  position: relative;
+  z-index: 1;
+}
+
+.elementRow {
+  display: flex;
+  flex-direction: row;
+  gap: 18px;
+}
+
+.generateWrapper {
+  box-shadow: 0px 4px 27.6px 10px #8D8D8D1A;
+  background: #FFFFFF;
+  border-radius: 40px;
+  padding: 6.5px 11.5px;
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+
+}
+
+.generateWrapper p {
+  font-weight: 500;
+  font-size: 8px;
+  line-height: 100%;
+  letter-spacing: 3%;
+  text-transform: capitalize;
+  margin: 0;
+}
+
+.whiteBgWrapper {
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #FFFFFF;
+  border-radius: 4px;
+  box-shadow: 0px 0px 84px 0px #0000001A;
+}
+
+.bottomWrapper {
+  position: relative;
+  z-index: 1;
+  margin-bottom: 54px;
+}
+
+.bottomWrapperTitle {
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 100%;
+  letter-spacing: 3%;
+  text-transform: capitalize;
+  text-align: center;
+  margin: 0;
+}
+
+.bottomWrapperSubHeading,
+.bubbleText {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 22px;
+  letter-spacing: 3%;
+  text-transform: capitalize;
+  text-align: center;
+  color: #8D8D8D;
+  max-width: 278px;
+}
+
+.bottomWrapperSubHeading {
+  margin: 6px auto 19px auto;
+}
+
+.bubbleWrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 11.5px;
+  justify-content: center;
+  align-items: center;
+}
+
+.filledBubble {
+  background: linear-gradient(180deg, #16D3F0 0%, #00AEEF 100%);
+  backdrop-filter: blur(50px);
+  padding: 9px 19px;
+  border-radius: 40px;
+}
+
+.filledBubbleText {
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 100%;
+  letter-spacing: 3%;
+  text-transform: capitalize;
+  color: #FFFFFF;
+  margin: 0;
+}
+
+.outlineBubble {
+  background: linear-gradient(#fff, #fff) padding-box,
+    linear-gradient(90deg, #00AEEF 0%, #16D3F0 100%) border-box;
+  border: 1px solid transparent;
+  backdrop-filter: blur(50px);
+  border-radius: 40px;
+  padding: 9px 19px;
+}
+
+.outlineBubbleText {
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 100%;
+  letter-spacing: 3%;
+  text-transform: capitalize;
+  color: #00AEEF;
+  margin: 0;
+}
+
+.authButtonWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.buttonDescription {
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 100%;
+  letter-spacing: 3%;
+  text-align: center;
+  text-transform: capitalize;
+  color: #8D8D8D;
+  margin: 0;
+  margin-top: 7px;
+}
+
+.support {
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 100%;
+  letter-spacing: 3%;
+  text-align: center;
+  text-transform: capitalize;
+  color: #8D8D8D;
+  margin: 0;
+  margin-top: 24px;
+}
+
+.support a {
+  font-weight: 500;
+  color: #00AEEF;
+  cursor: pointer;
+  text-decoration: none;
+}
