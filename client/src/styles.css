@@ -11,21 +11,24 @@ body {
   overflow: hidden;
 }
 
-button {
-  border-radius: 8px !important;
-}
-
 .extension-container {
   display: flex;
   width: 100%;
   height: 100vh;
+  padding: 14px;
+  background: linear-gradient(90deg, #00AEEF 0%, #19CCED 100%);
 }
 
 .main-content {
   flex: 1;
   overflow-y: auto;
   padding: 0px;
-  max-width: 288px;
+  max-width: 285px;
+  border-radius: 12px;
+  border: 1px solid #FFFFFF91;
+  background: #FFFFFFED;
+  backdrop-filter: blur(45px);
+  padding: 11.5px;
 }
 
 .loading-container,
@@ -50,38 +53,43 @@ button {
 }
 
 .dashboardPageHeader {
-  background-color: #F5F5F5;
-  max-width: 288px;
   width: 100%;
-  padding: 26px 11px 26px 20px;
+  padding: 16.5px 12px;
   display: flex;
   flex-direction: row;
-  gap: 20px;
+  gap: 13px;
 }
 
 .dashboardPageTitle,
 .jobsPageTitle,
 .savedSearchesHeading {
   margin: 0;
-  font-weight: 700;
-  font-size: 24px;
   text-align: left;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 100%;
+  letter-spacing: 3%;
+  text-transform: capitalize;
 }
 
 .proposalLeftWrapper {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 3px 15px;
-  background: rgba(111, 218, 68, 0.1);
-  border-radius: 6px;
+  padding: 0px 5px;
+  background: #00AEEF1A;
+  border-radius: 4px;
 }
 
 .proposalLeftText {
   font-weight: 400;
-  font-size: 10px;
+  font-size: 11px;
+  line-height: 100%;
+  letter-spacing: 3%;
+  text-align: center;
+  text-transform: capitalize;
   margin: 0;
-  color: #01A76F;
+  color: #00AEEF;
 }
 
 .max-width-wrapper {
@@ -89,29 +97,32 @@ button {
   width: 100%;
 }
 
-.max-extension-width {
-  max-width: 360px;
-  width: 100%;
+.sectionWrapper {
+  padding: 7.5px 11.5px;
+  background-color: #fff;
+  border-radius: 8px;
+  margin-bottom: 9px;
 }
 
 .secondHeading {
-  font-weight: 600;
-  font-size: 12px;
-  line-height: 100%;
-  letter-spacing: 0%;
-  margin-bottom: 8px;
+  margin-bottom: 0px;
   text-align: left;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: 3%;
+  text-transform: capitalize;
 }
 
 .secondHeadingPara {
   font-weight: 400;
-  font-size: 10px;
-  line-height: 100%;
-  letter-spacing: 0%;
   color: #979797;
   text-align: left;
   line-height: 15px;
-  margin: 0;
+  margin-top: 5px;
+  font-size: 9px;
+  letter-spacing: 0%;
+  text-transform: capitalize;
 }
 
 .dashboardButton {
@@ -127,6 +138,7 @@ button {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  padding: 0;
 }
 
 .dashboardListItem {
@@ -134,7 +146,7 @@ button {
   font-size: 14px;
   display: flex;
   flex-direction: row;
-  gap: 13px;
+  gap: 5px;
   align-items: center;
 }
 
@@ -144,7 +156,7 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #01A76F;
+  background: linear-gradient(180deg, #00AEEF 0%, #00AEEF 100%);
   border-radius: 50%;
 }
 
@@ -153,30 +165,36 @@ button {
 }
 
 .dropOptions {
-  width: 40px;
-  height: 40px;
+  width: 34px;
+  height: 34px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
-  border: 1px solid #919EAB52;
+  border-radius: 50%;
   text-decoration: none;
+  background: linear-gradient(180deg, #00AEEF 0%, #16D3F0 100%);
 }
 
 .savedSearchesSubHeading {
   font-weight: 400;
-  font-size: 14px;
-  color: #979797;
+  font-size: 10px;
+  line-height: 15px;
+  letter-spacing: 0%;
+  text-transform: capitalize;
   text-align: left;
-  margin: 0;
-  margin-top: 15px;
+  color: #979797;
+  max-width: 194px;
+  margin-top: 5px;
+  margin-bottom: 12px;
 }
 
 .thirdHeading {
   font-weight: 500;
-  font-size: 16px;
-  margin: 0;
-  text-align: left;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: 3%;
+  text-transform: capitalize;
+  margin-bottom: 8px;
 }
 
 .savedSearchListContainer {
@@ -189,9 +207,29 @@ button {
 }
 
 .searchName {
-  font-weight: 500;
-  font-size: 12px;
+  font-weight: 400;
+  font-size: 10px;
+  line-height: 100%;
+  letter-spacing: 0%;
+  text-transform: capitalize;
+  color: #898989;
   margin: 0;
+}
+
+.searchNameBlue {
+  color: #00AEEF;
+}
+
+.searchNameWrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
+}
+
+.savedSearchesSection {
+  margin-top: 13px;
+  margin-bottom: 23px;
 }
 
 .authPageTextWrapper {
@@ -222,9 +260,8 @@ button {
 }
 
 .outerSpace {
-  padding: 14px 12.5px;
-  background-color: #00AEEF;
   height: 100%;
+  max-width: 335px;
 }
 
 .innerSpace {
@@ -403,4 +440,54 @@ button {
   color: #00AEEF;
   cursor: pointer;
   text-decoration: none;
+}
+
+.sidebar-container {
+  background-color: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100%;
+  padding: 0px 10px;
+  gap: 5px;
+}
+
+.sidebar-item:nth-of-type(1) {
+  margin-bottom: 130px;
+}
+
+.sidebar-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.jobsPageEmptyText {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 11.5px 10px;
+}
+
+.jobsPageEmptyTextTitle {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: 3%;
+  text-transform: capitalize;
+  text-align: center;
+  margin-bottom: 4px;
+  color: #000;
+}
+
+.jobsPageEmptyTextSubtitle {
+  font-weight: 400;
+  font-size: 10px;
+  line-height: 13px;
+  letter-spacing: 0%;
+  text-transform: capitalize;
+  color: #979797;
+  max-width: 152px;
+  margin: 0 auto 9px auto;
 }

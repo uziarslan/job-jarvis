@@ -3,8 +3,18 @@
   "name": "Job Jarvis",
   "version": "1.0",
   "description": "An extension to help you in your job search.",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
   "side_panel": {
-    "default_path": "popup.html"
+    "default_path": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
   },
   "action": {
     "default_title": "Job Jarvis",

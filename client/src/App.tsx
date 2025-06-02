@@ -14,6 +14,7 @@ import AuthProvider from "./Context/AuthContext";
 import { useAuth } from "./hooks/useAuth";
 import LoginPage from "./components/auth/LoginPage";
 import ScrapeProfilePage from "./components/scrape/ScrapeProfilePage";
+import Settings from "./components/settings/settings";
 
 let theme = createTheme({
   palette: {
@@ -68,11 +69,7 @@ function AppContent() {
       case "Dashboard":
         return <Dashboard />;
       case "Settings":
-        return <div>Settings</div>;
-      case "Profile":
-        return <div>Profile</div>;
-      case "History":
-        return <div>History</div>;
+        return <Settings />;
       case "Templates":
         return <TemplatesPage />;
       case "Jobs":
@@ -81,10 +78,6 @@ function AppContent() {
         );
       case "Saved Searches":
         return <SavedSearchesPage />;
-      case "Manual Job Proposal":
-        return <div>Manual Job Proposal</div>;
-      case "Reviews":
-        return <div>Reviews</div>;
       default:
         return <Dashboard />;
     }
@@ -92,7 +85,7 @@ function AppContent() {
 
   return (
     <div className="extension-container">
-      <div className={`${showSidebar ? 'main-content' : 'max-extension-width'}`}>
+      <div className={`${showSidebar ? 'main-content' : ''}`}>
         {renderPage}
       </div>
       {showSidebar && <Sidebar onSelectRoute={setRoute} routeSelected={route} />}

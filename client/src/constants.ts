@@ -9,7 +9,7 @@ export const COLOR_LIGHT_GREEN = "#22C55E1A";
 export const COLOR_DEEP_BLACK = "#1B2632";
 
 // Add SIDEBAR_WIDTH_PX
-export const SIDEBAR_WIDTH_PX = 250; // Adjust this value based on your sidebar design
+export const SIDEBAR_WIDTH_PX = 62; // Adjust this value based on your sidebar design
 
 let cachedScrollbarWidth: number | null = null;
 

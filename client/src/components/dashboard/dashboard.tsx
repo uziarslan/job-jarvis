@@ -4,7 +4,27 @@ import chackIcon from "../../assets/check-icon.svg";
 import jobMonitoringImg from "../../assets/job-monitoring-img.svg";
 import { API_URL } from "../../constants";
 import { Chart as ChartType } from "chart.js";
-import { Button } from "@mui/material";
+import { Button, ButtonProps } from "@mui/material";
+import { styled } from '@mui/system';
+
+
+type CustomButtonProps = ButtonProps & {
+    component?: React.ElementType;
+    href?: string;
+    target?: string;
+};
+
+const CustomButtonFilled = styled(Button)<CustomButtonProps>(({ theme }) => ({
+    background: "linear-gradient(90deg, #00AEEF 0%, #16D3F0 100%)",
+    width: "100%",
+    borderRadius: "4px",
+    fontWeight: "400",
+    fontSize: "10px",
+    lineHeight: "100%",
+    letterSpacing: "3%",
+    textTransform: "capitalize",
+    height: "29px"
+}));
 
 export default function Dashboard() {
     // Type the ref for the canvas element
@@ -32,8 +52,8 @@ export default function Dashboard() {
                             {
                                 label: "",
                                 data: [5, 5, 5, 5, 5, 5, 5],
-                                borderColor: "rgb(0, 128, 0)",
-                                backgroundColor: "rgba(0, 128, 0, 0.2)",
+                                borderColor: "#00AEEF",
+                                backgroundColor: "#00AEEF",
                                 fill: false,
                                 borderDash: [5, 5],
                                 tension: 0.1,
@@ -41,7 +61,7 @@ export default function Dashboard() {
                             {
                                 label: "",
                                 data: [1, 2, 3, 4, 2, 3, 5],
-                                borderColor: "rgba(0, 128, 0, 0.5)",
+                                borderColor: "#00AEEF",
                                 fill: false,
                                 tension: 0.1,
                             },
@@ -83,16 +103,16 @@ export default function Dashboard() {
                         <p className="proposalLeftText">10 proposals left</p>
                     </div>
                 </div>
-                <div className="p-2 mb-3">
+                <div className="sectionWrapper">
                     <h2 className="secondHeading">Proposals Usage</h2>
                     <p className="secondHeadingPara">Proposals used in cover letters in the last 7 days.</p>
                     <canvas ref={chartRef} id="proposalsChart"></canvas>
                     <p className="secondHeadingPara text-center mb-3">Dashed line shows recommended activity</p>
-                    <Button target="_blank" href={`${API_URL}/history`} variant="contained" className="dashboardButton">
+                    <CustomButtonFilled target="_blank" href={`${API_URL}/history`} variant="contained" className="dashboardButton">
                         View Proposals
-                    </Button>
+                    </CustomButtonFilled>
                 </div>
-                <div className="p-2 mb-3">
+                <div className="sectionWrapper">
                     <h2 className="secondHeading">Update Your AI Profile</h2>
                     <p className="secondHeadingPara">Make sure you add as much detail as possible to your profile in PouncerAi. It will make your proposal better.</p>
                     <ul className="dashboardList">
@@ -115,17 +135,17 @@ export default function Dashboard() {
                             Add Portfolio Links
                         </li>
                     </ul>
-                    <Button target="_blank" href={`${API_URL}/profiles`} variant="contained" className="dashboardButton">
+                    <CustomButtonFilled target="_blank" href={`${API_URL}/profiles`} variant="contained" className="dashboardButton">
                         Update Profile Now
-                    </Button>
+                    </CustomButtonFilled>
                 </div>
-                <div className="p-2">
+                <div className="sectionWrapper">
                     <h2 className="secondHeading">Start Job Monitoring</h2>
                     <p className="secondHeadingPara">Start monitoring jobs and get notified when new jobs are posted.</p>
                     <img src={jobMonitoringImg} alt="job monitoring" className="jobMonitoringImg" />
-                    <Button variant="contained" className="dashboardButton">
+                    <CustomButtonFilled variant="contained">
                         Start Monitoring Jobs
-                    </Button>
+                    </CustomButtonFilled>
                 </div>
             </div>
         </>

@@ -17,30 +17,29 @@ import type { Job, SavedSearch } from "../../types";
 import CenteredCircularProgress from "../ui/CenteredCircularProgress";
 import JobCard from "./JobCard";
 import "bootstrap/dist/css/bootstrap.min.css";
-
-// Import icons
-import InboxIcon from "../../assets/icon_inbox.svg";
-import SavedIcon from "../../assets/icon_saved.svg";
-import ArchivedIcon from "../../assets/icon_archived.svg";
 import filterIcon from "../../assets/filter-icon.svg";
 
 // Styled components with fixed max-width of 288px
 const ContainerWithStyle = styled(Box)`
   display: flex;
   flex-direction: column;
-  max-width: 288px;
+  max-width: 285px;
   width: 100%;
-  padding: 15px;
+  padding: 0px;
 `;
 
 const TabsWithStyle = styled(Tabs)`
   width: 100%;
-  .MuiTab-root {
-    min-width: 0;
-    padding: 0px;
-  }
+  padding: 0px;
+  min-height: 32px;
+  height: 32px;
+  
   .MuiTabs-indicator {
-    background-color: #28a745;
+    display: none;
+  }
+
+  .MuiTabs-flexContainer {
+    gap: 8px;
   }
 `;
 
@@ -60,6 +59,45 @@ const TypographyWithEmptyStyle = styled(Typography)`
   color: #6c757d;
   margin-bottom: 20px;
   line-height: 1.5;
+`;
+
+const TabWithStyle = styled(Tab)`
+  text-transform: none;
+  min-height: 32px;
+  height: 32px;
+  width: 71px;
+  padding: 0px;
+  color: #DBD9D9;
+  font-size: 12px;
+  background: #fff;
+  border-radius: 4px;
+  border: 1px solid #DBD9D9;
+  margin: 0;
+  
+  &.Mui-selected {
+    color: #fff;
+    font-weight: 500;
+    background: linear-gradient(180deg, #00AEEF 0%, #16D3F0 100%);
+    border: none;
+  }
+
+  .MuiTab-iconWrapper {
+    margin-right: 8px;
+  }
+`;
+
+const ButtonWithStyle = styled(Button)`
+  background: linear-gradient(180deg, #00AEEF 0%, #16D3F0 100%);
+  font-weight: 400;
+  font-size: 10px;
+  line-height: 100%;
+  letter-spacing: 3%;
+  text-align: center;
+  text-transform: capitalize;
+  color: #fff;
+  border-radius: 4px;
+  width: 100%;
+  height: 29px;
 `;
 
 interface IProps {
@@ -201,39 +239,20 @@ const JobsPage = ({ onStartTrackingClick }: IProps) => {
       </div>
       <TabsWithStyle
         variant="fullWidth"
-        scrollButtons="auto"
         value={tab}
         onChange={(_, newValue) => setTab(newValue)}
       >
-        <Tab
-          icon={<img src={InboxIcon} alt="Inbox Icon" style={{ width: "20px" }} />}
+        <TabWithStyle
           iconPosition="start"
           label="Inbox"
-          className="text-dark"
-          sx={{
-            fontWeight: "500",
-            fontSize: "10px",
-          }}
         />
-        <Tab
-          icon={<img src={SavedIcon} alt="Saved Icon" style={{ width: "20px" }} />}
+        <TabWithStyle
           iconPosition="start"
           label={`Saved (${savedJobIds.length})`}
-          className="text-dark"
-          sx={{
-            fontWeight: "500",
-            fontSize: "10px",
-          }}
         />
-        <Tab
-          icon={<img src={ArchivedIcon} alt="Archived Icon" style={{ width: "20px" }} />}
+        <TabWithStyle
           iconPosition="start"
           label={`Archived (${archivedJobIds.length})`}
-          className="text-dark"
-          sx={{
-            fontWeight: "500",
-            fontSize: "10px",
-          }}
         />
       </TabsWithStyle>
       <Box>
@@ -245,24 +264,20 @@ const JobsPage = ({ onStartTrackingClick }: IProps) => {
           <BoxWithEmptyStyle>
             <TypographyWithEmptyStyle>
               {tab === 0 && (
-                <>
-                  No jobs yet! <br /> Start tracking a search to see new jobs
-                  here.
-                </>
+                <div className="jobsPageEmptyText">
+                  <h2 className="jobsPageEmptyTextTitle">No jobs yet!</h2>
+                  <p className="jobsPageEmptyTextSubtitle">Start tracking a search to see new jobs here.</p>
+                  <ButtonWithStyle
+                    variant="contained"
+                    onClick={onStartTrackingClick}
+                  >
+                    Start Tracking
+                  </ButtonWithStyle>
+                </div>
               )}
               {tab === 1 && "No saved jobs"}
               {tab === 2 && "No archived jobs"}
             </TypographyWithEmptyStyle>
-            {tab === 0 && (
-              <Button
-                variant="contained"
-                onClick={onStartTrackingClick}
-                className="btn btn-success"
-                sx={{ mt: 2 }}
-              >
-                Start Tracking
-              </Button>
-            )}
           </BoxWithEmptyStyle>
         ) : (
           <ListWithStyle>

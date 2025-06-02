@@ -1,19 +1,41 @@
-import { styled, Box, Typography, Button, List, ListItem } from "@mui/material";
+import { styled, Button } from "@mui/material";
 import {
   DEFAULT_SAVED_SEARCHES,
-  getScrollbarWidth,
   SAVED_SEARCHES_KEY,
 } from "../../constants";
-import { SIDEBAR_WIDTH_PX } from "../Sidebar";
 import SavedSearchCard from "./SavedSearchCard";
 import { useEffect, useState } from "react";
 import { SavedSearch, ActiveSearch } from "../../types";
-import CenteredCircularProgress from "../ui/CenteredCircularProgress";
-import playIcon from "../../assets/play-icon.svg";
 
 const BottomButtonWithStyle = styled(Button)`
-  margin: 20px;
+  margin: 0px;
   text-transform: capitalize;
+  background: linear-gradient(90deg, #00AEEF 0%, #16D3F0 100%);
+  border-radius: 4px;
+  font-weight: 400;
+  font-size: 10px;
+  line-height: 100%;
+  letter-spacing: 3%;
+  text-align: center;
+  text-transform: capitalize;
+  height: 29px;
+  padding: 0px;
+  width: 100%;
+  color: #fff;
+`;
+
+const ButtonWithStyleDotted = styled(Button)`
+  border: 1px dashed #00AEEF;
+  color: #00AEEF;
+  font-weight: 400;
+  font-size: 10px;
+  line-height: 100%;
+  letter-spacing: 0%;
+  text-transform: capitalize;
+  height: 28px;
+  width: 100%;
+  border-radius: 4px;
+  padding: 0;
 `;
 
 export default function SavedSearchesPage() {
@@ -199,13 +221,13 @@ export default function SavedSearchesPage() {
   };
 
   return (
-    <div className="max-width-wrapper p-3">
+    <div>
       <h1 className="savedSearchesHeading">Saved Searches</h1>
       <p className="savedSearchesSubHeading">
         Control which searches Job Jarvis will monitor for new jobs.
       </p>
-      <div className="my-4">
-        <h2 className="thirdHeading mb-2">Default Searches</h2>
+      <div className="sectionWrapper">
+        <h2 className="thirdHeading">Default Searches</h2>
         <ul className="savedSearchListContainer">
           {DEFAULT_SAVED_SEARCHES.map((search) => (
             <li key={search.name}>
@@ -219,53 +241,46 @@ export default function SavedSearchesPage() {
             </li>
           ))}
         </ul>
+        <div className="savedSearchesSection">
+          <h2 className="thirdHeading mb-2">Saved Searches</h2>
+          <ul className="savedSearchListContainer">
+            {savedSearches ? (
+              <ul className="savedSearchListContainer">
+                {savedSearches
+                  .filter(
+                    (search) =>
+                      !DEFAULT_SAVED_SEARCHES.map((other) => other.name).includes(
+                        search.name
+                      )
+                  )
+                  .map((search) => (
+                    <li key={search.name}>
+                      <SavedSearchCard
+                        savedSearch={search}
+                        onClickMonitoring={handleMonitoringClick}
+                      />
+                    </li>
+                  ))}
+                <li>
+                  <ButtonWithStyleDotted
+                    variant="outlined"
+                  >
+                    + Import Saved Searches from Upwork
+                  </ButtonWithStyleDotted>
+                </li>
+              </ul>
+            ) : (
+              ""
+            )}
+          </ul>
+        </div>
+        <BottomButtonWithStyle
+          variant="contained"
+          onClick={handleStartMonitoringAllClick}
+        >
+          Start all monitoring
+        </BottomButtonWithStyle>
       </div>
-      <div className="my-4">
-        <h2 className="thirdHeading mb-2">Saved Searches</h2>
-        <ul className="savedSearchListContainer">
-          {savedSearches ? (
-            <ul className="savedSearchListContainer">
-              {savedSearches
-                .filter(
-                  (search) =>
-                    !DEFAULT_SAVED_SEARCHES.map((other) => other.name).includes(
-                      search.name
-                    )
-                )
-                .map((search) => (
-                  <li key={search.name}>
-                    <SavedSearchCard
-                      savedSearch={search}
-                      onClickMonitoring={handleMonitoringClick}
-                    />
-                  </li>
-                ))}
-              <li>
-                <Button
-                  sx={{
-                    fontWeight: 400,
-                    fontSize: "12px",
-                    color: "#01A76F",
-                    textTransform: "Capitalize",
-                  }}
-                  variant="text"
-                >
-                  + Import Saved Searches from Upwork
-                </Button>
-              </li>
-            </ul>
-          ) : (
-            ""
-          )}
-        </ul>
-      </div>
-      <BottomButtonWithStyle
-        startIcon={<img src={playIcon} alt="Play Icon" />}
-        variant="contained"
-        onClick={handleStartMonitoringAllClick}
-      >
-        Start all monitoring
-      </BottomButtonWithStyle>
     </div>
   );
 }

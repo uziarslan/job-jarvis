@@ -1,10 +1,7 @@
 import {
-  Box,
   IconButton,
-  Paper,
   styled,
   Tooltip,
-  useTheme,
 } from "@mui/material";
 import { useCallback, type Dispatch, type SetStateAction } from "react";
 import type { Route } from "../types";
@@ -25,46 +22,33 @@ interface IProps {
 
 export const SIDEBAR_WIDTH_PX = 75;
 
-const PaperWithStyle = styled(Paper)`
-  width: ${SIDEBAR_WIDTH_PX}px;
-  height: 100vh;
-  overflow-y: auto;
-  background-color: ${(props) => props.theme.palette.secondary.main};
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-
-const BoxWithStyle = styled(Box)`
-  margin-top: 20px;
-  margin-bottom: 20px;
-`;
-
-const IconButtonWithStyle = styled(IconButton)<{
+const IconButtonWithStyle = styled(IconButton) <{
   route_selected: Route;
   route: Route;
 }>`
-  width: 51px;
-  height: 51px;
-  border-radius: 56px !important;
+  width: 42px;
+  height: 42px;
   background-color: ${({ route_selected, route, ...props }) =>
     route_selected === route
-      ? props.theme.palette.primary.main
-      : props.theme.palette.secondary.dark};
+      ? "#00AEEF"
+      : "transparent"};
+  &:hover {
+    background-color: #00AEEF;
+  }
 `;
 
-const ImageWithStyle = styled("img")<{
+const ImageWithStyle = styled("img") <{
   route_selected: Route;
   route: Route;
 }>`
-  width: 30px;
-  height: 30px;
-  filter: ${({ route_selected, route }) =>
-    route_selected === route ? "brightness(0) invert(1)" : undefined};
+width: 28px;
+height: 28px;
+fill: ${({ route_selected, route }) =>
+    route_selected === route ? "linear-gradient(180deg, #00AEEF 0%, #16D3F0 100%)" : undefined
+  };
 `;
 
 export default function Sidebar({ routeSelected, onSelectRoute }: IProps) {
-  const theme = useTheme();
   const frontendUrl = process.env.REACT_APP_FRONTEND_URL || "http://localhost:3000";
 
   const getRouteUrl = (route: Route): string => {
@@ -88,15 +72,11 @@ export default function Sidebar({ routeSelected, onSelectRoute }: IProps) {
     (icon: string, route: Route) => {
       const url = getRouteUrl(route);
       return (
-        <BoxWithStyle key={route}>
-          <Tooltip title={route}>
+        <div className="sidebar-item">
+          <Tooltip title={route} placement="left">
             <IconButtonWithStyle
-              sx={{
-                "&:hover": {
-                  backgroundColor: theme.palette.primary.main,
-                },
-              }}
-              size="large"
+              route={route}
+              route_selected={routeSelected}
               onClick={() => {
                 if (url !== "#") {
                   window.open(url, "_blank");
@@ -104,25 +84,18 @@ export default function Sidebar({ routeSelected, onSelectRoute }: IProps) {
                   onSelectRoute(route);
                 }
               }}
-              route={route}
-              route_selected={routeSelected}
             >
-              <ImageWithStyle
-                src={icon}
-                alt={route}
-                route={route}
-                route_selected={routeSelected}
-              />
+              <ImageWithStyle src={icon} alt={route} route={route} route_selected={routeSelected} />
             </IconButtonWithStyle>
           </Tooltip>
-        </BoxWithStyle>
+        </div>
       );
     },
     [routeSelected, frontendUrl]
   );
 
   return (
-    <PaperWithStyle>
+    <div className="sidebar-container">
       {renderItem(IconDashboard, "Dashboard")}
       {renderItem(IconProfile, "Profile")}
       {renderItem(IconHistory, "History")}
@@ -132,6 +105,6 @@ export default function Sidebar({ routeSelected, onSelectRoute }: IProps) {
       {renderItem(IconManualJobProposal, "Manual Job Proposal")}
       {renderItem(IconSettings, "Settings")}
       {renderItem(IconReviews, "Reviews")}
-    </PaperWithStyle>
+    </div>
   );
 }

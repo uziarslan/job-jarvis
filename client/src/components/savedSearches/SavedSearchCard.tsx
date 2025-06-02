@@ -1,8 +1,8 @@
 import { Box, styled, Button } from "@mui/material";
 import { SavedSearch } from "../../types";
-import { COLOR_LIGHT_GREY, getScrollbarWidth } from "../../constants";
-import { SIDEBAR_WIDTH_PX } from "../Sidebar";
 import { useState } from "react";
+import chevronIconBlue from "../../assets/chevron-right.svg"
+import chevronIconGrey from "../../assets/chevron-icon-grey.svg"
 
 interface IProps {
   savedSearch: SavedSearch;
@@ -10,40 +10,18 @@ interface IProps {
 }
 
 const ContainerWithStyle = styled(Box, {
-  shouldForwardProp: (prop) => prop !== "is_hovered",
-}) <{ is_hovered: boolean }>`
+  shouldForwardProp: (prop) => prop !== "is_hovered" && prop !== "is_enabled",
+}) <{ is_hovered: boolean; is_enabled: boolean }>`
   display: flex;
   width: 100%;
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
-  background-color: ${({ is_hovered }) =>
-    is_hovered ? COLOR_LIGHT_GREY : undefined};
-  padding: 10px;
-  border-radius: 5px;
-`;
-
-const BoxWithStyle = styled(Box)`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 5px;
-`;
-
-const Indicator = styled("div", {
-  shouldForwardProp: (prop) => prop !== "is_enabled",
-}) <{ is_enabled: boolean }>`
-  width: 7px;
-  height: 7px;
-  border-radius: 50px;
-  background-color: ${(props) =>
-    props.is_enabled ? props.theme.palette.primary.main : "#919EAB"};
-`;
-
-const ToggleButton = styled(Button)`
-  font-size: 12px;
-  padding: 4px 8px;
-  text-transform: capitalize;
+  border: 1px solid ${({ is_hovered, is_enabled }) =>
+    is_hovered || is_enabled ? "#00AEEF" : "#DCDCDC"};
+  padding: 6.5px 4px 6.5px 12px;
+  border-radius: 4px;
+  transition: border 0.3s ease;
 `;
 
 export default function SavedSearchCard({
@@ -55,23 +33,16 @@ export default function SavedSearchCard({
   return (
     <ContainerWithStyle
       is_hovered={isHovered}
+      is_enabled={savedSearch?.enabled}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <BoxWithStyle>
-        <Indicator is_enabled={savedSearch.enabled} />{" "}
-        <h3 className="searchName">{savedSearch.name}</h3>
-      </BoxWithStyle>
-      <ToggleButton
-        variant={savedSearch.enabled ? "outlined" : "contained"}
-        color={savedSearch.enabled ? "secondary" : "primary"}
-        onClick={() => {
-          console.log("Track button clicked for:", savedSearch.name, "URL:", savedSearch.url);
-          onClickMonitoring(savedSearch);
-        }}
-      >
-        {savedSearch.enabled ? "Stop Tracking" : "Track"}
-      </ToggleButton>
+      <div className="searchNameWrapper" onClick={() => {
+        onClickMonitoring(savedSearch);
+      }}>
+        <h3 className={`${savedSearch.enabled || isHovered ? "searchNameBlue" : ""} searchName`}>{savedSearch.name}</h3>
+      </div>
+      <img src={savedSearch.enabled || isHovered ? chevronIconBlue : chevronIconGrey} alt="chevron-right" />
     </ContainerWithStyle>
   );
 }
