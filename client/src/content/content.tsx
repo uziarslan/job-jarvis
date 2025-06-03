@@ -36,7 +36,7 @@ function injectNavbarContent() {
   const injectContent = () => {
     const body = document.querySelector("body");
     const navbar = document.querySelector("#nav-right > ul");
-    
+
     if (!navbar || !body) {
       attempts++;
       if (attempts < maxAttempts) {
@@ -652,6 +652,53 @@ function setUpUrlObserver() {
     handleUrlBasedInjection(location.href);
   }
 })();
+
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.type === "SCRAPE_MODAL") {
+    (async () => {
+      try {
+        const targetCardsContainer = document.querySelector('#published > div > div.air3-grid-container.mt-6x') as HTMLElement;
+
+        if (!targetCardsContainer || targetCardsContainer.children.length === 0) {
+          sendResponse({ success: false, error: "No portfolio cards found" });
+          return;
+        }
+
+        const projects: { projectName: string; projectDescription: string; skills: string[] }[] = [];
+
+        for (const card of Array.from(targetCardsContainer.children).slice(0, 3)) {
+          (card as HTMLElement).click();
+
+          await new Promise(res => setTimeout(res, 1500)); // Wait for modal
+
+          const modal = document.querySelector('.air3-modal-content.position-relative');
+          const projectName = modal?.querySelector(".air3-modal-header > .d-flex.flex-1 > h2.m-0 > span")?.textContent?.trim() || "No project name found";
+          const description = modal?.querySelector('div > div.content-height-wrapper > div > div > div.portfolio-v2-viewer.air3-grid-container.simulate-modal-body > div.span-12.span-lg-4 > div > div.span-12.text-body.text-pre-line.break')?.textContent?.trim() || "No description found";
+          const skills = modal?.querySelector("div > div.content-height-wrapper > div > div > div.portfolio-v2-viewer.air3-grid-container.simulate-modal-body > div.span-12.span-lg-4 > div > div:nth-child(3) > div")
+
+          let skillsArray: string[] = [];
+          if (skills) {
+            skillsArray = Array.from(skills.children).map(skill => skill.textContent?.trim() || "");
+          }
+          projects.push({ projectName, projectDescription: description, skills: skillsArray });
+
+          const closeBtn = modal?.querySelector('[data-ev-label="modal_close"]') as HTMLElement;
+          closeBtn?.click();
+
+          await new Promise(res => setTimeout(res, 1000)); // Wait for modal to close
+        }
+
+        // Send all descriptions at once
+        sendResponse({ success: true, data: projects });
+
+      } catch (err) {
+        sendResponse({ success: false, error: String(err) });
+      }
+    })();
+
+    return true; // Keep async listener open
+  }
+});
 
 // JWT Handler
 window.addEventListener("message", (event) => {

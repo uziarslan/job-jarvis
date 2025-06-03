@@ -49,19 +49,24 @@ function AppContent() {
     });
   }, []);
 
-  const renderPage = useMemo(() => {
-    if (isLoading) {
+  useEffect(() => {
+    if (!user || (user && !user.profiles?.length)) {
       setShowSidebar(false);
+    } else {
+      setShowSidebar(true);
+    }
+  }, [user]);
+
+  function renderPage() {
+    if (isLoading) {
       return <div className="loading-container">Loading...</div>;
     }
 
     if (!user) {
-      setShowSidebar(false);
       return <LoginPage />;
     }
 
-    if (user && !user.upworkId || !user.profile) {
-      setShowSidebar(false);
+    if (user && !user.profiles?.length) {
       return <ScrapeProfilePage />;
     }
 
@@ -81,12 +86,12 @@ function AppContent() {
       default:
         return <Dashboard />;
     }
-  }, [route, user, isLoading]);
+  }
 
   return (
     <div className="extension-container">
       <div className={`${showSidebar ? 'main-content' : ''}`}>
-        {renderPage}
+        {renderPage()}
       </div>
       {showSidebar && <Sidebar onSelectRoute={setRoute} routeSelected={route} />}
     </div>
