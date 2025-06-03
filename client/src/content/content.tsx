@@ -6,9 +6,10 @@ console.log("📦 Content script running...");
 
 async function checkAuthentication(): Promise<boolean> {
   try {
+    // @ts-ignore
     const result = await chrome.storage.local.get(['token']);
     if (!result.token) return false;
-
+    // @ts-ignore
     // Fetch user data using the token
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/user`, {
       headers: {
@@ -26,7 +27,7 @@ async function checkAuthentication(): Promise<boolean> {
     return false;
   }
 }
-
+// @ts-ignore
 const frontendUrl = process.env.REACT_APP_FRONTEND_URL;
 
 function injectNavbarContent() {
@@ -151,6 +152,7 @@ function injectNavbarContent() {
     // Add click handler to open sidebar
     div.addEventListener("click", () => {
       // Send message to extension to open sidebar
+      // @ts-ignore
       chrome.runtime.sendMessage({ action: "toggleSidepanel" });
     });
 
@@ -653,6 +655,7 @@ function setUpUrlObserver() {
   }
 })();
 
+// @ts-ignore
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.type === "SCRAPE_MODAL") {
     (async () => {
@@ -704,6 +707,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 window.addEventListener("message", (event) => {
   if (event.source !== window) return;
   if (event.data.type === "FROM_WEB_TO_EXTENSION" && event.data.token) {
+    // @ts-ignore
     chrome.storage.local.set({ token: event.data.token }, () => {
       console.log("✅ JWT stored in extension");
     });
