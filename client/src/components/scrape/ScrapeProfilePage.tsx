@@ -1,10 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useState } from 'react';
 import aiIcon from "../../assets/ai-icon.svg";
 import chromeIcon from "../../assets/chrome.svg";
 import redoIcon from "../../assets/redo-icon.svg";
 import logoIcon from "../../assets/logo-icon.svg";
 import rippleBg from "../../assets/ripple-bg.svg";
-import { Button, ButtonProps } from '@mui/material';
+import { Button, CircularProgress } from '@mui/material';
 import { styled } from '@mui/system';
 import axiosInstance from '../../services/axiosInstance';
 
@@ -22,13 +22,7 @@ interface ScrapeResponse {
     error?: string;
 }
 
-type CustomButtonProps = ButtonProps & {
-    component?: React.ElementType;
-    href?: string;
-    target?: string;
-};
-
-const CustomButtonFilled = styled(Button)<CustomButtonProps>(({ theme }) => ({
+const CustomButtonFilled = styled(Button)(({ theme }) => ({
     background: "linear-gradient(90deg, #00AEEF 0%, #16D3F0 100%)",
     width: "100%",
     padding: "14.5px 0",
@@ -41,18 +35,21 @@ const CustomButtonFilled = styled(Button)<CustomButtonProps>(({ theme }) => ({
 }));
 
 const ScrapeProfilePage: React.FC = () => {
-
+    const [isLoading, setIsLoading] = useState(false);
     const isProfileUrl = (url: string) =>
         /^~[a-zA-Z0-9]{13,}$/.test(url.split('/').pop() || '');
 
     const sendToBackend = async (data: any) => {
         try {
+            setIsLoading(true);
             const { status } = await axiosInstance.post("/api/v1/profile", data);
             if (status === 201) {
                 window.location.reload();
             }
         } catch (err) {
             console.error("❌ Backend error:", err);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -65,6 +62,7 @@ const ScrapeProfilePage: React.FC = () => {
 
     const handleProfileScrape = async () => {
         try {
+            setIsLoading(true);
             const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
             const url = tab?.url;
             const id = tab?.id;
@@ -91,6 +89,7 @@ const ScrapeProfilePage: React.FC = () => {
             setTimeout(() => clearInterval(checkInterval), 120000);
         } catch (err) {
             console.error('Scrape failed:', err);
+            setIsLoading(false);
         }
     };
 
@@ -133,6 +132,11 @@ const ScrapeProfilePage: React.FC = () => {
                 </div>
                 <div className='authButtonWrapper'>
                     <CustomButtonFilled
+                        loading={isLoading}
+                        loadingIndicator={
+                            <CircularProgress sx={{ color: "#fff" }} size={24} />
+                        }
+                        disabled={isLoading}
                         onClick={handleProfileScrape}
                         variant='contained'
                     >

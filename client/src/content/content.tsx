@@ -660,10 +660,25 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.type === "SCRAPE_MODAL") {
     (async () => {
       try {
-        const targetCardsContainer = document.querySelector('#published > div > div.air3-grid-container.mt-6x') as HTMLElement;
+
+        const waitForSection = async (selector: string, timeout: number) => {
+          const pollInterval = 100;
+          const maxAttempts = timeout / pollInterval;
+          let attempts = 0;
+
+          while (attempts < maxAttempts) {
+            const element = document.querySelector(selector);
+            if (element && element.children.length > 0) return element;
+            await new Promise(res => setTimeout(res, pollInterval));
+            attempts++;
+          }
+          return null;
+        };
+
+        const targetCardsContainer = await waitForSection('#published > div > div.air3-grid-container.mt-6x', 8000) as HTMLElement;
 
         if (!targetCardsContainer || targetCardsContainer.children.length === 0) {
-          sendResponse({ success: false, error: "No portfolio cards found" });
+          location.reload();
           return;
         }
 
@@ -676,7 +691,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
           const modal = document.querySelector('.air3-modal-content.position-relative');
           const projectName = modal?.querySelector(".air3-modal-header > .d-flex.flex-1 > h2.m-0 > span")?.textContent?.trim() || "No project name found";
-          const description = modal?.querySelector('div > div.content-height-wrapper > div > div > div.portfolio-v2-viewer.air3-grid-container.simulate-modal-body > div.span-12.span-lg-4 > div > div.span-12.text-body.text-pre-line.break')?.textContent?.trim() || "No description found";
+          const description = modal?.querySelector('div > div.content-height-wrapper > div > div > div.portfolio-v2-viewer.air3-grid-container.simulate-modal-body > div.span-12.span-lg-4 > div > div.span-12.text-body.text-pre-line.break')?.textContent?.replace("Project description.", "").trim() || "No description found";
           const skills = modal?.querySelector("div > div.content-height-wrapper > div > div > div.portfolio-v2-viewer.air3-grid-container.simulate-modal-body > div.span-12.span-lg-4 > div > div:nth-child(3) > div")
 
           let skillsArray: string[] = [];
