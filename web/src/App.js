@@ -12,16 +12,17 @@ import EditProfile from "./Pages/EditProfile";
 import AddProfile from "./Pages/AddProfile";
 import Login from "./Pages/Login";
 import Signup from "./Pages/Signup";
-
+import Homepage from "./Pages/Homepage";
 
 function App() {
   return (
     <div className="App">
       <BrowserRouter>
         <Routes>
+          <Route path="/" element={<Homepage />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/" element={<Manual />} />
+          <Route path="/manual-job-proposal" element={<Manual />} />
           <Route path="/templates" element={<Templates />} />
           <Route path="/add/template" element={<AddTemplate />} />
           <Route path="/edit/template/:id" element={<EditTemplate />} />

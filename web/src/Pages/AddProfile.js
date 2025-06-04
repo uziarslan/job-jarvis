@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "../Components/Navbar";
 import { Button, TextField, Autocomplete, Modal, Box, MenuItem, Select, InputLabel, FormControl } from "@mui/material";
 import { Link } from "react-router-dom";
@@ -8,11 +8,6 @@ import eyeIconLarge from "../Assets/images/eye-icon-large.svg";
 import axiosInstance from "../services/axiosInstance";
 
 const options = ['Upwork', 'My Website', 'Blog/Podcast', 'Video Channel', 'Portfolio Page', 'Github (Code Examples)', 'Dribble', 'Behance', 'Other'];
-
-const top100Films = [
-    'The Shawshank Redemption',
-    'The Godfather',
-];
 
 const modalStyle = {
     position: 'absolute',
@@ -29,7 +24,7 @@ const modalStyle = {
 };
 
 export default function AddProfile() {
-    // Single formData state with all fields reset
+    const [skills, setSkills] = useState([]);
     const [formData, setFormData] = useState({
         profileDetails: {
             profileName: '',
@@ -54,6 +49,14 @@ export default function AddProfile() {
         portfolioLinks: [],
         projects: [],
     });
+
+    useEffect(() => {
+        const fetchSkills = async () => {
+            const { data } = await axiosInstance.get("/api/v1/skills")
+            setSkills(data)
+        }
+        fetchSkills()
+    }, [])
 
     // Modal states
     const [openModal, setOpenModal] = useState({ type: '', mode: '', index: null });
@@ -402,8 +405,10 @@ export default function AddProfile() {
                         />
                         <Autocomplete
                             multiple
-                            className="w-100"
-                            options={top100Films}
+                            freeSolo
+                            className="w-100 custom-border-shadow"
+                            id="tags-outlined"
+                            options={skills}
                             filterSelectedOptions
                             value={modalData.skills}
                             onChange={(e, value) => handleModalInputChange('skills', value)}
@@ -413,7 +418,6 @@ export default function AddProfile() {
                                     {...params}
                                     label="Skills"
                                     placeholder="Skills"
-                                    margin="normal"
                                 />
                             )}
                         />
@@ -564,9 +568,10 @@ export default function AddProfile() {
                                 <div className="col-12">
                                     <Autocomplete
                                         multiple
+                                        freeSolo
                                         className="w-100 custom-border-shadow"
                                         id="tags-outlined"
-                                        options={top100Films}
+                                        options={skills}
                                         filterSelectedOptions
                                         value={formData.personalDetails.skills}
                                         onChange={(e, value) => handleInputChange('personalDetails', 'skills', value)}

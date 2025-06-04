@@ -9,11 +9,6 @@ import axiosInstance from "../services/axiosInstance";
 
 const options = ['Upwork', 'My Website', 'Blog/Podcast', 'Video Channel', 'Portfolio Page', 'Github (Code Examples)', 'Dribble', 'Behance', 'Other'];
 
-const top100Films = [
-    'The Shawshank Redemption',
-    'The Godfather',
-];
-
 const modalStyle = {
     position: 'absolute',
     top: '50%',
@@ -31,6 +26,7 @@ const modalStyle = {
 export default function EditProfile() {
     // Single formData state with all fields reset
     const [formData, setFormData] = useState({});
+    const [skills, setSkills] = useState([]);
 
     const { id } = useParams();
 
@@ -45,6 +41,14 @@ export default function EditProfile() {
         };
         fetchProfileData();
     }, [id])
+
+    useEffect(() => {
+        const fetchSkills = async () => {
+            const { data } = await axiosInstance.get("/api/v1/skills")
+            setSkills(data)
+        }
+        fetchSkills()
+    }, [])
 
     // Modal states
     const [openModal, setOpenModal] = useState({ type: '', mode: '', index: null });
@@ -369,8 +373,9 @@ export default function EditProfile() {
                         />
                         <Autocomplete
                             multiple
+                            freeSolo
                             className="w-100"
-                            options={top100Films}
+                            options={skills}
                             getOptionLabel={(option) => option}
                             filterSelectedOptions
                             value={modalData.skills}
@@ -532,9 +537,10 @@ export default function EditProfile() {
                                 <div className="col-12">
                                     <Autocomplete
                                         multiple
+                                        freeSolo
                                         className="w-100 custom-border-shadow"
                                         id="tags-outlined"
-                                        options={top100Films}
+                                        options={skills}
                                         getOptionLabel={(option) => option}
                                         filterSelectedOptions
                                         value={formData?.personalDetails?.skills || []}

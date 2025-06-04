@@ -1,5 +1,6 @@
 .navbar-brand {
     font-family: "Orbitron";
+    color: #000;
 }
 
 .profile {
@@ -362,6 +363,341 @@ button span {
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.auth-img {
+    max-width: 730px;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    object-position: center top;
+}
+
+.auth-content {
+    margin-top: 42px;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.auth-content h2 {
+    font-weight: 200;
+    font-size: 20px;
+    line-height: 25px;
+    letter-spacing: 0%;
+    color: #202020;
+    max-width: 546px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.auth-content p {
+    font-weight: 200;
+    font-size: 20px;
+    line-height: 25px;
+    letter-spacing: 0%;
+    text-align: center;
+    max-width: 723px;
+    margin: 0 auto;
+    color: #202020;
+}
+
+.authLogo {
+    width: 105px;
+    height: auto;
+    object-fit: contain;
+    object-position: center;
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 80px;
+}
+
+.auth-form-container {
+    width: 100%;
+    max-width: 370px;
+}
+
+.auth-form-heading {
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 100%;
+    letter-spacing: 0px;
+    margin: 0;
+    margin-bottom: 25px;
+}
+
+.forgot-password-link {
+    font-weight: 400;
+    font-size: 14px;
+    color: #202020;
+    text-decoration: none;
+    margin-bottom: 40px;
+}
+
+.seprator {
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 100%;
+    letter-spacing: 0px;
+    vertical-align: middle;
+    color: #898989;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    margin: 24px 0px;
+}
+
+.seprator::before,
+.seprator::after {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 1px;
+    background-color: #DCDCDC;
+}
+
+.toggleUrl {
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 100%;
+    letter-spacing: 0px;
+    position: absolute;
+    top: 40px;
+    right: 40px;
+}
+
+.toggleUrl a {
+    text-decoration: none;
+    color: #00AEEF;
+    font-weight: 600;
+}
+
+.heroSection {
+    border: 1px solid #FFFFFF1A;
+    min-height: calc(100vh - 100px);
+    backdrop-filter: blur(40.79999923706055px);
+    position: relative;
+    z-index: 1;
+    background: #FFFFFFD1;
+    padding-top: 100px;
+}
+
+.heroSectionEllipses {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    left: -195px;
+    background: #00AEEF80;
+    width: 798px;
+    height: 798px;
+    border-radius: 50%;
+    filter: blur(484px);
+}
+
+.heroSectionEllipsesBottomRight {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    top: 144px;
+    right: -195px;
+    width: 798px;
+    background: #00AEEF80;
+    height: 798px;
+    border-radius: 50%;
+    filter: blur(484px);
+}
+
+.aiProposalWrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 17.16px;
+    background: #FFFFFF;
+    border-radius: 40px;
+    padding: 16px;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 100%;
+    letter-spacing: 3%;
+    text-transform: capitalize;
+    color: #202020;
+    box-shadow: 0px 4px 27.6px 10px #8D8D8D1A;
+    max-width: 344px;
+    margin: 0 auto;
+}
+
+.heroTitle {
+    font-weight: 600;
+    font-size: 80px;
+    line-height: 96px;
+    letter-spacing: 0px;
+    text-align: center;
+    margin: 22px auto;
+    max-width: 885px;
+}
+
+.brandTagLine {
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 25px;
+    letter-spacing: 0%;
+    text-align: center;
+    max-width: 546px;
+    margin: 0 auto;
+    color: #202020;
+}
+
+.brandInfo {
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 25px;
+    letter-spacing: 0%;
+    text-align: center;
+    max-width: 723px;
+    margin: 22px auto 40px auto;
+    color: #202020;
+}
+
+.heroStats {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 56px auto;
+    gap: 33px;
+}
+
+.statsHeading {
+    font-family: Poppins;
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 100%;
+    letter-spacing: 0%;
+    text-align: center;
+    color: #202020;
+}
+
+.statsText {
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 100%;
+    letter-spacing: 0%;
+    text-align: center;
+    color: #202020;
+}
+
+.statsOverViewWrapper {
+    background: #1FC0E9;
+    border-radius: 87px;
+    padding: 11.5px 10px 11.5px 21px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+    cursor: pointer;
+}
+
+.peopleImagesWrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.peopleImage:nth-child(1) {
+    margin-left: 0px;
+}
+
+.peopleImage {
+    border: 2px solid #FFFFFF;
+    border-radius: 50%;
+    width: 49px;
+    height: 49px;
+    margin-left: -21px;
+}
+
+.peopleImage img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 50%;
+}
+
+.forFreelancersSection {
+    padding: 29px 53px 40px 45px;
+    background: #FFFFFF;
+    margin-top: 73px;
+    border-radius: 16px;
+    box-shadow: 0px 0px 144px 0px #0000000D;
+}
+
+.forFreelancersHeading {
+    font-weight: 300;
+    font-size: 24px;
+    line-height: 100%;
+    letter-spacing: 3%;
+    text-transform: uppercase;
+    color: #8D8D8D;
+    margin-bottom: 5px;
+}
+
+.forFreelancersTitle {
+    font-weight: 500;
+    font-size: 48px;
+    line-height: 100%;
+    letter-spacing: 3%;
+    text-transform: capitalize;
+}
+
+.forFreelancersList {
+    list-style: decimal-leading-zero;
+    font-weight: 300;
+    font-size: 20px;
+    line-height: 100%;
+    letter-spacing: 3%;
+    text-transform: capitalize;
+    color: #000;
+    margin: 0;
+}
+
+.forFreelancersListItem {
+    padding-left: 29px;
+    margin-bottom: 28px;
+}
+
+.forFreelancersListItem h2 {
+    font-weight: 500;
+    font-size: 24px;
+    line-height: 100%;
+    letter-spacing: 3%;
+    text-transform: capitalize;
+    margin-bottom: 16px;
+}
+
+.forFreelancersListItemDescription {
+    font-weight: 300;
+    font-size: 18px;
+    line-height: 25px;
+    letter-spacing: 3%;
+    text-transform: capitalize;
+    color: #202020;
+}
+
+.forFreelancersImage {
+    max-width: 491px;
+    height: auto;
+    width: 100%;
+    object-fit: contain;
+    object-position: center;
+    border-radius: 16px;
 }
 
 @media(max-width: 850px) {
