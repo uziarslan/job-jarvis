@@ -16,12 +16,11 @@ interface IProps {
 }
 
 const BoxWithStyle = styled(Box)`
-  width: calc(100vw - ${SIDEBAR_WIDTH_PX}px - ${getScrollbarWidth()}px);
+  width: 100%;
   word-break: break-word;
   overflow-wrap: break-word;
   white-space: normal;
   cursor: pointer;
-  background-color: white;
   padding: 0px;
 `;
 
@@ -98,10 +97,24 @@ const ContainerProposals = styled(Box)`
   font-weight: 400;
 `;
 
-const ButtonWithStyle = styled(Button)`
+const ButtonWithStyle = styled(Button) <{ target: string, href: string }>`
   font-size: 12px;
-  padding: 4px 8px;
-  min-width: 80px;
+  min-width: 70px;
+  background: linear-gradient(90deg, #00AEEF 0%, #16D3F0 100%);
+  color: white;
+  &:hover {
+    background: linear-gradient(90deg, #0097C1 0%, #13B8D6 100%);
+  }
+  text-transform: capitalize;
+`;
+
+const ButtonWithStyleOutlined = styled(Button)`
+  font-size: 12px;
+  min-width: 70px;
+  background: white;
+  color: #00AEEF;
+  border: 1px solid #00AEEF;
+  text-transform: capitalize;
 `;
 
 export default function JobCard({ job, onSaveJob, onArchiveJob }: IProps) {
@@ -194,37 +207,28 @@ export default function JobCard({ job, onSaveJob, onArchiveJob }: IProps) {
           gap: "8px",
         }}
       >
-        <Button
+        <ButtonWithStyle
           target="_blank"
           href={job.link}
           size="small"
           variant="contained"
-          sx={{
-            fontSize: "12px",
-          }}
         >
           View Job
-        </Button>
-        <Button
+        </ButtonWithStyle>
+        <ButtonWithStyleOutlined
           size="small"
           variant="outlined"
-          sx={{
-            fontSize: "12px",
-          }}
           onClick={() => onSaveJob?.(String(job._id))}
         >
           Save
-        </Button>
-        <Button
+        </ButtonWithStyleOutlined>
+        <ButtonWithStyleOutlined
           size="small"
           variant="outlined"
-          sx={{
-            fontSize: "12px",
-          }}
           onClick={() => onArchiveJob?.(String(job._id))}
         >
           Archive
-        </Button>
+        </ButtonWithStyleOutlined>
       </Box>
     </BoxWithStyle>
   );

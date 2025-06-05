@@ -11,15 +11,14 @@ import {
   Tabs,
   Typography,
 } from "@mui/material";
-import { SAVED_SEARCHES_KEY } from "../../constants";
 import { Fragment, useEffect, useState } from "react";
-import type { Job, SavedSearch } from "../../types";
+import type { Job } from "../../types";
 import CenteredCircularProgress from "../ui/CenteredCircularProgress";
 import JobCard from "./JobCard";
 import "bootstrap/dist/css/bootstrap.min.css";
 import filterIcon from "../../assets/filter-icon.svg";
 
-// Styled components with fixed max-width of 288px
+// Styled components
 const ContainerWithStyle = styled(Box)`
   display: flex;
   flex-direction: column;
@@ -53,7 +52,7 @@ const BoxWithEmptyStyle = styled(Box)`
   padding: 20px 0;
 `;
 
-const TypographyWithEmptyStyle = styled(Typography)`
+const TypographyWithEmptyStyle = styled(Typography) <{ component: string }>`
   font-weight: 500;
   font-size: 14px;
   color: #6c757d;
@@ -107,123 +106,76 @@ interface IProps {
 const JobsPage = ({ onStartTrackingClick }: IProps) => {
   const [allJobs, setAllJobs] = useState<Job[] | null>(null);
   const [tab, setTab] = useState<number>(0);
-  const [hasMonitoredSearches, setHasMonitoredSearches] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-  const [isMonitoring, setIsMonitoring] = useState<boolean>(false);
   const [savedJobIds, setSavedJobIds] = useState<string[]>([]);
   const [archivedJobIds, setArchivedJobIds] = useState<string[]>([]);
 
-  // Scrape jobs by sending a message to the background script
-  const scrapeJobs = async (): Promise<Job[]> => {
-    try {
-      return new Promise((resolve, reject) => {
-        chrome.runtime.sendMessage({ action: "scrapeJobs" }, (response) => {
-          if (chrome.runtime.lastError) {
-            reject(new Error(chrome.runtime.lastError.message));
-          } else if (response.error) {
-            reject(new Error(response.error));
-          } else {
-            resolve(response.jobs);
-          }
-        });
-      });
-    } catch (err) {
-      throw new Error(
-        err instanceof Error ? err.message : "Failed to scrape jobs"
-      );
-    }
-  };
+  // Load jobs and job IDs from storage
+  useEffect(() => {
+    chrome.storage.local.get(['scrapedJobs', 'savedJobIds', 'archivedJobIds'], (result) => {
+      setAllJobs(result.scrapedJobs || []);
+      setSavedJobIds(result.savedJobIds || []);
+      setArchivedJobIds(result.archivedJobIds || []);
+    });
 
-  // Run scraping when monitoring is active
-  const runJobScraping = async () => {
-    try {
-      setAllJobs(null);
-      const scrapedJobs = await scrapeJobs();
-      setAllJobs(scrapedJobs);
-    } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "An unexpected error occurred"
-      );
-      setAllJobs([]);
-    }
-  };
+    // Listen for storage changes
+    const storageListener = (changes: { [key: string]: chrome.storage.StorageChange }) => {
+      if (changes.scrapedJobs) {
+        setAllJobs(changes.scrapedJobs.newValue || []);
+      }
+      if (changes.savedJobIds) {
+        setSavedJobIds(changes.savedJobIds.newValue || []);
+      }
+      if (changes.archivedJobIds) {
+        setArchivedJobIds(changes.archivedJobIds.newValue || []);
+      }
+    };
+    chrome.storage.onChanged.addListener(storageListener);
+
+    return () => chrome.storage.onChanged.removeListener(storageListener);
+  }, []);
 
   // Handle saving a job
   const handleSaveJob = (jobId: string) => {
-    setSavedJobIds((prev) =>
-      prev.includes(jobId) ? prev : [...prev, jobId]
-    );
-    setArchivedJobIds((prev) =>
-      prev.includes(jobId) ? prev.filter((id) => id !== jobId) : prev
-    );
+    setSavedJobIds((prev) => {
+      const newIds = prev.includes(jobId) ? prev : [...prev, jobId];
+      chrome.storage.local.set({ savedJobIds: newIds });
+      return newIds;
+    });
+    setArchivedJobIds((prev) => {
+      const newIds = prev.includes(jobId) ? prev.filter((id) => id !== jobId) : prev;
+      chrome.storage.local.set({ archivedJobIds: newIds });
+      return newIds;
+    });
   };
 
   // Handle archiving a job
   const handleArchiveJob = (jobId: string) => {
-    setArchivedJobIds((prev) =>
-      prev.includes(jobId) ? prev : [...prev, jobId]
-    );
-    setSavedJobIds((prev) =>
-      prev.includes(jobId) ? prev.filter((id) => id !== jobId) : prev
-    );
-  };
-
-  // Fetch saved searches status to determine monitoring state
-  const fetchSavedSearchesStatus = () => {
-    chrome.storage.sync.get(SAVED_SEARCHES_KEY, (result) => {
-      const savedSearches = result[SAVED_SEARCHES_KEY] as SavedSearch[] | undefined;
-      const isMonitoringActive = savedSearches?.some((search) => search.enabled) || false;
-      setHasMonitoredSearches(isMonitoringActive);
-      setIsMonitoring(isMonitoringActive);
+    setArchivedJobIds((prev) => {
+      const newIds = prev.includes(jobId) ? prev : [...prev, jobId];
+      chrome.storage.local.set({ archivedJobIds: newIds });
+      return newIds;
+    });
+    setSavedJobIds((prev) => {
+      const newIds = prev.includes(jobId) ? prev.filter((id) => id !== jobId) : prev;
+      chrome.storage.local.set({ savedJobIds: newIds });
+      return newIds;
     });
   };
 
   const displayedJobs = useMemo(() => {
+    if (!allJobs) return [];
     if (tab === 0) {
-      console.log(allJobs)
-      return allJobs || [];
+      return allJobs;
     } else if (tab === 1) {
-      return allJobs ? allJobs.filter((job) => savedJobIds.includes(String(job._id))) : [];
+      return allJobs.filter((job) => savedJobIds.includes(String(job._id)));
     } else if (tab === 2) {
-      return allJobs ? allJobs.filter((job) => archivedJobIds.includes(String(job._id))) : [];
+      return allJobs.filter((job) => archivedJobIds.includes(String(job._id)));
     }
     return [];
   }, [tab, allJobs, savedJobIds, archivedJobIds]);
 
-  useEffect(() => {
-    fetchSavedSearchesStatus();
-    const onStorageChange = (changes: { [key: string]: chrome.storage.StorageChange }) => {
-      if (changes[SAVED_SEARCHES_KEY]) {
-        fetchSavedSearchesStatus();
-      }
-    };
-    chrome.storage.onChanged.addListener(onStorageChange);
-    return () => chrome.storage.onChanged.removeListener(onStorageChange);
-  }, []);
-
-  useEffect(() => {
-    if (tab === 0 && isMonitoring) {
-      runJobScraping();
-      const intervalId = setInterval(runJobScraping, 30000);
-      return () => clearInterval(intervalId);
-    }
-  }, [tab, isMonitoring]);
-
   return (
     <ContainerWithStyle>
-      {!hasMonitoredSearches && (
-        <Alert
-          sx={{
-            ":hover": {
-              cursor: "pointer",
-            },
-          }}
-          onClick={onStartTrackingClick}
-          severity="warning"
-        >
-          No active job tracking
-        </Alert>
-      )}
       <div className="d-flex justify-content-between align-items-center my-3">
         <h1 className="jobsPageTitle">Jobs</h1>
         <div className="dropdown">
@@ -256,13 +208,11 @@ const JobsPage = ({ onStartTrackingClick }: IProps) => {
         />
       </TabsWithStyle>
       <Box>
-        {error ? (
-          <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>
-        ) : displayedJobs === null ? (
+        {allJobs === null ? (
           <CenteredCircularProgress />
         ) : !displayedJobs.length ? (
           <BoxWithEmptyStyle>
-            <TypographyWithEmptyStyle>
+            <TypographyWithEmptyStyle component="div">
               {tab === 0 && (
                 <div className="jobsPageEmptyText">
                   <h2 className="jobsPageEmptyTextTitle">No jobs yet!</h2>
@@ -283,7 +233,7 @@ const JobsPage = ({ onStartTrackingClick }: IProps) => {
           <ListWithStyle>
             {displayedJobs.map((job) => (
               <Fragment key={job._id}>
-                <ListItem sx={{ padding: "0px", marginBottom: "15px" }}>
+                <ListItem sx={{ padding: "11.5px 10px", marginBottom: "15px", backgroundColor: "white" }}>
                   <JobCard
                     job={job}
                     onSaveJob={handleSaveJob}

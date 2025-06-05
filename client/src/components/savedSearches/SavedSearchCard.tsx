@@ -1,8 +1,8 @@
-import { Box, styled, Button } from "@mui/material";
+import { Box, styled } from "@mui/material";
 import { SavedSearch } from "../../types";
 import { useState } from "react";
-import chevronIconBlue from "../../assets/chevron-right.svg"
-import chevronIconGrey from "../../assets/chevron-icon-grey.svg"
+import chevronIconBlue from "../../assets/chevron-right.svg";
+import chevronIconGrey from "../../assets/chevron-icon-grey.svg";
 
 interface IProps {
   savedSearch: SavedSearch;
@@ -24,23 +24,21 @@ const ContainerWithStyle = styled(Box, {
   transition: border 0.3s ease;
 `;
 
-export default function SavedSearchCard({
-  savedSearch,
-  onClickMonitoring,
-}: IProps) {
-  const [isHovered, setIsHovered] = useState<boolean>(false);
+export default function SavedSearchCard({ savedSearch, onClickMonitoring }: IProps) {
+  const [isHovered, setIsHovered] = useState(false);
 
   return (
     <ContainerWithStyle
       is_hovered={isHovered}
-      is_enabled={savedSearch?.enabled}
+      is_enabled={savedSearch.enabled}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onClick={() => onClickMonitoring(savedSearch)}
     >
-      <div className="searchNameWrapper" onClick={() => {
-        onClickMonitoring(savedSearch);
-      }}>
-        <h3 className={`${savedSearch.enabled || isHovered ? "searchNameBlue" : ""} searchName`}>{savedSearch.name}</h3>
+      <div className="searchNameWrapper">
+        <h3 className={`${savedSearch.enabled || isHovered ? "searchNameBlue" : ""} searchName`}>
+          {savedSearch.name}
+        </h3>
       </div>
       <img src={savedSearch.enabled || isHovered ? chevronIconBlue : chevronIconGrey} alt="chevron-right" />
     </ContainerWithStyle>

@@ -1,5 +1,5 @@
 import { styled, FormControl, Select, MenuItem, InputLabel } from "@mui/material";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const InputLabelWithStyle = styled(InputLabel)`
     font-weight: 400;
@@ -46,7 +46,6 @@ const SelectWithStyle = styled(Select)`
     text-transform: capitalize;
     color: #00AEEF;
 
-
   & .MuiOutlinedInput-notchedOutline {
     border-color: #00AEEF;
   }
@@ -65,10 +64,25 @@ const SelectWithStyle = styled(Select)`
 `;
 
 export default function Settings() {
-  const [value, setValue] = useState<number>(30);
+  const [value, setValue] = useState<number>(3); // Default to 3 minutes
 
+  // Load saved refresh interval on mount
+  useEffect(() => {
+    chrome.storage.local.get(['refreshIntervalMinutes'], (result) => {
+      if (result.refreshIntervalMinutes) {
+        setValue(Number(result.refreshIntervalMinutes));
+        console.log(`Loaded refresh interval: ${result.refreshIntervalMinutes} minutes`);
+      }
+    });
+  }, []);
+
+  // Save refresh interval on change
   const handleChange = (event: any) => {
-    setValue(Number(event.target.value));
+    const newValue = Number(event.target.value);
+    setValue(newValue);
+    chrome.storage.local.set({ refreshIntervalMinutes: newValue }, () => {
+      console.log(`Saved refresh interval: ${newValue} minutes`);
+    });
   };
 
   return (
@@ -85,9 +99,10 @@ export default function Settings() {
           labelId="refreshRate"
           value={value}
         >
-          <MenuItem value={10}>10 minutes</MenuItem>
-          <MenuItem value={20}>20 minutes</MenuItem>
-          <MenuItem value={30}>30 minutes</MenuItem>
+          <MenuItem value={1}>Aggressive (1 minute)</MenuItem>
+          <MenuItem value={3}>Normal (3 minutes)</MenuItem>
+          <MenuItem value={5}>Moderate (5 minutes)</MenuItem>
+          <MenuItem value={10}>Infrequent (10 minutes)</MenuItem>
         </SelectWithStyle>
       </FormControlWithStyle>
     </div>

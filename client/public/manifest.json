@@ -31,10 +31,13 @@
     "storage",
     "tabs",
     "scripting",
-    "sidePanel"
+    "sidePanel",
+    "tabGroups",
+    "cookies"
   ],
   "host_permissions": [
-    "https://www.upwork.com/*"
+    "https://www.upwork.com/*",
+    "https://api.crawlbase.com/*"
   ],
   "externally_connectable": {
     "matches": [
