@@ -2,12 +2,10 @@ import React, { useState, useEffect } from "react";
 import Navbar from "../Components/Navbar";
 import { Button, TextField, Autocomplete } from "@mui/material";
 import RichTextArea from "../Components/RichTextArea";
-import { CustomFavourite } from "../Components/CustomFavourite";
 import { Link, useParams, useNavigate } from "react-router-dom"
 import axiosInstance from "../services/axiosInstance";
 
 export default function EditTemplate() {
-    const [isFavourite, setIsFavourite] = useState(false);
     const [formData, setFormData] = useState({
         templateName: "",
         templateDescription: "",
@@ -193,7 +191,6 @@ export default function EditTemplate() {
                                             setFormData((prev) => ({ ...prev, templateContent: content }))
                                         }
                                         height={500}
-                                        extensions={[CustomFavourite.configure({ isFavourite, setIsFavourite })]}
                                     />
                                 </div>
                             </div>

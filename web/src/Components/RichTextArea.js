@@ -11,7 +11,7 @@ import {
 import StarterKit from "@tiptap/starter-kit";
 import { SpecialCharactersMenuButton, CustomSpecialCharacters } from "./CustomSpecialCharacters";
 import { AISnippetMenuButton, CustomAISnippet } from "./CustomAISnippet";
-import { FavouriteMenuButton, CustomFavourite } from "./CustomFavourite";
+import { EmojiMenuButton } from "./EmojiMenuButton";
 
 export default function RichTextArea({
     content,
@@ -26,13 +26,13 @@ export default function RichTextArea({
                 StarterKit, // Includes Bold, Italic, Bullet, Numbers (Ordered List), Quote
                 CustomSpecialCharacters, // Handles Emoji, Arrow, Currency, Trademark
                 CustomAISnippet, // Handles AI Snippet
-                CustomFavourite, // Handles Favourite
                 ...extensions, // Include parent-provided extensions (e.g., configured CustomFavourite)
             ]}
             content={content}
             onUpdate={(e) => setContent(e.editor.getHTML())}
-            renderControls={() => (
+            renderControls={(editor) => (
                 <MenuControlsContainer>
+                    <EmojiMenuButton editor={editor} />
                     <MenuButtonBold />
                     <MenuButtonItalic />
                     <MenuDivider />
@@ -40,9 +40,8 @@ export default function RichTextArea({
                     <MenuButtonOrderedList />
                     <MenuButtonBlockquote />
                     <MenuDivider />
-                    <SpecialCharactersMenuButton />
-                    <AISnippetMenuButton />
-                    <FavouriteMenuButton />
+                    <SpecialCharactersMenuButton editor={editor} />
+                    <AISnippetMenuButton editor={editor} />
                 </MenuControlsContainer>
             )}
         />

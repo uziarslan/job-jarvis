@@ -700,6 +700,11 @@ button span {
     border-radius: 16px;
 }
 
+.ai-snippet-highlight {
+    background-color: #d0f3fc;
+    border-radius: 3px;
+}
+
 @media(max-width: 850px) {
     .sideBySide {
         flex-direction: column;
