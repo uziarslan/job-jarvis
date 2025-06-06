@@ -45,7 +45,7 @@ export function renderModal(modalRoot: HTMLElement, props: {
 
   // Create new root
   currentRoot = createRoot(modalRoot);
-  
+
   // Wrap onClose to handle cleanup
   const wrappedOnClose = () => {
     if (currentRoot) {
@@ -64,11 +64,11 @@ export function renderModal(modalRoot: HTMLElement, props: {
       React.createElement(GenerateModal, {
         open: props.open,
         onClose: wrappedOnClose,
-        onGenerate: props.onGenerate,
+        onGenerate: props.onGenerate as () => Promise<void>,
         title: props.title
       })
     )
   );
-  
+
   return currentRoot;
 } 

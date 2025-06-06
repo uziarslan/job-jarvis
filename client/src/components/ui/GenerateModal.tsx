@@ -1,12 +1,27 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, Select, styled, MenuItem, SelectChangeEvent, FormControl } from "@mui/material";
+import { Dialog, Button, Select, styled, MenuItem, SelectChangeEvent, FormControl } from "@mui/material";
 import { useState, useEffect } from "react";
 import "./GenerateModal.css";
 import axiosInstance from "../../services/axiosInstance";
+import TemplateView from "./TemplateView";
 
-interface IProps {
+interface Profile {
+    _id: string;
+    profileDetails: { profileName: string };
+}
+
+interface Template {
+    _id: string;
+    templateName: string;
+    templateDescription: string;
+    templateContent?: string;
+    profile?: string;
+    default?: boolean;
+}
+
+interface GenerateModalProps {
     open: boolean;
     onClose: () => void;
-    onGenerate: () => void;
+    onGenerate: () => Promise<void>;
     title: string;
 }
 
@@ -21,10 +36,6 @@ const DialogWithStyle = styled(Dialog)`
   }
 `;
 
-const ButtonWithStyle = styled(Button)`
-  text-transform: capitalize;
-`;
-
 const ButtonWithStyleTemplate = styled(Button)`
   text-transform: capitalize;
   width: 100%;
@@ -32,8 +43,8 @@ const ButtonWithStyleTemplate = styled(Button)`
   border-radius: 8px;
   background: linear-gradient(180deg, #16D3F0 0%, #00AEEF 100%);
   color: #fff;
-    font-weight: 700;
-    font-size: 14px;
+  font-weight: 700;
+  font-size: 14px;
 `;
 
 const EditButton = styled(Button)`
@@ -60,184 +71,182 @@ const DeleteButton = styled(Button)`
   justify-content: center;
 `;
 
-export default function GenerateModal({ open, onClose, onGenerate, title }: IProps) {
+export default function GenerateModal({ open, onClose, onGenerate, title }: GenerateModalProps) {
+    const [profiles, setProfiles] = useState<Profile[]>([]);
+    const [selectedProfile, setSelectedProfile] = useState("");
+    const [templateFilter, setTemplateFilter] = useState<"all" | "jobjarvis" | "my">("all");
+    const [customTemplates, setCustomTemplates] = useState<Template[]>([]);
+    const [defaultTemplates, setDefaultTemplates] = useState<Template[]>([]);
+    const [templateViewOpen, setTemplateViewOpen] = useState(false);
+    const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
     const [isGenerating, setIsGenerating] = useState(false);
-    const [profiles, setProfiles] = useState<Array<{ profileDetails: { profileName: string } }>>([]);
-    const [selectedProfile, setSelectedProfile] = useState<string>('');
-    const [templates, setTemplates] = useState<string>('all');
-    const [templatesList, setTemplatesList] = useState<Array<{}>>([]);
 
     useEffect(() => {
-        const fetchProfiles = async () => {
+        const fetchData = async () => {
             try {
-                const { status, data } = await axiosInstance.get('/api/v1/profiles');
-                if (status === 200) {
-                    setProfiles(data.profiles);
-                    if (data.profiles.length > 0) {
-                        setSelectedProfile(data.profiles[0].profileDetails.profileName);
-                    }
+                const [profilesRes, templatesRes, defaultTemplatesRes] = await Promise.all([
+                    axiosInstance.get<{ profiles: Profile[] }>("/api/v1/profiles"),
+                    axiosInstance.get<Template[]>("/api/v1/templates"),
+                    axiosInstance.get<Template[]>("/api/v1/templates-default"),
+                ]);
+
+                setProfiles(profilesRes.data.profiles);
+                setCustomTemplates(templatesRes.data);
+                setDefaultTemplates(defaultTemplatesRes.data);
+                if (profilesRes.data.profiles.length > 0) {
+                    setSelectedProfile(profilesRes.data.profiles[0]._id);
                 }
             } catch (error) {
-                setProfiles([]);
+                console.error("Failed to fetch data:", error);
             }
-        }
+        };
 
-        const fetchTemplates = async () => {
-            try {
-                const { status, data } = await axiosInstance.get('/api/v1/templates');
-                if (status === 200) {
-                    setTemplatesList(data);
-                }
-            } catch (error) {
-                setTemplatesList([]);
-            }
-        }
-
-        fetchProfiles();
-        fetchTemplates();
+        fetchData();
     }, []);
 
-    const handleProfileChange = (event: SelectChangeEvent) => {
-        setSelectedProfile(event.target.value);
-    };
-
-    const handleTemplateChange = (event: SelectChangeEvent) => {
-        setTemplates(event.target.value);
-    };
-
-    const handleGenerate = async () => {
+    const handleGenerate = async (template: Template) => {
         setIsGenerating(true);
         try {
             await onGenerate();
+            onClose();
+        } catch (error) {
+            console.error("Generation failed:", error);
         } finally {
             setIsGenerating(false);
-            onClose();
         }
     };
 
+    const handleDeleteTemplate = async (templateId: string) => {
+        if (!window.confirm("Are you sure you want to delete this template?")) return;
+        try {
+            await axiosInstance.delete(`/api/v1/template/${templateId}`);
+            setCustomTemplates(customTemplates.filter((t) => t._id !== templateId));
+        } catch (error) {
+            console.error("Failed to delete template:", error);
+        }
+    };
+
+    const filteredTemplates =
+        templateFilter === "my"
+            ? customTemplates
+            : templateFilter === "jobjarvis"
+                ? defaultTemplates
+                : [...customTemplates, ...defaultTemplates];
+
     return (
-        <DialogWithStyle open={open} onClose={onClose}>
-            <div className="row justify-content-between align-items-center">
-                <div className="col">
-                    <img
-                        className="modalLogo"
-                        src={chrome.runtime.getURL('assets/black-test-logo.png')}
-                        alt="logo"
-                    />
-                </div>
-                <div className="col">
-                    <div className="crossIconWrapper" onClick={onClose}>
-                        <img src={chrome.runtime.getURL('assets/cross-icon.svg')} alt="cross" />
-                    </div>
-                </div>
-            </div>
-            <div className="profileAndTemplateContainer">
-                <div className="containerText">
-                    <span>Generate Proposal for</span>
-                    <span>
-                        <FormControl>
-                            <Select
-                                sx={{ height: '40px' }}
-                                labelId="profile-select-label"
-                                id="profile-select"
-                                value={selectedProfile}
-                                onChange={handleProfileChange}
+        <DialogWithStyle open={open} onClose={onClose} aria-labelledby="generate-proposal-dialog">
+            {templateViewOpen ? (
+                <TemplateView
+                    open={templateViewOpen}
+                    onClose={() => setTemplateViewOpen(false)}
+                    template={selectedTemplate!}
+                    templateList={filteredTemplates}
+                    setSelectedTemplate={setSelectedTemplate}
+                    selectedProfile={selectedProfile}
+                    setSelectedProfile={setSelectedProfile}
+                    profiles={profiles}
+                />
+            ) : (
+                <>
+                    <div className="row justify-content-between align-items-center">
+                        <div className="col">
+                            <img
+                                className="modalLogo"
+                                src={chrome.runtime.getURL("assets/black-test-logo.png")}
+                                alt="Job Jarvis Logo"
+                            />
+                        </div>
+                        <div className="col">
+                            <div
+                                className="crossIconWrapper"
+                                onClick={onClose}
+                                role="button"
+                                aria-label="Close dialog"
                             >
-                                {profiles?.map(({ profileDetails }) => (
-                                    <MenuItem key={profileDetails.profileName} value={profileDetails.profileName}>{profileDetails.profileName}</MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    </span>
-                    <span>Using</span>
-                    <span>
-                        <FormControl>
-                            <Select
-                                sx={{ height: '40px' }}
-                                id="templates"
-                                value={templates}
-                                onChange={handleTemplateChange}
-                            >
-                                <MenuItem value="all">All Templates</MenuItem>
-                                <MenuItem value="jobjarvis">Job Jarvis Templates</MenuItem>
-                                <MenuItem value="my">My Templates</MenuItem>
-                            </Select>
-                        </FormControl>
-                    </span>
-                </div>
-            </div>
-            <div className="templatesContainer">
-                <div className="addNewtemplate">
-                    <h1 className="templateHeading">Add a new template</h1>
-                    <p className="templateDescription">Create a new template from the template library or create a new from scratch.</p>
-                    <ButtonWithStyleTemplate variant="contained">+ Add New Template</ButtonWithStyleTemplate>
-                </div>
-                {templatesList?.map((template: any) => (
-                    <div className="templateCard">
-                    <h1 className="templateHeading">{template.templateName}</h1>
-                    <p className="templateDescription">{template.templateDescription}</p>
-                    <div className="templateActions">
-                        <ButtonWithStyleTemplate variant="contained">Generate</ButtonWithStyleTemplate>
-                        <EditButton variant="contained">
-                            <img src={chrome.runtime.getURL('assets/icon_code.svg')} alt="code" />
-                        </EditButton>
-                        <DeleteButton variant="contained">
-                            <img src={chrome.runtime.getURL('assets/trash-icon.svg')} alt="trash" />
-                        </DeleteButton>
+                                <img src={chrome.runtime.getURL("assets/cross-icon.svg")} alt="Close" />
+                            </div>
+                        </div>
                     </div>
-                </div>
-                ))}
-                <div className="templateCard">
-                    <h1 className="templateHeading">📝 Standard Cover Letter</h1>
-                    <p className="templateDescription">A general purpose template that showcases your relevant skills and experiences.</p>
-                    <ButtonWithStyleTemplate variant="contained">+ Add New Template</ButtonWithStyleTemplate>
-                </div>
-                <div className="templateCard">
-                    <h1 className="templateHeading">💪 My Approach</h1>
-                    <p className="templateDescription">Demonstrate that you understand the clients need by discussing your approach.</p>
-                    <ButtonWithStyleTemplate variant="contained">+ Add New Template</ButtonWithStyleTemplate>
-                </div>
-                <div className="templateCard">
-                    <h1 className="templateHeading">🤷‍♂️ Ask questions about a project</h1>
-                    <p className="templateDescription">Use this template to respond to detaied job postings and/or complex projects.</p>
-                    <ButtonWithStyleTemplate variant="contained">+ Add New Template</ButtonWithStyleTemplate>
-                </div>
-                <div className="templateCard">
-                    <h1 className="templateHeading">🛠️ My skills for your job</h1>
-                    <p className="templateDescription">Let the client know how your skills align with their project.</p>
-                    <ButtonWithStyleTemplate variant="contained">+ Add New Template</ButtonWithStyleTemplate>
-                </div>
-                <div className="templateCard">
-                    <h1 className="templateHeading">📧 Reply to Job Invite</h1>
-                    <p className="templateDescription">Got an invite for a job? Then use this template to reply.</p>
-                    <ButtonWithStyleTemplate variant="contained">+ Add New Template</ButtonWithStyleTemplate>
-                </div>
-                <div className="templateCard">
-                    <h1 className="templateHeading">💼 Apply for part-time/full-time job</h1>
-                    <p className="templateDescription">Looking to apply to a part-time/full-time job post? Then this template will help you stand out.</p>
-                    <ButtonWithStyleTemplate variant="contained">+ Add New Template</ButtonWithStyleTemplate>
-                </div>
-                <div className="templateCard">
-                    <h1 className="templateHeading">✍️ Short Reply</h1>
-                    <p className="templateDescription">An easy way to create a short proposal. Perfect for small jobs.</p>
-                    <ButtonWithStyleTemplate variant="contained">+ Add New Template</ButtonWithStyleTemplate>
-                </div>
-                <div className="templateCard">
-                    <h1 className="templateHeading">💵 Estimate For Project</h1>
-                    <p className="templateDescription">Send clients a detailed estimate for their job. Feel free to alter the AI-prompt to include your hourly rate.</p>
-                    <ButtonWithStyleTemplate variant="contained">+ Add New Template</ButtonWithStyleTemplate>
-                </div>
-                <div className="templateCard">
-                    <h1 className="templateHeading">👉 Be Direct</h1>
-                    <p className="templateDescription">A direct response to any questions or requirements a client may ask.</p>
-                    <ButtonWithStyleTemplate variant="contained">+ Add New Template</ButtonWithStyleTemplate>
-                </div>
-                <div className="templateCard">
-                    <h1 className="templateHeading">🚧 Prompt Playground</h1>
-                    <p className="templateDescription">Want to experiment with your own AI prompts? Then use this template to write your own.</p>
-                    <ButtonWithStyleTemplate variant="contained">+ Add New Template</ButtonWithStyleTemplate>
-                </div>
-            </div>
+                    <div className="profileAndTemplateContainer">
+                        <div className="containerText" id="generate-proposal-dialog">
+                            <span>Generate Proposal for</span>
+                            <FormControl>
+                                <Select
+                                    sx={{ height: "40px" }}
+                                    value={selectedProfile}
+                                    onChange={(e) => setSelectedProfile(e.target.value)}
+                                    aria-label="Select profile"
+                                >
+                                    {profiles.map(({ _id, profileDetails }) => (
+                                        <MenuItem key={_id} value={_id}>
+                                            {profileDetails.profileName}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                            <span>Using</span>
+                            <FormControl>
+                                <Select
+                                    sx={{ height: "40px" }}
+                                    value={templateFilter}
+                                    onChange={(e) => setTemplateFilter(e.target.value as "all" | "jobjarvis" | "my")}
+                                    aria-label="Select template filter"
+                                >
+                                    <MenuItem value="all">All Templates</MenuItem>
+                                    <MenuItem value="jobjarvis">Job Jarvis Templates</MenuItem>
+                                    <MenuItem value="my">My Templates</MenuItem>
+                                </Select>
+                            </FormControl>
+                        </div>
+                    </div>
+                    <div className="templatesContainer">
+                        <div className="addNewtemplate">
+                            <h1 className="templateHeading">Add a new template</h1>
+                            <p className="templateDescription">
+                                Create a new template from the template library or create a new from scratch.
+                            </p>
+                            <ButtonWithStyleTemplate variant="contained" aria-label="Add new template">
+                                + Add New Template
+                            </ButtonWithStyleTemplate>
+                        </div>
+                        {filteredTemplates.map((template) => (
+                            <div key={template._id} className="templateCard" role="article">
+                                <h1 className="templateHeading">{template.templateName}</h1>
+                                <p className="templateDescription">{template.templateDescription}</p>
+                                <div className="templateActions">
+                                    <ButtonWithStyleTemplate
+                                        variant="contained"
+                                        onClick={() => handleGenerate(template)}
+                                        aria-label={`Generate proposal using ${template.templateName}`}
+                                        disabled={isGenerating}
+                                    >
+                                        Generate
+                                    </ButtonWithStyleTemplate>
+                                    <EditButton
+                                        onClick={() => {
+                                            setTemplateViewOpen(true);
+                                            setSelectedTemplate(template);
+                                        }}
+                                        variant="contained"
+                                        aria-label={`Edit ${template.templateName}`}
+                                    >
+                                        <img src={chrome.runtime.getURL("assets/icon_code.svg")} alt="Edit template" />
+                                    </EditButton>
+                                    {template.profile && (
+                                        <DeleteButton
+                                            onClick={() => handleDeleteTemplate(template._id)}
+                                            variant="contained"
+                                            aria-label={`Delete ${template.templateName}`}
+                                        >
+                                            <img src={chrome.runtime.getURL("assets/trash-icon.svg")} alt="Delete template" />
+                                        </DeleteButton>
+                                    )}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </>
+            )}
         </DialogWithStyle>
     );
-} 
+}
