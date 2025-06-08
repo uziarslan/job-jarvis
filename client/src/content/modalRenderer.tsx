@@ -35,8 +35,9 @@ let currentRoot: ReturnType<typeof createRoot> | null = null;
 export function renderModal(modalRoot: HTMLElement, props: {
   open: boolean;
   onClose: () => void;
-  onGenerate: () => void;
+  onGenerate: (content: string) => void;
   title: string;
+  jobData: any;
 }) {
   // Clean up previous root if it exists
   if (currentRoot) {
@@ -64,8 +65,8 @@ export function renderModal(modalRoot: HTMLElement, props: {
       React.createElement(GenerateModal, {
         open: props.open,
         onClose: wrappedOnClose,
-        onGenerate: props.onGenerate as () => Promise<void>,
-        title: props.title
+        onGenerate: props.onGenerate,
+        jobData: props.jobData,
       })
     )
   );

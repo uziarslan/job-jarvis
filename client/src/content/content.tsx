@@ -1,7 +1,6 @@
 import './button.css';
 import { createModalRoot, renderModal } from './modalRenderer';
 
-
 console.log("📦 Content script running...");
 
 async function checkAuthentication(): Promise<boolean> {
@@ -382,11 +381,11 @@ function createApplyButton(jobLink: string) {
   return button;
 }
 
-const injectJobApplyButton = () => {
+const injectJobApplyButton = async () => {
   let attempts = 0;
   const maxAttempts = 20; // 20 attempts * 500ms = 10 seconds
 
-  const findAndInjectButton = () => {
+  const findAndInjectButton = async () => {
     // Create modal root if it doesn't exist
     let modalRoot = document.getElementById('job-jarvis-modal-root');
     if (!modalRoot) {
@@ -414,6 +413,41 @@ const injectJobApplyButton = () => {
         </div>
       `;
 
+      // Scrape the job to apply for
+
+      const jobTitle = document.querySelector("#main > div.container > div:nth-child(4) > div > div > div:nth-child(3) > div.fe-job-details > div > section > div:nth-child(1) > div.content.span-md-8.span-lg-9 > h3")?.textContent?.trim();
+
+      const jobPosted = document.querySelector('[itemprop="datePosted"]')?.textContent?.trim();
+
+      // Fix: Properly select the "Show more" button for job description and click it if present
+      const moreDescriptionButton = document.querySelector('[data-ev-label="truncation_toggle"]');
+
+      let jobDescription = '';
+      if (moreDescriptionButton instanceof HTMLElement) {
+        moreDescriptionButton.click();
+        await new Promise(resolve => setTimeout(resolve, 500));
+        jobDescription = document.querySelector("#air3-truncation-1")?.textContent?.trim() || '';
+        moreDescriptionButton.click();
+      }
+
+
+      const jobSkillsContainer = document.querySelector("#main > div.container > div:nth-child(4) > div > div > div:nth-child(3) > div.fe-job-details > div > section > div.air3-grid-container.d-none.d-lg-block > div > ul");
+
+      let jobSkills: string[] = [];
+      if (jobSkillsContainer) {
+        jobSkills = Array.from(jobSkillsContainer.querySelectorAll("li span"))
+          .map((span) => span.textContent?.trim() || "")
+          .filter(Boolean);
+      }
+
+      let jobData = {
+        jobTitle: jobTitle,
+        jobDescription: jobDescription,
+        jobSkills: jobSkills,
+        jobPosted: jobPosted,
+        type: "coverLetter"
+      }
+
       button.addEventListener('click', (e) => {
         e.preventDefault();
         renderModal(modalRoot!, {
@@ -421,11 +455,16 @@ const injectJobApplyButton = () => {
           onClose: () => {
             // No need for manual cleanup anymore
           },
-          onGenerate: async () => {
-            // TODO: Implement cover letter generation
-            console.log('Generating cover letter...');
+          onGenerate: (content: string) => {
+            console.log("inserting in textarea")
+            const textarea = document.querySelector('[aria-labelledby="cover_letter_label"]') as HTMLTextAreaElement || document.querySelector('textarea') as HTMLTextAreaElement;
+            if (textarea) {
+              textarea.value = content;
+              textarea.dispatchEvent(new Event('input', { bubbles: true }));
+            }
           },
-          title: 'Generate Cover Letter'
+          title: "Generate Cover Letter",
+          jobData: jobData
         });
       });
 
@@ -457,19 +496,60 @@ const injectJobApplyButton = () => {
             </svg>
           `;
 
+          const jobTitle = document.querySelector("#main > div.container > div:nth-child(4) > div > div > div:nth-child(3) > div.fe-job-details > div > section > div:nth-child(1) > div.content.span-md-8.span-lg-9 > h3")?.textContent?.trim();
+
+          const jobPosted = document.querySelector('[itemprop="datePosted"]')?.textContent?.trim();
+
+          // Fix: Properly select the "Show more" button for job description and click it if present
+          const moreDescriptionButton = document.querySelector('[data-ev-label="truncation_toggle"]');
+
+          let jobDescription = '';
+          if (moreDescriptionButton instanceof HTMLElement) {
+            moreDescriptionButton.click();
+            (async () => {
+              await new Promise(resolve => setTimeout(resolve, 500));
+            })();
+            jobDescription = document.querySelector("#air3-truncation-1")?.textContent?.trim() || '';
+            moreDescriptionButton.click();
+          }
+
+          const jobSkillsContainer = document.querySelector("#main > div.container > div:nth-child(4) > div > div > div:nth-child(3) > div.fe-job-details > div > section > div.air3-grid-container.d-none.d-lg-block > div > ul");
+
+          let jobSkills: string[] = [];
+          if (jobSkillsContainer) {
+            jobSkills = Array.from(jobSkillsContainer.querySelectorAll("li span"))
+              .map((span) => span.textContent?.trim() || "")
+              .filter(Boolean);
+          }
+
+
+          const questionText = questionElement.querySelector(".label")?.textContent?.trim();
+
+          let jobData = {
+            jobTitle: jobTitle,
+            jobDescription: jobDescription,
+            jobSkills: jobSkills,
+            jobPosted: jobPosted,
+            questionText: questionText,
+            type: "question"
+          }
+
           button.addEventListener('click', (e) => {
             e.preventDefault();
-            const questionText = questionElement.querySelector('.question-text')?.textContent || 'Question';
             renderModal(modalRoot!, {
               open: true,
               onClose: () => {
                 // No need for manual cleanup anymore
               },
-              onGenerate: async () => {
-                // TODO: Implement question answer generation
-                console.log('Generating answer for:', questionText);
+              onGenerate: (content: string) => {
+                const textarea = questionElement.querySelector('textarea') as HTMLTextAreaElement;
+                if (textarea) {
+                  textarea.value = content;
+                  textarea.dispatchEvent(new Event('input', { bubbles: true }));
+                }
               },
-              title: `Generate Answer: ${questionText}`
+              title: `Generate Answer`,
+              jobData: jobData
             });
           });
 
@@ -488,58 +568,95 @@ const injectJobApplyButton = () => {
     }
 
     // Set up observers for both areas
-    const setupObserver = (element: Element) => {
-      const observer = new MutationObserver(() => {
-        if (!element.querySelector('.job-jarvis-button')) {
-          const button = document.createElement('a');
-          button.className = 'job-jarvis-button my-5';
-          button.innerHTML = `
-            <span class="button-text">Generate</span>
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <g clip-path="url(#clip0_12_242)">
-                <path d="M3.92744 5.93982L3.72244 6.41148C3.6904 6.48829 3.63635 6.5539 3.5671 6.60004C3.49785 6.64619 3.41649 6.67082 3.33327 6.67082C3.25005 6.67082 3.16869 6.64619 3.09944 6.60004C3.03019 6.5539 2.97614 6.48829 2.9441 6.41148L2.7391 5.93982C2.37867 5.10542 1.71859 4.43642 0.889104 4.06482L0.256604 3.78232C0.179869 3.74702 0.114865 3.69046 0.069298 3.61934C0.0237309 3.54822 -0.000488281 3.46553 -0.000488281 3.38107C-0.000488281 3.2966 0.0237309 3.21391 0.069298 3.14279C0.114865 3.07168 0.179869 3.01512 0.256604 2.97982L0.854104 2.71398C1.70444 2.3318 2.37582 1.63805 2.72994 0.775651L2.9416 0.266484C2.97257 0.187612 3.02658 0.119899 3.09659 0.0721717C3.1666 0.0244443 3.24937 -0.00108337 3.3341 -0.00108337C3.41884 -0.00108337 3.5016 0.0244443 3.57162 0.0721717C3.64163 0.119899 3.69564 0.187612 3.7266 0.266484L3.93744 0.774818C4.29118 1.63738 4.96226 2.33143 5.81244 2.71398L6.41077 2.98065C6.48727 3.01605 6.55204 3.0726 6.59744 3.14363C6.64284 3.21466 6.66696 3.29719 6.66696 3.38148C6.66696 3.46578 6.64284 3.54831 6.59744 3.61934C6.55204 3.69037 6.48727 3.74692 6.41077 3.78232L5.77744 4.06398C4.94811 4.43596 4.28833 5.10525 3.92827 5.93982M2.55327 18.0107C3.40827 12.8515 5.25994 1.66398 17.4999 1.66398C16.2533 4.16398 15.4166 5.41398 14.5833 6.24732L13.7499 7.08065L14.9999 7.91398C14.1666 10.414 11.6666 13.3307 8.33327 13.7473C6.10938 14.0251 4.71994 15.5529 4.16494 18.3307H2.49994L2.55327 18.0107Z" fill="#fff"/>
-              </g>
-              <defs>
-                <clipPath id="clip0_12_242">
-                  <rect width="20" height="20" fill="white"/>
-                </clipPath>
-              </defs>
-            </svg>
-          `;
+    // const setupObserver = async (element: Element) => {
+    //   const observer = new MutationObserver(async () => {
+    //     if (!element.querySelector('.job-jarvis-button')) {
+    //       const button = document.createElement('a');
+    //       button.className = 'job-jarvis-button my-5';
+    //       button.innerHTML = `
+    //         <span class="button-text">Generate</span>
+    //         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+    //           <g clip-path="url(#clip0_12_242)">
+    //             <path d="M3.92744 5.93982L3.72244 6.41148C3.6904 6.48829 3.63635 6.5539 3.5671 6.60004C3.49785 6.64619 3.41649 6.67082 3.33327 6.67082C3.25005 6.67082 3.16869 6.64619 3.09944 6.60004C3.03019 6.5539 2.97614 6.48829 2.9441 6.41148L2.7391 5.93982C2.37867 5.10542 1.71859 4.43642 0.889104 4.06482L0.256604 3.78232C0.179869 3.74702 0.114865 3.69046 0.069298 3.61934C0.0237309 3.54822 -0.000488281 3.46553 -0.000488281 3.38107C-0.000488281 3.2966 0.0237309 3.21391 0.069298 3.14279C0.114865 3.07168 0.179869 3.01512 0.256604 2.97982L0.854104 2.71398C1.70444 2.3318 2.37582 1.63805 2.72994 0.775651L2.9416 0.266484C2.97257 0.187612 3.02658 0.119899 3.09659 0.0721717C3.1666 0.0244443 3.24937 -0.00108337 3.3341 -0.00108337C3.41884 -0.00108337 3.5016 0.0244443 3.57162 0.0721717C3.64163 0.119899 3.69564 0.187612 3.7266 0.266484L3.93744 0.774818C4.29118 1.63738 4.96226 2.33143 5.81244 2.71398L6.41077 2.98065C6.48727 3.01605 6.55204 3.0726 6.59744 3.14363C6.64284 3.21466 6.66696 3.29719 6.66696 3.38148C6.66696 3.46578 6.64284 3.54831 6.59744 3.61934C6.55204 3.69037 6.48727 3.74692 6.41077 3.78232L5.77744 4.06398C4.94811 4.43596 4.28833 5.10525 3.92827 5.93982M2.55327 18.0107C3.40827 12.8515 5.25994 1.66398 17.4999 1.66398C16.2533 4.16398 15.4166 5.41398 14.5833 6.24732L13.7499 7.08065L14.9999 7.91398C14.1666 10.414 11.6666 13.3307 8.33327 13.7473C6.10938 14.0251 4.71994 15.5529 4.16494 18.3307H2.49994L2.55327 18.0107Z" fill="#fff"/>
+    //           </g>
+    //           <defs>
+    //             <clipPath id="clip0_12_242">
+    //               <rect width="20" height="20" fill="white"/>
+    //             </clipPath>
+    //           </defs>
+    //         </svg>
+    //       `;
 
-          button.addEventListener('click', (e) => {
-            e.preventDefault();
-            const questionText = element.querySelector('.question-text')?.textContent || 'Question';
-            renderModal(modalRoot!, {
-              open: true,
-              onClose: () => {
-                // No need for manual cleanup anymore
-              },
-              onGenerate: async () => {
-                // TODO: Implement question answer generation
-                console.log('Generating answer for:', questionText);
-              },
-              title: `Generate Answer: ${questionText}`
-            });
-          });
+    //       const jobTitle = document.querySelector("#main > div.container > div:nth-child(4) > div > div > div:nth-child(3) > div.fe-job-details > div > section > div:nth-child(1) > div.content.span-md-8.span-lg-9 > h3")?.textContent?.trim();
 
-          element.appendChild(button);
-        }
-      });
+    //       const jobPosted = document.querySelector('[itemprop="datePosted"]')?.textContent?.trim();
 
-      observer.observe(element, {
-        childList: true,
-        subtree: true
-      });
-    };
+    //       // Fix: Properly select the "Show more" button for job description and click it if present
+    //       const moreDescriptionButton = document.querySelector('[data-ev-label="truncation_toggle"]');
 
-    // Setup observers for both areas if they exist
-    if (coverLetterArea) {
-      setupObserver(coverLetterArea);
-    }
-    if (questionsArea) {
-      Array.from(questionsArea.children).forEach(setupObserver);
-    }
+    //       let jobDescription = '';
+    //       if (moreDescriptionButton instanceof HTMLElement) {
+    //         moreDescriptionButton.click();
+    //         await new Promise(resolve => setTimeout(resolve, 500));
+    //         jobDescription = document.querySelector("#air3-truncation-1")?.textContent?.trim() || '';
+    //       }
+
+
+    //       const jobSkillsContainer = document.querySelector("#main > div.container > div:nth-child(4) > div > div > div:nth-child(3) > div.fe-job-details > div > section > div.air3-grid-container.d-none.d-lg-block > div > ul");
+
+    //       let jobSkills: string[] = [];
+    //       if (jobSkillsContainer) {
+    //         jobSkills = Array.from(jobSkillsContainer.querySelectorAll("li span"))
+    //           .map((span) => span.textContent?.trim() || "")
+    //           .filter(Boolean);
+    //       }
+
+    //       let jobData = {
+    //         jobTitle: jobTitle,
+    //         jobDescription: jobDescription,
+    //         jobSkills: jobSkills,
+    //         jobPosted: jobPosted,
+    //         type: "coverLetter"
+    //       }
+
+    //       button.addEventListener('click', (e) => {
+    //         e.preventDefault();
+    //         const questionText = element.querySelector('.question-text')?.textContent || 'Question';
+    //         renderModal(modalRoot!, {
+    //           open: true,
+    //           onClose: () => {
+    //             // No need for manual cleanup anymore
+    //           },
+    //           onGenerate: (content: string) => {
+    //             // Directly insert into the textarea
+    //             const textarea = document.querySelector('textarea[name="coverLetter"]') as HTMLTextAreaElement || document.querySelector('textarea') as HTMLTextAreaElement;
+    //             if (textarea) {
+    //               textarea.value = content;
+    //               textarea.dispatchEvent(new Event('input', { bubbles: true }));
+    //             }
+    //           },
+    //           title: `Generate Answer: ${questionText}`,
+    //           jobData: jobData
+    //         });
+    //       });
+
+    //       element.appendChild(button);
+    //     }
+    //   });
+
+    //   observer.observe(element, {
+    //     childList: true,
+    //     subtree: true
+    //   });
+    // };
+
+    // // Setup observers for both areas if they exist
+    // if (coverLetterArea) {
+    //   setupObserver(coverLetterArea);
+    // }
+    // if (questionsArea) {
+    //   Array.from(questionsArea.children).forEach(setupObserver);
+    // }
   };
 
   // Start the first attempt

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   MenuButtonBold,
   MenuButtonBulletedList,
@@ -109,8 +109,18 @@ export default function RichTextArea({
   extraControls = [],
   extraExtensions = [],
 }: IProps) {
+  const editorRef = useRef<any>(null);
+
+  useEffect(() => {
+    const editor = editorRef.current?.editor;
+    if (editor && content !== editor.getHTML()) {
+      editor.commands.setContent(content, false); // false = don't emit transaction
+    }
+  }, [content]);
+
   return (
     <RichTextEditorWithStyle
+      ref={editorRef}
       height={height}
       extensions={[StarterKit, Underline, TaskList, TaskItem, ...extraExtensions]}
       content={content}

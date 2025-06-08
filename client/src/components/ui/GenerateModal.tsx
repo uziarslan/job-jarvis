@@ -21,8 +21,8 @@ interface Template {
 interface GenerateModalProps {
     open: boolean;
     onClose: () => void;
-    onGenerate: () => Promise<void>;
-    title: string;
+    onGenerate: (content: string) => void;
+    jobData: any;
 }
 
 const DialogWithStyle = styled(Dialog)`
@@ -71,7 +71,7 @@ const DeleteButton = styled(Button)`
   justify-content: center;
 `;
 
-export default function GenerateModal({ open, onClose, onGenerate, title }: GenerateModalProps) {
+export default function GenerateModal({ open, onClose, onGenerate, jobData }: GenerateModalProps) {
     const [profiles, setProfiles] = useState<Profile[]>([]);
     const [selectedProfile, setSelectedProfile] = useState("");
     const [templateFilter, setTemplateFilter] = useState<"all" | "jobjarvis" | "my">("all");
@@ -80,6 +80,14 @@ export default function GenerateModal({ open, onClose, onGenerate, title }: Gene
     const [templateViewOpen, setTemplateViewOpen] = useState(false);
     const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
     const [isGenerating, setIsGenerating] = useState(false);
+
+    useEffect(() => {
+        if (jobData.type === "coverLetter") {
+            setTemplateViewOpen(false);
+        } else if (jobData.type === "question") {
+            setTemplateViewOpen(true);
+        }
+    }, [jobData]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -104,18 +112,6 @@ export default function GenerateModal({ open, onClose, onGenerate, title }: Gene
         fetchData();
     }, []);
 
-    const handleGenerate = async (template: Template) => {
-        setIsGenerating(true);
-        try {
-            await onGenerate();
-            onClose();
-        } catch (error) {
-            console.error("Generation failed:", error);
-        } finally {
-            setIsGenerating(false);
-        }
-    };
-
     const handleDeleteTemplate = async (templateId: string) => {
         if (!window.confirm("Are you sure you want to delete this template?")) return;
         try {
@@ -139,12 +135,15 @@ export default function GenerateModal({ open, onClose, onGenerate, title }: Gene
                 <TemplateView
                     open={templateViewOpen}
                     onClose={() => setTemplateViewOpen(false)}
+                    closeModal={onClose}
                     template={selectedTemplate!}
                     templateList={filteredTemplates}
                     setSelectedTemplate={setSelectedTemplate}
                     selectedProfile={selectedProfile}
                     setSelectedProfile={setSelectedProfile}
                     profiles={profiles}
+                    jobData={jobData}
+                    onGenerate={onGenerate}
                 />
             ) : (
                 <>
@@ -216,7 +215,6 @@ export default function GenerateModal({ open, onClose, onGenerate, title }: Gene
                                 <div className="templateActions">
                                     <ButtonWithStyleTemplate
                                         variant="contained"
-                                        onClick={() => handleGenerate(template)}
                                         aria-label={`Generate proposal using ${template.templateName}`}
                                         disabled={isGenerating}
                                     >

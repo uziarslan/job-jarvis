@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-const API_BASE_URL = typeof process !== 'undefined' && process.env.REACT_APP_API_URL 
-  ? process.env.REACT_APP_API_URL 
+const API_BASE_URL = typeof process !== 'undefined' && process.env.REACT_APP_API_URL
+  ? process.env.REACT_APP_API_URL
   : 'http://localhost:4000';
 
 const axiosInstance = axios.create({
@@ -9,7 +9,7 @@ const axiosInstance = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
-  timeout: 10000, // 10 seconds timeout
+  timeout: 120000, // 10 seconds timeout
 });
 
 // Request interceptor

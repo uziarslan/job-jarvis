@@ -7,6 +7,8 @@ import { AISnippetMenuButton } from "./CustomAISnippet";
 import { SpecialCharactersMenuButton } from "./CustomSpecialCharacters";
 import { CustomAISnippet } from "./CustomAISnippet";
 import { CustomSpecialCharacters } from "./CustomSpecialCharacters";
+import axiosInstance from "../../services/axiosInstance";
+import { htmlToText } from 'html-to-text';
 
 interface Profile {
     _id: string;
@@ -22,12 +24,15 @@ interface Template {
 interface TemplateViewProps {
     open: boolean;
     onClose: () => void;
+    closeModal: () => void;
     template: any;
     templateList: any[];
     setSelectedTemplate: (template: Template | any) => void;
     selectedProfile: string;
     setSelectedProfile: (profileId: string) => void;
     profiles: Profile[];
+    jobData: any;
+    onGenerate: (content: string) => void;
 }
 
 const StyledFormControl = styled(FormControl)({
@@ -105,18 +110,54 @@ const ButtonWithStyles = styled(Button)({
 
 export default function TemplateView({
     onClose,
+    closeModal,
     template,
     templateList,
     setSelectedTemplate,
     selectedProfile,
     setSelectedProfile,
     profiles,
+    jobData,
+    onGenerate,
 }: TemplateViewProps) {
-    const [content, setContent] = useState(template.templateContent);
+    const [content, setContent] = useState(template?.templateContent || `<p>{I need a concise response to the following question:<br>${jobData?.questionText}<br>Instructions: Answer the question directly. If I do not have the skills, experiences, or qualifications requested, then highlight similar or related skills.}`)
+    const [coverLetterGenerated, setCoverLetterGenerated] = useState(false);
 
     useEffect(() => {
-        setContent(template.templateContent);
+        setContent(template?.templateContent || `<p>{I need a concise response to the following question:<br>${jobData?.questionText}<br>Instructions: Answer the question directly. If I do not have the skills, experiences, or qualifications requested, then highlight similar or related skills.}`);
     }, [template]);
+
+    const handleGenerate = async () => {
+        switch (jobData.type) {
+            case "coverLetter":
+                try {
+                    const { status, data } = await axiosInstance.post("/api/v1/generate-proposal", { content, profileId: selectedProfile, templateId: template._id, jobData });
+
+                    if (status === 201) {
+                        setContent(data);
+                        setCoverLetterGenerated(true);
+                    }
+
+                } catch (error) {
+                    console.error(error);
+                    setCoverLetterGenerated(false);
+                }
+                break;
+            case "question":
+                try {
+                    const { status, data } = await axiosInstance.post("/api/v1/generate-answer", { content, profileId: selectedProfile, jobData });
+
+                    if (status === 201) {
+                        setContent(data);
+                        setCoverLetterGenerated(true);
+                    }
+                } catch (error) {
+                    console.error(error);
+                    setCoverLetterGenerated(false);
+                }
+                break;
+        }
+    }
 
     return (
         <div role="dialog" aria-labelledby="template-view-title">
@@ -129,7 +170,7 @@ export default function TemplateView({
                 <div className="col">
                     <div
                         className="crossIconWrapper"
-                        onClick={onClose}
+                        onClick={closeModal}
                         role="button"
                         aria-label="Close template view"
                     >
@@ -139,52 +180,57 @@ export default function TemplateView({
             </div>
             <div className="templateViewContentWrapper">
                 <div className="templateViewContent">
-                    <StyledFormControl>
-                        <InputLabel sx={{ background: "#fff", padding: "0px 5px" }} id="templateSelect">
-                            Template
-                        </InputLabel>
-                        <StyledSelect
-                            labelId="templateSelect"
-                            id="templateSelect"
-                            value={template._id}
-                            label="Template"
-                            onChange={(e) => {
-                                const selected = templateList.find((item) => item._id === e.target.value);
-                                if (selected) {
-                                    setSelectedTemplate(selected);
-                                    setContent(selected.templateContent);
-                                }
-                            }}
-                            aria-label="Select template"
-                        >
-                            {templateList.map((item) => (
-                                <MenuItem key={item._id} value={item._id}>
-                                    {item.templateName}
-                                </MenuItem>
-                            ))}
-                        </StyledSelect>
-                    </StyledFormControl>
-                    <StyledFormControl>
-                        <InputLabel sx={{ background: "#fff", padding: "0px 5px" }} id="profileSelect">
-                            Profile
-                        </InputLabel>
-                        <StyledSelect
-                            labelId="profileSelect"
-                            id="profileSelect"
-                            value={selectedProfile}
-                            label="Profile"
-                            onChange={(e) => setSelectedProfile(e.target.value as string)}
-                            aria-label="Select profile"
-                        >
-                            {profiles.map((item) => (
-                                <MenuItem key={item._id} value={item._id}>
-                                    {item.profileDetails.profileName}
-                                </MenuItem>
-                            ))}
-                        </StyledSelect>
-                    </StyledFormControl>
+                    {
+                        jobData.type === "coverLetter" ? (
+                            <>
+                                <StyledFormControl>
+                                    <InputLabel sx={{ background: "#fff", padding: "0px 5px" }} id="templateSelect">
+                                        Template
+                                    </InputLabel>
+                                    <StyledSelect
+                                        labelId="templateSelect"
+                                        id="templateSelect"
+                                        value={template._id}
+                                        label="Template"
+                                        onChange={(e) => {
+                                            const selected = templateList.find((item) => item._id === e.target.value);
+                                            if (selected) {
+                                                setSelectedTemplate(selected);
+                                                setContent(selected.templateContent);
+                                            }
+                                        }}
+                                        aria-label="Select template"
+                                    >
+                                        {templateList.map((item) => (
+                                            <MenuItem key={item._id} value={item._id}>
+                                                {item.templateName}
+                                            </MenuItem>
+                                        ))}
+                                    </StyledSelect>
+                                </StyledFormControl>
+                                <StyledFormControl>
+                                    <InputLabel sx={{ background: "#fff", padding: "0px 5px" }} id="profileSelect">
+                                        Profile
+                                    </InputLabel>
+                                    <StyledSelect
+                                        labelId="profileSelect"
+                                        id="profileSelect"
+                                        value={selectedProfile}
+                                        label="Profile"
+                                        onChange={(e) => setSelectedProfile(e.target.value as string)}
+                                        aria-label="Select profile"
+                                    >
+                                        {profiles.map((item) => (
+                                            <MenuItem key={item._id} value={item._id}>
+                                                {item.profileDetails.profileName}
+                                            </MenuItem>
+                                        ))}
+                                    </StyledSelect>
+                                </StyledFormControl>
+                            </>
+                        ) : ''
+                    }
                     <RichTextArea
-                        key={template._id}
                         content={content}
                         setContent={setContent}
                         height={350}
@@ -195,15 +241,28 @@ export default function TemplateView({
                         <ButtonWithStylesOutline onClick={onClose}>
                             Cancel
                         </ButtonWithStylesOutline>
-                        <ButtonWithStyles>
-                            Generate
-                        </ButtonWithStyles>
+                        {
+                            !coverLetterGenerated ? (
+                                <ButtonWithStyles onClick={handleGenerate}>
+                                    Generate
+                                </ButtonWithStyles>
+                            ) : (
+                                <ButtonWithStyles onClick={() => {
+                                    onGenerate(htmlToText(content, {
+                                        wordwrap: false
+                                    }))
+                                    closeModal()
+                                }}>
+                                    Insert
+                                </ButtonWithStyles>
+                            )
+                        }
                     </div>
                 </div>
                 <div className="jobContent">
                     <div className="jobTitleSection">
-                        <h2 className="jobTitle">Esoteric Consultation Platform Development (Web + Chat + Mobile)</h2>
-                        <p className="jobPosted">Posted: May 12, 2025</p>
+                        <h2 className="jobTitle">{jobData.jobTitle}</h2>
+                        <p className="jobPosted">Posted: {jobData.jobPosted}</p>
                     </div>
                     <StyledAccordion>
                         <AccordionSummary
@@ -214,9 +273,9 @@ export default function TemplateView({
                             <TypographyWithStyles>Job Description</TypographyWithStyles>
                         </AccordionSummary>
                         <AccordionDetails>
-                            Hello, My name is Vladimir. I am looking for a team to develop an online consultation platform in the field of esotericism (tarot, astrology, clairvoyance, etc.). Core components of the project: - Website - Chat system - Mobile application - Partner landing page - Admin panel - Integrations and more Examples of similar platforms: - https://psychicbook.net - https://www.mysticsense.com - https://www.spiritualblossom.com Development approach: - Website and mobile application - Multifunctional chat system Budget: We are targeting a budget range of $10,000–$15,000. If the collaboration proves effective, we are ready to expand the budget in future phases. It is important that this budget covers actual functional implementation, not just design or a prototype. I would appreciate your feedback on the following: - Suggested tech stack - Timeline and budget estimation If you're interested in the project, feel free to message me directly. I'll be happy to answer any questions and provide the technical brief. **Only considering freelancers located in Ukraine, preferably in Kyiv.**
+                            {jobData.jobDescription}
                             <div className="jobTagsContainer">
-                                {Array(8).fill("Web Development").map((tag, index) => (
+                                {jobData.jobSkills.map((tag: string, index: number) => (
                                     <div key={index} className="jobTag">
                                         {tag}
                                     </div>
