@@ -1,31 +1,18 @@
-import { Dialog, Button, Select, styled, MenuItem, SelectChangeEvent, FormControl } from "@mui/material";
-import { useState, useEffect } from "react";
-import "./GenerateModal.css";
-import axiosInstance from "../../services/axiosInstance";
-import TemplateView from "./TemplateView";
-
-interface Profile {
-    _id: string;
-    profileDetails: { profileName: string };
-}
-
-interface Template {
-    _id: string;
-    templateName: string;
-    templateDescription: string;
-    templateContent?: string;
-    profile?: string;
-    default?: boolean;
-}
+import { useState, useEffect } from 'react';
+import { Dialog, Button, Select, MenuItem, FormControl, styled } from '@mui/material';
+import axiosInstance from '../../services/axiosInstance';
+import TemplateView from './TemplateView';
+import { Profile, Template, JobData } from '../../types';
+import './GenerateModal.css';
 
 interface GenerateModalProps {
     open: boolean;
     onClose: () => void;
     onGenerate: (content: string) => void;
-    jobData: any;
+    jobData: JobData;
 }
 
-const DialogWithStyle = styled(Dialog)`
+const StyledDialog = styled(Dialog)`
   .MuiDialog-paper {
     width: 100%;
     height: 100%;
@@ -36,7 +23,7 @@ const DialogWithStyle = styled(Dialog)`
   }
 `;
 
-const ButtonWithStyleTemplate = styled(Button)`
+const StyledButton = styled(Button)`
   text-transform: capitalize;
   width: 100%;
   height: 40px;
@@ -47,24 +34,12 @@ const ButtonWithStyleTemplate = styled(Button)`
   font-size: 14px;
 `;
 
-const EditButton = styled(Button)`
+const ActionButton = styled(Button) <{ bgColor?: string }>`
   text-transform: capitalize;
   width: 58px;
   height: 40px;
   border-radius: 8px;
-  background: transparent;
-  box-shadow: 0px 0px 3px 0px #00000040;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const DeleteButton = styled(Button)`
-  text-transform: capitalize;
-  width: 58px;
-  height: 40px;
-  border-radius: 8px;
-  background: #D11A2A;
+  background: ${({ color }) => color || 'transparent'};
   box-shadow: 0px 0px 3px 0px #00000040;
   display: flex;
   align-items: center;
@@ -73,70 +48,54 @@ const DeleteButton = styled(Button)`
 
 export default function GenerateModal({ open, onClose, onGenerate, jobData }: GenerateModalProps) {
     const [profiles, setProfiles] = useState<Profile[]>([]);
-    const [selectedProfile, setSelectedProfile] = useState("");
-    const [templateFilter, setTemplateFilter] = useState<"all" | "jobjarvis" | "my">("all");
-    const [customTemplates, setCustomTemplates] = useState<Template[]>([]);
-    const [defaultTemplates, setDefaultTemplates] = useState<Template[]>([]);
-    const [templateViewOpen, setTemplateViewOpen] = useState(false);
+    const [selectedProfile, setSelectedProfile] = useState('');
+    const [templateFilter, setTemplateFilter] = useState<'all' | 'jobjarvis' | 'my'>('all');
+    const [templates, setTemplates] = useState<Template[]>([]);
     const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
-    const [isGenerating, setIsGenerating] = useState(false);
-
-    useEffect(() => {
-        if (jobData.type === "coverLetter") {
-            setTemplateViewOpen(false);
-        } else if (jobData.type === "question") {
-            setTemplateViewOpen(true);
-        }
-    }, [jobData]);
+    const [showTemplateView, setShowTemplateView] = useState(jobData.type === 'question');
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [profilesRes, templatesRes, defaultTemplatesRes] = await Promise.all([
-                    axiosInstance.get<{ profiles: Profile[] }>("/api/v1/profiles"),
-                    axiosInstance.get<Template[]>("/api/v1/templates"),
-                    axiosInstance.get<Template[]>("/api/v1/templates-default"),
+                const [profilesRes, customTemplatesRes, defaultTemplatesRes] = await Promise.all([
+                    axiosInstance.get<{ profiles: Profile[] }>('/api/v1/profiles'),
+                    axiosInstance.get<Template[]>('/api/v1/templates'),
+                    axiosInstance.get<Template[]>('/api/v1/templates-default'),
                 ]);
-
                 setProfiles(profilesRes.data.profiles);
-                setCustomTemplates(templatesRes.data);
-                setDefaultTemplates(defaultTemplatesRes.data);
-                if (profilesRes.data.profiles.length > 0) {
-                    setSelectedProfile(profilesRes.data.profiles[0]._id);
-                }
+                setTemplates([...customTemplatesRes.data, ...defaultTemplatesRes.data]);
+                setSelectedProfile(profilesRes.data.profiles[0]?._id || '');
             } catch (error) {
-                console.error("Failed to fetch data:", error);
+                console.error('Failed to fetch data:', error);
             }
         };
-
         fetchData();
     }, []);
 
     const handleDeleteTemplate = async (templateId: string) => {
-        if (!window.confirm("Are you sure you want to delete this template?")) return;
+        if (!window.confirm('Are you sure you want to delete this template?')) return;
         try {
             await axiosInstance.delete(`/api/v1/template/${templateId}`);
-            setCustomTemplates(customTemplates.filter((t) => t._id !== templateId));
+            setTemplates(templates.filter(template => template._id !== templateId));
         } catch (error) {
-            console.error("Failed to delete template:", error);
+            console.error('Failed to delete template:', error);
         }
     };
 
-    const filteredTemplates =
-        templateFilter === "my"
-            ? customTemplates
-            : templateFilter === "jobjarvis"
-                ? defaultTemplates
-                : [...customTemplates, ...defaultTemplates];
+    const filteredTemplates = templateFilter === 'my'
+        ? templates.filter(t => t.profile)
+        : templateFilter === 'jobjarvis'
+            ? templates.filter(t => !t.profile)
+            : templates;
 
     return (
-        <DialogWithStyle open={open} onClose={onClose} aria-labelledby="generate-proposal-dialog">
-            {templateViewOpen ? (
+        <StyledDialog open={open} onClose={onClose} aria-labelledby="generate-proposal-dialog">
+            {showTemplateView ? (
                 <TemplateView
-                    open={templateViewOpen}
-                    onClose={() => setTemplateViewOpen(false)}
+                    open={showTemplateView}
+                    onClose={() => setShowTemplateView(false)}
                     closeModal={onClose}
-                    template={selectedTemplate!}
+                    template={selectedTemplate}
                     templateList={filteredTemplates}
                     setSelectedTemplate={setSelectedTemplate}
                     selectedProfile={selectedProfile}
@@ -146,24 +105,20 @@ export default function GenerateModal({ open, onClose, onGenerate, jobData }: Ge
                     onGenerate={onGenerate}
                 />
             ) : (
-                <>
+                <div className="generate-modal-content">
                     <div className="row justify-content-between align-items-center">
-                        <div className="col">
-                            <img
-                                className="modalLogo"
-                                src={chrome.runtime.getURL("assets/black-test-logo.png")}
-                                alt="Job Jarvis Logo"
-                            />
-                        </div>
-                        <div className="col">
-                            <div
-                                className="crossIconWrapper"
-                                onClick={onClose}
-                                role="button"
-                                aria-label="Close dialog"
-                            >
-                                <img src={chrome.runtime.getURL("assets/cross-icon.svg")} alt="Close" />
-                            </div>
+                        <img
+                            className="modalLogo"
+                            src={chrome.runtime.getURL('assets/black-test-logo.png')}
+                            alt="Job Jarvis Logo"
+                        />
+                        <div
+                            className="crossIconWrapper"
+                            onClick={onClose}
+                            role="button"
+                            aria-label="Close dialog"
+                        >
+                            <img src={chrome.runtime.getURL('assets/cross-icon.svg')} alt="Close" />
                         </div>
                     </div>
                     <div className="profileAndTemplateContainer">
@@ -171,14 +126,14 @@ export default function GenerateModal({ open, onClose, onGenerate, jobData }: Ge
                             <span>Generate Proposal for</span>
                             <FormControl>
                                 <Select
-                                    sx={{ height: "40px" }}
+                                    sx={{ height: '40px' }}
                                     value={selectedProfile}
-                                    onChange={(e) => setSelectedProfile(e.target.value)}
+                                    onChange={e => setSelectedProfile(e.target.value)}
                                     aria-label="Select profile"
                                 >
-                                    {profiles.map(({ _id, profileDetails }) => (
-                                        <MenuItem key={_id} value={_id}>
-                                            {profileDetails.profileName}
+                                    {profiles.map(profile => (
+                                        <MenuItem key={profile._id} value={profile._id}>
+                                            {profile.profileDetails.profileName}
                                         </MenuItem>
                                     ))}
                                 </Select>
@@ -186,9 +141,9 @@ export default function GenerateModal({ open, onClose, onGenerate, jobData }: Ge
                             <span>Using</span>
                             <FormControl>
                                 <Select
-                                    sx={{ height: "40px" }}
+                                    sx={{ height: '40px' }}
                                     value={templateFilter}
-                                    onChange={(e) => setTemplateFilter(e.target.value as "all" | "jobjarvis" | "my")}
+                                    onChange={e => setTemplateFilter(e.target.value as 'all' | 'jobjarvis' | 'my')}
                                     aria-label="Select template filter"
                                 >
                                     <MenuItem value="all">All Templates</MenuItem>
@@ -204,47 +159,51 @@ export default function GenerateModal({ open, onClose, onGenerate, jobData }: Ge
                             <p className="templateDescription">
                                 Create a new template from the template library or create a new from scratch.
                             </p>
-                            <ButtonWithStyleTemplate variant="contained" aria-label="Add new template">
+                            <StyledButton variant="contained" aria-label="Add new template">
                                 + Add New Template
-                            </ButtonWithStyleTemplate>
+                            </StyledButton>
                         </div>
-                        {filteredTemplates.map((template) => (
+                        {filteredTemplates.map(template => (
                             <div key={template._id} className="templateCard" role="article">
                                 <h1 className="templateHeading">{template.templateName}</h1>
                                 <p className="templateDescription">{template.templateDescription}</p>
                                 <div className="templateActions">
-                                    <ButtonWithStyleTemplate
+                                    <StyledButton
                                         variant="contained"
                                         aria-label={`Generate proposal using ${template.templateName}`}
-                                        disabled={isGenerating}
+                                        onClick={() => {
+                                            setSelectedTemplate(template);
+                                            setShowTemplateView(true);
+                                        }}
                                     >
                                         Generate
-                                    </ButtonWithStyleTemplate>
-                                    <EditButton
-                                        onClick={() => {
-                                            setTemplateViewOpen(true);
-                                            setSelectedTemplate(template);
-                                        }}
+                                    </StyledButton>
+                                    <ActionButton
                                         variant="contained"
                                         aria-label={`Edit ${template.templateName}`}
+                                        onClick={() => {
+                                            setSelectedTemplate(template);
+                                            setShowTemplateView(true);
+                                        }}
                                     >
-                                        <img src={chrome.runtime.getURL("assets/icon_code.svg")} alt="Edit template" />
-                                    </EditButton>
+                                        <img src={chrome.runtime.getURL('assets/icon_code.svg')} alt="Edit template" />
+                                    </ActionButton>
                                     {template.profile && (
-                                        <DeleteButton
-                                            onClick={() => handleDeleteTemplate(template._id)}
+                                        <ActionButton
+                                            bgColor="#D11A2A"
                                             variant="contained"
                                             aria-label={`Delete ${template.templateName}`}
+                                            onClick={() => handleDeleteTemplate(template._id)}
                                         >
-                                            <img src={chrome.runtime.getURL("assets/trash-icon.svg")} alt="Delete template" />
-                                        </DeleteButton>
+                                            <img src={chrome.runtime.getURL('assets/trash-icon.svg')} alt="Delete template" />
+                                        </ActionButton>
                                     )}
                                 </div>
                             </div>
                         ))}
                     </div>
-                </>
+                </div>
             )}
-        </DialogWithStyle>
+        </StyledDialog>
     );
 }

@@ -51,6 +51,7 @@ const RichTextEditorWithStyle = styled(RichTextEditor) <{ height?: number }>`
 
   & .ProseMirror {
     min-height: ${({ height }) => height}px;
+    max-height: ${({ height }) => height}px;
     height: 100%;
     box-sizing: border-box;
     cursor: text;
@@ -59,6 +60,7 @@ const RichTextEditorWithStyle = styled(RichTextEditor) <{ height?: number }>`
     box-shadow: none !important;
     outline: none !important;
     transition: none !important;
+    overflow-y: auto;
   }
 `;
 

@@ -53,3 +53,25 @@ export interface ActiveSearch {
   url: string;
   tabId: number;
 }
+
+export interface Profile {
+  _id: string;
+  profileDetails: { profileName: string };
+}
+
+export interface Template {
+  _id: string;
+  templateName: string;
+  templateDescription: string;
+  templateContent?: string;
+  profile?: string;
+}
+
+export interface JobData {
+  jobTitle?: string;
+  jobDescription?: string;
+  jobSkills?: string[];
+  jobPosted?: string;
+  type: 'coverLetter' | 'question';
+  questionText?: string;
+}
