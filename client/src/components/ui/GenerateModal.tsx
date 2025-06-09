@@ -153,54 +153,56 @@ export default function GenerateModal({ open, onClose, onGenerate, jobData }: Ge
                             </FormControl>
                         </div>
                     </div>
-                    <div className="templatesContainer">
-                        <div className="addNewtemplate">
-                            <h1 className="templateHeading">Add a new template</h1>
-                            <p className="templateDescription">
-                                Create a new template from the template library or create a new from scratch.
-                            </p>
-                            <StyledButton variant="contained" aria-label="Add new template">
-                                + Add New Template
-                            </StyledButton>
-                        </div>
-                        {filteredTemplates.map(template => (
-                            <div key={template._id} className="templateCard" role="article">
-                                <h1 className="templateHeading">{template.templateName}</h1>
-                                <p className="templateDescription">{template.templateDescription}</p>
-                                <div className="templateActions">
-                                    <StyledButton
-                                        variant="contained"
-                                        aria-label={`Generate proposal using ${template.templateName}`}
-                                        onClick={() => {
-                                            setSelectedTemplate(template);
-                                            setShowTemplateView(true);
-                                        }}
-                                    >
-                                        Generate
-                                    </StyledButton>
-                                    <ActionButton
-                                        variant="contained"
-                                        aria-label={`Edit ${template.templateName}`}
-                                        onClick={() => {
-                                            setSelectedTemplate(template);
-                                            setShowTemplateView(true);
-                                        }}
-                                    >
-                                        <img src={chrome.runtime.getURL('assets/icon_code.svg')} alt="Edit template" />
-                                    </ActionButton>
-                                    {template.profile && (
-                                        <ActionButton
-                                            bgColor="#D11A2A"
-                                            variant="contained"
-                                            aria-label={`Delete ${template.templateName}`}
-                                            onClick={() => handleDeleteTemplate(template._id)}
-                                        >
-                                            <img src={chrome.runtime.getURL('assets/trash-icon.svg')} alt="Delete template" />
-                                        </ActionButton>
-                                    )}
-                                </div>
+                    <div className="templatesContainerWrapper">
+                        <div className="templatesContainer">
+                            <div className="addNewtemplate">
+                                <h1 className="templateHeading">Add a new template</h1>
+                                <p className="templateDescription">
+                                    Create a new template from the template library or create a new from scratch.
+                                </p>
+                                <StyledButton variant="contained" aria-label="Add new template">
+                                    + Add New Template
+                                </StyledButton>
                             </div>
-                        ))}
+                            {filteredTemplates.map(template => (
+                                <div key={template._id} className="templateCard" role="article">
+                                    <h1 className="templateHeading">{template.templateName}</h1>
+                                    <p className="templateDescription">{template.templateDescription}</p>
+                                    <div className="templateActions">
+                                        <StyledButton
+                                            variant="contained"
+                                            aria-label={`Generate proposal using ${template.templateName}`}
+                                            onClick={() => {
+                                                setSelectedTemplate(template);
+                                                setShowTemplateView(true);
+                                            }}
+                                        >
+                                            Generate
+                                        </StyledButton>
+                                        <ActionButton
+                                            variant="contained"
+                                            aria-label={`Edit ${template.templateName}`}
+                                            onClick={() => {
+                                                setSelectedTemplate(template);
+                                                setShowTemplateView(true);
+                                            }}
+                                        >
+                                            <img src={chrome.runtime.getURL('assets/icon_code.svg')} alt="Edit template" />
+                                        </ActionButton>
+                                        {template.profile && (
+                                            <ActionButton
+                                                bgColor="#D11A2A"
+                                                variant="contained"
+                                                aria-label={`Delete ${template.templateName}`}
+                                                onClick={() => handleDeleteTemplate(template._id)}
+                                            >
+                                                <img src={chrome.runtime.getURL('assets/trash-icon.svg')} alt="Delete template" />
+                                            </ActionButton>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
             )}

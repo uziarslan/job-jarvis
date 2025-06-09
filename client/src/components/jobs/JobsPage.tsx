@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 import {
-  Alert,
   Box,
   Button,
   Divider,
@@ -13,7 +12,6 @@ import {
 } from "@mui/material";
 import { Fragment, useEffect, useState } from "react";
 import type { Job } from "../../types";
-import CenteredCircularProgress from "../ui/CenteredCircularProgress";
 import JobCard from "./JobCard";
 import "bootstrap/dist/css/bootstrap.min.css";
 import filterIcon from "../../assets/filter-icon.svg";
@@ -208,9 +206,7 @@ const JobsPage = ({ onStartTrackingClick }: IProps) => {
         />
       </TabsWithStyle>
       <Box>
-        {allJobs === null ? (
-          <CenteredCircularProgress />
-        ) : !displayedJobs.length ? (
+        {!displayedJobs.length ? (
           <BoxWithEmptyStyle>
             <TypographyWithEmptyStyle component="div">
               {tab === 0 && (
