@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { AppBar, Toolbar, IconButton, Typography, Button, Drawer, List, ListItem, ListItemButton, ListItemText, Box, useScrollTrigger } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -18,7 +18,7 @@ const navLinks = [
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
     background: "transparent",
-    padding: "8px 0px",
+    padding: "8px 0px"
 }));
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
@@ -140,6 +140,15 @@ function ElevationScroll(props) {
 
 export default function Navbar(props) {
     const [drawerOpen, setDrawerOpen] = useState(false);
+    const [scrolled, setScrolled] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            setScrolled(window.scrollY > 0);
+        };
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     const handleDrawerToggle = () => {
         setDrawerOpen((prev) => !prev);
@@ -148,43 +157,45 @@ export default function Navbar(props) {
     return (
         <>
             <ElevationScroll {...props}>
-                <StyledAppBar position="fixed">
-                    <StyledToolbar>
-                        <LogoBox>
-                            <Link href="/">
-                                <img src={logo} alt="logo" />
-                            </Link>
-                        </LogoBox>
+                <StyledAppBar position="fixed" className={scrolled ? 'navbar-scrolled' : ''}>
+                    <div className="navbar-maxwidth-container">
+                        <StyledToolbar>
+                            <LogoBox>
+                                <Link href="/">
+                                    <img src={logo} alt="logo" />
+                                </Link>
+                            </LogoBox>
 
-                        <CenterLinks>
-                            {navLinks.map((link) => (
-                                <NavButton
-                                    key={link.label}
-                                    href={link.href}
+                            <CenterLinks>
+                                {navLinks.map((link) => (
+                                    <NavButton
+                                        key={link.label}
+                                        href={link.href}
+                                    >
+                                        {link.label}
+                                    </NavButton>
+                                ))}
+                            </CenterLinks>
+
+                            {/* Right Button */}
+                            <RightButtonBox>
+                                <ActionButton startIcon={<img src={chrome} alt="chrome" />} variant="contained">
+                                    add to chrome
+                                </ActionButton>
+                            </RightButtonBox>
+
+                            {/* Burger Menu (xs/sm) */}
+                            <BurgerMenuBox>
+                                <IconButton
+                                    edge="end"
+                                    aria-label="menu"
+                                    onClick={handleDrawerToggle}
                                 >
-                                    {link.label}
-                                </NavButton>
-                            ))}
-                        </CenterLinks>
-
-                        {/* Right Button */}
-                        <RightButtonBox>
-                            <ActionButton startIcon={<img src={chrome} alt="chrome" />} variant="contained">
-                                add to chrome
-                            </ActionButton>
-                        </RightButtonBox>
-
-                        {/* Burger Menu (xs/sm) */}
-                        <BurgerMenuBox>
-                            <IconButton
-                                edge="end"
-                                aria-label="menu"
-                                onClick={handleDrawerToggle}
-                            >
-                                <MenuIcon sx={{ color: "#000" }} />
-                            </IconButton>
-                        </BurgerMenuBox>
-                    </StyledToolbar>
+                                    <MenuIcon sx={{ color: "#000" }} />
+                                </IconButton>
+                            </BurgerMenuBox>
+                        </StyledToolbar>
+                    </div>
                 </StyledAppBar>
             </ElevationScroll>
             <DrawerWithStyles

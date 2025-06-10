@@ -7,6 +7,9 @@ import playIcon from '../Assets/images/play-icon.svg';
 import fadedArrow from '../Assets/images/faded-arrow.svg';
 import peopleImage from '../Assets/images/people.png';
 import forFreelancersImage from '../Assets/images/freelancersection.jpg';
+import Testimonials from '../Components/Testimonials';
+import Gurantee from '../Components/Gurantee';
+import Benefits from '../Components/Benefits';
 
 const ButtonWithStyles = styled(Button)(({ theme }) => ({
     background: "linear-gradient(180deg, #16D3F0 0%, #00AEEF 100%)",
@@ -116,6 +119,9 @@ export default function Homepage() {
                     </div>
                 </div>
             </div>
+            <Testimonials />
+            <Gurantee />
+            <Benefits />
         </div>
     )
 }

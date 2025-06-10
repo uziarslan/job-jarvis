@@ -1,6 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import './App.css';
 import "./Assets/css/styles.css"
+import 'swiper/css';
+import 'swiper/css/pagination';
 import Manual from "./Pages/Manual";
 import Templates from "./Pages/Templates";
 import EditTemplate from "./Pages/EditTemplate";
