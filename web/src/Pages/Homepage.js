@@ -10,7 +10,9 @@ import forFreelancersImage from '../Assets/images/freelancersection.jpg';
 import Testimonials from '../Components/Testimonials';
 import Gurantee from '../Components/Gurantee';
 import Benefits from '../Components/Benefits';
-
+import Faq from '../Components/Faq';
+import About from '../Components/About';
+import Footer from '../Components/Footer';
 const ButtonWithStyles = styled(Button)(({ theme }) => ({
     background: "linear-gradient(180deg, #16D3F0 0%, #00AEEF 100%)",
     color: "#F8F8F8",
@@ -49,8 +51,8 @@ export default function Homepage() {
             <div className="heroSectionEllipses" />
             <div className="heroSectionEllipsesBottomRight" />
             <div className="heroSection">
-                <div className="d-flex flex-column align-items-center justify-content-end">
-                    <div className="heroContent">
+                <div className="d-flex flex-column justify-content-end">
+                    <div className="heroContent max-width-852">
                         <div className="aiProposalWrapper">
                             <img src={starsIcon} alt="stars" />
                             AI PROPOSAL TOOL FOR UPWORK
@@ -120,8 +122,19 @@ export default function Homepage() {
                 </div>
             </div>
             <Testimonials />
-            <Gurantee />
+            <Gurantee
+                heading="NO RESULTS. THEN YOUR MONEY BACK."
+                title="Risk-Free Guarantee"
+                description="Start with a 14-day free trial and subscribe knowing you’re covered. If you’re not 100% satisfied, request a full refund within 60 days of your subscription."
+            />
             <Benefits />
+            <Faq />
+            <About />
+            <Gurantee
+                heading="START USING IT NOW"
+                title="Free 14 Day Trial"
+            />
+            <Footer />
         </div>
     )
 }

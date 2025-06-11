@@ -15,6 +15,7 @@ import AddProfile from "./Pages/AddProfile";
 import Login from "./Pages/Login";
 import Signup from "./Pages/Signup";
 import Homepage from "./Pages/Homepage";
+import Pricing from "./Pages/Pricing";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Homepage />} />
+          <Route path="/pricing" element={<Pricing />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
           <Route path="/manual-job-proposal" element={<Manual />} />

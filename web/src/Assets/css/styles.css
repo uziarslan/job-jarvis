@@ -3,6 +3,46 @@
     color: #000;
 }
 
+.top-layer {
+    min-height: 100vh;
+}
+
+.top-layer::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #FFFFFFD1;
+    border: 1px solid #FFFFFF1A;
+    backdrop-filter: blur(40.79999923706055px);
+    z-index: 0;
+}
+
+.content-pricing>* {
+    z-index: 1;
+}
+
+.content-pricing {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 200px 0px 0 0;
+}
+
+.pricing-heading-title {
+    font-family: Poppins;
+    font-weight: 600;
+    font-size: 4rem;
+    letter-spacing: 0px;
+    text-align: center;
+    margin: 0;
+    max-width: 885px;
+    margin-bottom: 80px;
+}
+
 .profile {
     width: 40px;
     height: 40px;
@@ -23,7 +63,7 @@
     width: 100%;
     text-transform: capitalize !important;
     font-weight: "semibold" !important;
-    font-size: 14px !important;
+    font-size: 0.70rem !important;
 }
 
 .custom-border {
@@ -48,13 +88,13 @@
 
 .page-title {
     font-weight: 700;
-    font-size: 32px;
+    font-size: 1.60rem;
     margin: 0;
 }
 
 .page-description {
     font-weight: 400;
-    font-size: 16px;
+    font-size: 0.80rem;
     margin: 0;
     color: #212B36;
 }
@@ -92,13 +132,13 @@ button span {
 
 .templateHeading {
     font-weight: 600;
-    font-size: 18px;
+    font-size: 0.90rem;
     margin: 0;
 }
 
 .templateDescription {
     font-weight: 600;
-    font-size: 14px;
+    font-size: 0.70rem;
     color: #637381;
     margin: 0;
     display: -webkit-box;
@@ -137,14 +177,14 @@ button span {
 .breadCrumbs p {
     margin: 0;
     font-weight: 400;
-    font-size: 14px;
+    font-size: 0.70rem;
     text-decoration: none;
     color: #212B36;
 }
 
 .breadCrumbs li {
     font-weight: 400;
-    font-size: 14px;
+    font-size: 0.70rem;
     line-height: 100%;
     letter-spacing: 0%;
     color: #919EAB;
@@ -165,7 +205,7 @@ button span {
 
 .containerHeading {
     font-weight: 600;
-    font-size: 18px;
+    font-size: 0.90rem;
     padding: 24px;
     margin: 0;
     border-bottom: 1px solid #919EAB33;
@@ -182,13 +222,13 @@ button span {
 .historyHeading {
     margin: 0;
     font-weight: 600;
-    font-size: 18px;
+    font-size: 0.90rem;
 }
 
 .historyDate {
     margin: 0;
     font-weight: 400;
-    font-size: 12px;
+    font-size: 0.60rem;
 }
 
 .sideBySide {
@@ -211,7 +251,7 @@ button span {
 
 .jobTitleAndLink h2 {
     font-weight: 600;
-    font-size: 18px;
+    font-size: 0.90rem;
     line-height: 100%;
     letter-spacing: 0%;
     margin-bottom: 10px;
@@ -223,7 +263,7 @@ button span {
     border-radius: 8px;
     padding: 11px 12.5px;
     font-weight: 500;
-    font-size: 14px;
+    font-size: 0.70rem;
     color: #000000;
 }
 
@@ -240,7 +280,7 @@ button span {
 .variableDate {
     margin: 0px;
     font-weight: 500;
-    font-size: 18px;
+    font-size: 0.90rem;
 }
 
 .jobDescriptionWrapper {
@@ -249,7 +289,7 @@ button span {
 
 .jobDescriptionHeading {
     font-weight: 600;
-    font-size: 14px;
+    font-size: 0.70rem;
     line-height: 100%;
     letter-spacing: 0%;
     color: #637381;
@@ -261,7 +301,7 @@ button span {
     margin: 0 auto;
     width: 100%;
     font-weight: 300;
-    font-size: 14px;
+    font-size: 0.70rem;
     line-height: 20px;
     letter-spacing: 0%;
     display: -webkit-box;
@@ -285,7 +325,7 @@ button span {
     background-color: transparent;
     border: none;
     font-weight: 500;
-    font-size: 14px;
+    font-size: 0.70rem;
     color: black;
     width: 100%;
 }
@@ -303,7 +343,7 @@ button span {
     padding: 3px 11px;
     border-radius: 8px;
     font-weight: 400;
-    font-size: 13px;
+    font-size: 0.65rem;
 }
 
 .removeFieldButton {
@@ -323,14 +363,14 @@ button span {
 
 .boxHeading {
     font-weight: 700;
-    font-size: 18px;
+    font-size: 0.90rem;
 }
 
 .addFieldButton {
     background-color: transparent;
     border: none;
     font-weight: 600;
-    font-size: 14px;
+    font-size: 0.70rem;
     border: 1px solid black;
     border-radius: 8px;
     padding: 5px 10px;
@@ -338,7 +378,7 @@ button span {
 
 .employmentHistoryText {
     font-weight: 600;
-    font-size: 16px;
+    font-size: 0.80rem;
 }
 
 .projectExperienceWrapper {
@@ -349,13 +389,13 @@ button span {
 
 .projectExperienceWrapper h5 {
     font-weight: 600;
-    font-size: 16px;
+    font-size: 0.80rem;
     margin: 0;
 }
 
 .projectExperienceWrapper p {
     font-weight: 600;
-    font-size: 14px;
+    font-size: 0.70rem;
     color: #637381;
     display: -webkit-box;
     -webkit-line-clamp: 3;
@@ -382,7 +422,7 @@ button span {
 
 .auth-content h2 {
     font-weight: 200;
-    font-size: 20px;
+    font-size: 1rem;
     line-height: 25px;
     letter-spacing: 0%;
     color: #202020;
@@ -393,7 +433,7 @@ button span {
 
 .auth-content p {
     font-weight: 200;
-    font-size: 20px;
+    font-size: 1rem;
     line-height: 25px;
     letter-spacing: 0%;
     text-align: center;
@@ -433,7 +473,7 @@ button span {
 
 .forgot-password-link {
     font-weight: 400;
-    font-size: 14px;
+    font-size: 0.70rem;
     color: #202020;
     text-decoration: none;
     margin-bottom: 40px;
@@ -441,7 +481,7 @@ button span {
 
 .seprator {
     font-weight: 400;
-    font-size: 14px;
+    font-size: 0.70rem;
     line-height: 100%;
     letter-spacing: 0px;
     vertical-align: middle;
@@ -465,7 +505,7 @@ button span {
 
 .toggleUrl {
     font-weight: 400;
-    font-size: 14px;
+    font-size: 0.70rem;
     line-height: 100%;
     letter-spacing: 0px;
     position: absolute;
@@ -525,20 +565,19 @@ button span {
     border-radius: 40px;
     padding: 16px;
     font-weight: 500;
-    font-size: 16px;
+    font-size: 0.80rem;
     line-height: 100%;
     letter-spacing: 3%;
     text-transform: capitalize;
     color: #202020;
     box-shadow: 0px 4px 27.6px 10px #8D8D8D1A;
-    max-width: 344px;
     margin: 0 auto;
+    max-width: 280px;
 }
 
 .heroTitle {
     font-weight: 600;
-    font-size: 80px;
-    line-height: 96px;
+    font-size: 4rem;
     letter-spacing: 0px;
     text-align: center;
     margin: 22px auto;
@@ -547,7 +586,7 @@ button span {
 
 .brandTagLine {
     font-weight: 400;
-    font-size: 20px;
+    font-size: 1rem;
     line-height: 25px;
     letter-spacing: 0%;
     text-align: center;
@@ -558,7 +597,7 @@ button span {
 
 .brandInfo {
     font-weight: 400;
-    font-size: 20px;
+    font-size: 1rem;
     line-height: 25px;
     letter-spacing: 0%;
     text-align: center;
@@ -577,7 +616,7 @@ button span {
 
 .statsHeading {
     font-weight: 700;
-    font-size: 24px;
+    font-size: 1.20rem;
     line-height: 100%;
     letter-spacing: 0%;
     text-align: center;
@@ -586,7 +625,7 @@ button span {
 
 .statsHeading-light {
     font-weight: 700;
-    font-size: 24px;
+    font-size: 1.20rem;
     line-height: 100%;
     letter-spacing: 0%;
     text-align: center;
@@ -596,7 +635,7 @@ button span {
 
 .statsText {
     font-weight: 400;
-    font-size: 20px;
+    font-size: 1rem;
     line-height: 100%;
     letter-spacing: 0%;
     text-align: center;
@@ -605,7 +644,7 @@ button span {
 
 .statsText-light {
     font-weight: 400;
-    font-size: 20px;
+    font-size: 1rem;
     line-height: 100%;
     letter-spacing: 0%;
     text-align: center;
@@ -667,7 +706,7 @@ button span {
 
 .forFreelancersHeading {
     font-weight: 300;
-    font-size: 24px;
+    font-size: 1.20rem;
     line-height: 100%;
     letter-spacing: 3%;
     text-transform: uppercase;
@@ -677,7 +716,7 @@ button span {
 
 .forFreelancersTitle {
     font-weight: 500;
-    font-size: 48px;
+    font-size: 2.40rem;
     line-height: 100%;
     letter-spacing: 3%;
     text-transform: capitalize;
@@ -686,7 +725,7 @@ button span {
 .forFreelancersList {
     list-style: decimal-leading-zero;
     font-weight: 300;
-    font-size: 20px;
+    font-size: 1rem;
     line-height: 100%;
     letter-spacing: 3%;
     text-transform: capitalize;
@@ -701,7 +740,7 @@ button span {
 
 .forFreelancersListItem h2 {
     font-weight: 500;
-    font-size: 24px;
+    font-size: 1.20rem;
     line-height: 100%;
     letter-spacing: 3%;
     text-transform: capitalize;
@@ -710,7 +749,7 @@ button span {
 
 .forFreelancersListItemDescription {
     font-weight: 300;
-    font-size: 18px;
+    font-size: 0.90rem;
     line-height: 25px;
     letter-spacing: 3%;
     text-transform: capitalize;
@@ -762,14 +801,14 @@ button span {
 
 .client-name h3 {
     font-weight: 600;
-    font-size: 14px;
+    font-size: 0.70rem;
     margin: 0;
     color: #040F25;
 }
 
 .client-name p {
     font-weight: 400;
-    font-size: 12px;
+    font-size: 0.60rem;
     color: #202020;
     margin: 0;
 }
@@ -829,7 +868,7 @@ button span {
 
 .testimonials-heading {
     font-weight: 500;
-    font-size: 24px;
+    font-size: 1.20rem;
     letter-spacing: 3%;
     text-transform: capitalize;
     color: #8D8D8D;
@@ -839,7 +878,7 @@ button span {
 
 .testimonials-description {
     font-weight: 600;
-    font-size: 48px;
+    font-size: 2.40rem;
     letter-spacing: 3%;
     text-transform: capitalize;
     text-align: center;
@@ -856,7 +895,7 @@ button span {
 
 .gurantee-heading {
     font-weight: 500;
-    font-size: 24px;
+    font-size: 1.20rem;
     letter-spacing: 3%;
     text-transform: capitalize;
     color: #FFFFFF;
@@ -866,7 +905,7 @@ button span {
 
 .gurantee-title {
     font-weight: 600;
-    font-size: 48px;
+    font-size: 2.40rem;
     letter-spacing: 3%;
     text-transform: capitalize;
     color: #FFFFFF;
@@ -876,7 +915,7 @@ button span {
 
 .gurantee-description {
     font-weight: 300;
-    font-size: 18px;
+    font-size: 0.90rem;
     letter-spacing: 3%;
     text-align: center;
     text-transform: capitalize;
@@ -885,13 +924,15 @@ button span {
     margin-bottom: 31px;
 }
 
-.benefits-container {
+.benefits-container,
+.faq-container {
     margin: 66px 0px 100px 0px;
 }
 
-.benefits-container h5 {
+.benefits-container h5,
+.faq-container h5 {
     font-weight: 500;
-    font-size: 24px;
+    font-size: 1.20rem;
     letter-spacing: 3%;
     text-transform: capitalize;
     color: #8D8D8D;
@@ -899,9 +940,10 @@ button span {
     text-align: center;
 }
 
-.benefits-container h2 {
+.benefits-container h2,
+.faq-container h2 {
     font-weight: 600;
-    font-size: 48px;
+    font-size: 2.40rem;
     letter-spacing: 3%;
     text-align: center;
     text-transform: capitalize;
@@ -919,25 +961,25 @@ button span {
 }
 
 .benefits-heading {
-    font-size: 20px !important;
+    font-size: 1rem !important;
     text-align: left !important;
 }
 
 .benefits-title {
-    font-size: 32px !important;
+    font-size: 1.60rem !important;
     text-align: left !important;
     margin-bottom: 21px !important;
 }
 
 .benefits-title-center {
-    font-size: 32px !important;
+    font-size: 1.60rem !important;
     text-align: center !important;
     margin-bottom: 21px !important;
 }
 
 .benefits-description {
     font-weight: 300;
-    font-size: 18px;
+    font-size: 0.90rem;
     line-height: 30px;
     letter-spacing: 3%;
     text-transform: capitalize;
@@ -960,14 +1002,292 @@ button span {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
-@media(max-width: 850px) {
-    .sideBySide {
-        flex-direction: column;
-    }
-}
-
 .navbar-maxwidth-container {
     max-width: 1440px;
     margin: 0 auto;
     width: 100%;
+}
+
+.about-container {
+    background-color: linear-gradient(90deg, #FFFFFF 29.48%, rgba(255, 255, 255, 0.4) 100%);
+    background-image: url('../../Assets/images/demo.jpg');
+    border: 1px solid #CECECE;
+    max-height: 472px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    padding: 100px 0px;
+    border-radius: 16px;
+    position: relative;
+    padding-left: 50px;
+    box-sizing: border-box;
+    margin: 80px 0px 0px 0px;
+}
+
+.about-container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    background: linear-gradient(90deg, #FFFFFF 29.48%, rgba(255, 255, 255, 0.4) 100%);
+}
+
+.about-heading {
+    font-weight: 500;
+    font-size: 1rem;
+    line-height: 100%;
+    letter-spacing: 3%;
+    text-transform: capitalize;
+    color: #8D8D8D;
+    margin-bottom: 3px;
+}
+
+.about-title {
+    font-weight: 600;
+    font-size: 1.60rem;
+    line-height: 100%;
+    letter-spacing: 3%;
+    text-transform: capitalize;
+    color: #000000;
+    margin: 10px 0px 29px 0px;
+}
+
+.about-description {
+    font-weight: 300;
+    font-size: 0.90rem;
+    letter-spacing: 3%;
+    text-transform: capitalize;
+    color: #202020;
+}
+
+footer {
+    background-color: #000000;
+    padding: 40px 90px;
+    margin-top: 65px;
+}
+
+.footer-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 0px 20px;
+    margin-bottom: 31px
+}
+
+.branding-container {
+    display: flex;
+    flex-direction: column;
+    gap: 38px;
+}
+
+.branding-logo {
+    display: flex;
+    flex-direction: row;
+    gap: 25px;
+    align-items: center;
+}
+
+.branding-logo img {
+    width: 71px;
+    height: 62px;
+}
+
+.company-name {
+    font-family: Orbitron;
+    font-weight: 700;
+    font-size: 1.70rem;
+    line-height: 169%;
+    letter-spacing: 0%;
+    color: #FFFFFF;
+    margin: 0;
+}
+
+.branding-title {
+    font-weight: 500;
+    font-size: 1.20rem;
+    letter-spacing: -3%;
+    text-transform: capitalize;
+    color: #FFFFFFB5;
+    max-width: 373px;
+    margin: 0;
+}
+
+.branding-description {
+    font-weight: 400;
+    font-size: 0.80rem;
+    letter-spacing: 0%;
+    color: #FFFFFFB5;
+    max-width: 373px;
+    margin: 0;
+}
+
+.footer-links-container {
+    display: flex;
+    flex-direction: column;
+    gap: 44px;
+}
+
+.footer-heading {
+    font-weight: 700;
+    font-size: 0.80rem;
+    letter-spacing: -2%;
+    color: #FFFFFF;
+    margin: 0;
+}
+
+.footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.footer-links li,
+.footer-links a {
+    font-weight: 400;
+    font-size: 0.80rem;
+    line-height: 100%;
+    letter-spacing: 0%;
+    color: #FFFFFFB5;
+    text-decoration: none;
+}
+
+.footer-links li a {
+    text-decoration: none;
+}
+
+.footer-bottom {
+    border-top: 1px solid #F8F8F84A;
+    padding-top: 31px;
+}
+
+.footer-bottom-text {
+    font-weight: 500;
+    font-size: 0.80rem;
+    letter-spacing: 0%;
+    color: #FFFFFF;
+    text-align: center;
+    margin: 0;
+}
+
+.plan-type {
+    font-weight: 500;
+    font-size: 1.2rem;
+    letter-spacing: 3%;
+    color: #8D8D8D;
+    margin: 0;
+    text-wrap: nowrap;
+    transition: color 0.5s ease-in-out;
+}
+
+.pricing-card {
+    max-width: 377px;
+    width: 100%;
+}
+
+.pricing-card-header {
+    background: linear-gradient(135deg, #00AEEF 0%, #16D3F0 91%);
+    border-radius: 16px 16px 0px 0px;
+    padding: 18px 0px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.pricing-card-title {
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: #FFFFFF;
+    margin: 0;
+}
+
+.pricing-card-price-container {
+    background: #FFFFFF;
+    padding: 33px 0px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.pricing-card-price {
+    font-weight: 700;
+    font-size: 3.35rem;
+    letter-spacing: 0%;
+    text-align: center;
+    text-transform: capitalize;
+    color: #1A1B21;
+    margin: 0;
+}
+
+.pricing-card-price-duration {
+    font-weight: 400;
+    font-size: 0.80rem;
+    letter-spacing: 0%;
+    text-align: center;
+    color: #757783;
+    display: block;
+}
+
+.pricing-card-body {
+    background: #FFFFFF;
+    border: 1px solid #00AEEF;
+    border-radius: 0px 0px 32px 32px;
+    padding: 33px;
+}
+
+.pricing-card-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+}
+
+.pricing-card-list-item {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    align-items: center;
+    padding-bottom: 13px;
+    border: none;
+    border-bottom: 1px solid;
+    border-image: linear-gradient(135deg, #00AEEF 0%, #16D3F0 91%);
+    border-image-slice: 1;
+    font-weight: 500;
+    font-size: 0.80rem;
+    letter-spacing: 0%;
+    color: #757783;
+}
+
+.pricing-card-footer {
+    margin-top: 39px;
+}
+
+.blur-card .pricing-card-body,
+.blur-card .pricing-card-footer,
+.blur-card .pricing-card-price-container {
+    filter: blur(7px);
+    opacity: 0.5;
+    transition: filter 0.5s ease-in-out, opacity 0.5s ease-in-out;
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+@media(max-width: 850px) {
+    .sideBySide {
+        flex-direction: column;
+    }
 }

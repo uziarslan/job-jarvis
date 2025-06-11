@@ -22,13 +22,13 @@ const ActionButton = styled(Button)(({ theme }) => ({
     }
 }));
 
-export default function Gurantee() {
+export default function Gurantee({ heading, title, description }) {
     return (
         <div className='gurantee-container'>
             <div className='gurantee-content'>
-                <h5 className='gurantee-heading'>NO RESULTS. THEN YOUR MONEY BACK.</h5>
-                <h2 className='gurantee-title'>Risk-Free Guarantee</h2>
-                <p className='gurantee-description'>Start with a 14-day free trial and subscribe knowing you’re covered. If you’re not 100% satisfied, request a full refund within 60 days of your subscription.</p>
+                <h5 className='gurantee-heading'>{heading}</h5>
+                <h2 className={`gurantee-title ${!description && 'mb-5'}`}>{title}</h2>
+                {description && <p className='gurantee-description'>{description}</p>}
                 <div className='row justify-content-center'>
                     <ActionButton startIcon={<img src={chrome} alt="chrome" />}>
                         add to chrome
