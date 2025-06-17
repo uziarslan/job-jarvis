@@ -5,13 +5,18 @@ interface User {
   id: string;
   email: string;
   name?: string;
-  profiles?: any[];
+  upworkId?: string;
+  proposalLeft?: number;
 }
 
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   isAuthenticated: boolean;
+  upgrade: {
+    value: boolean;
+    message: string;
+  };
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -23,6 +28,10 @@ interface AuthProviderProps {
 const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [upgrade, setUpgrade] = useState({
+    value: false,
+    message: "",
+  });
 
   // Check for user data on mount and when storage changes
   useEffect(() => {
@@ -55,10 +64,23 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return () => chrome.storage.onChanged.removeListener(handleStorageChange);
   }, []);
 
+  useEffect(() => {
+    if (user) {
+      chrome.storage.local.get('upworkId', async (result) => {
+        const upworkId = result.upworkId || null;
+        if (upworkId) {
+          const result = await authService.checkUpworkId(upworkId);
+          setUpgrade(result);
+        }
+      });
+    }
+  }, [user]);
+
   const value: AuthContextType = {
     user,
     isLoading,
     isAuthenticated: !!user,
+    upgrade,
   };
 
   return (

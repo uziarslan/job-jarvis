@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Navbar from "../Components/Navbar";
+import DashNav from "../Components/DashNav";
 import { Button, TextField, Autocomplete, Modal, Box, MenuItem, Select, InputLabel, FormControl } from "@mui/material";
 import { Link, useParams } from "react-router-dom";
 import trashIconLarge from "../Assets/images/trash-icon-large.svg";
@@ -417,7 +417,7 @@ export default function EditProfile() {
 
     return (
         <>
-            <Navbar />
+            <DashNav />
             <div className="max-width px-5">
                 <form onSubmit={handleSubmit}>
                     <div className="headingAndButton">

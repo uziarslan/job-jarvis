@@ -31,7 +31,7 @@ function App() {
           <Route path="/add/template" element={<AddTemplate />} />
           <Route path="/edit/template/:id" element={<EditTemplate />} />
           <Route path="/history" element={<History />} />
-          <Route path="/history/details" element={<DetailHistory />} />
+          <Route path="/history/details/:id" element={<DetailHistory />} />
           <Route path="/profiles" element={<Profiles />} />
           <Route path="/edit/profile/:id" element={<EditProfile />} />
           <Route path="/add/profile" element={<AddProfile />} />

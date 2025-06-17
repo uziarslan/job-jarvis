@@ -4,6 +4,10 @@ import { Button, styled, Skeleton } from '@mui/material'
 import { Switch } from '@mui/material'
 import checkIcon from '../Assets/images/check-blue.svg'
 import chrome from '../Assets/images/chrome-white-icon.svg';
+import Faq from '../Components/Faq';
+import Gurantee from '../Components/Gurantee';
+import Footer from '../Components/Footer';
+import AlongWith from '../Components/AlongWith';
 
 const Android12Switch = styled(Switch)(({ theme }) => ({
     width: 77,
@@ -166,7 +170,19 @@ export default function Pricing() {
                         ))
                     }
                 </div>
+                <div className="row my-5">
+                    <div className="col">
+                        <p className='cancelAnytime'>Cancel Any Time</p>
+                    </div>
+                </div>
             </div>
+            <AlongWith />
+            <Faq />
+            <Gurantee
+                heading="START USING IT NOW"
+                title="Free 14 Day Trial"
+            />
+            <Footer />
         </div>
     )
 }

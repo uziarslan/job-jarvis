@@ -110,13 +110,13 @@ export default function TemplateView({
                 setContent(data);
                 setIsGenerated(true);
             }
-        } catch (error) {
-            console.error('Generation error:', error);
+        } catch (error: any) {
+            setContent(error?.response?.data?.error || 'Error generating content');
         }
         setIsLoading(false);
     };
 
-    const handleInsert = () => {
+    const handleInsert = async () => {
         const plainText = htmlToText(content, {
             wordwrap: false,
             preserveNewlines: false,
@@ -129,6 +129,11 @@ export default function TemplateView({
         })
             .replace(/\n{2,}/g, '\n\n')
             .trim();
+
+        await axiosInstance.post('/api/v1/history', {
+            content: plainText,
+            jobData,
+        });
 
         onGenerate(plainText);
         closeModal();

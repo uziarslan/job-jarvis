@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Navbar from "../Components/Navbar";
+import DashNav from "../Components/DashNav";
 import { Button, TextField, Autocomplete } from "@mui/material";
 import RichTextArea from "../Components/RichTextArea";
 import { Link, useParams, useNavigate } from "react-router-dom"
@@ -90,7 +90,7 @@ export default function EditTemplate() {
 
     return (
         <>
-            <Navbar />
+            <DashNav />
             <div className="max-width px-5 mb-5">
                 <form onSubmit={handleSubmit}>
                     <div className="headingAndButton">

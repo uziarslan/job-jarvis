@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Chart from "chart.js/auto"; // Import Chart.js
 import chackIcon from "../../assets/check-icon.svg";
 import jobMonitoringImg from "../../assets/job-monitoring-img.svg";
@@ -6,7 +6,8 @@ import { API_URL } from "../../constants";
 import { Chart as ChartType } from "chart.js";
 import { Button, ButtonProps } from "@mui/material";
 import { styled } from '@mui/system';
-
+import { useAuth } from "../../hooks/useAuth";
+import axiosInstance from "../../services/axiosInstance";
 
 type CustomButtonProps = ButtonProps & {
     component?: React.ElementType;
@@ -31,56 +32,64 @@ export default function Dashboard() {
     const chartRef = useRef<HTMLCanvasElement | null>(null);
     // Type the ref for the chart instance
     const chartInstanceRef = useRef<ChartType | null>(null);
+    const [usageData, setUsageData] = useState<{ date: string, count: number }[]>([]);
+
+    const { user } = useAuth();
 
     useEffect(() => {
-        // Ensure the canvas element exists
-        if (chartRef.current) {
+        const fetchUsageData = async () => {
+            try {
+                const { status, data } = await axiosInstance.get("/api/v1/history/usage/last7days");
+                if (status === 200) {
+                    setUsageData(data);
+                }
+            } catch (error) {
+                console.error("Failed to fetch usage data", error);
+            }
+        };
+        fetchUsageData();
+    }, []);
+
+    useEffect(() => {
+        if (chartRef.current && usageData.length > 0) {
             const ctx = chartRef.current.getContext("2d");
 
-            // Destroy the previous chart instance if it exists
             if (chartInstanceRef.current) {
                 chartInstanceRef.current.destroy();
             }
 
-            // Initialize the new chart
             if (ctx) {
                 chartInstanceRef.current = new Chart(ctx, {
-                    type: "line",
+                    type: "bar",
                     data: {
-                        labels: ["1", "2", "3", "4", "5", "6", "7"],
+                        labels: usageData.map(d => d.date.slice(5)), // e.g. "03-23"
                         datasets: [
                             {
-                                label: "",
+                                label: "Recommended",
+                                type: 'line',
                                 data: [5, 5, 5, 5, 5, 5, 5],
                                 borderColor: "#00AEEF",
                                 backgroundColor: "#00AEEF",
                                 fill: false,
-                                borderDash: [5, 5],
-                                tension: 0.1,
+                                borderDash: [14, 14],
+                                pointRadius: 0,
                             },
                             {
-                                label: "",
-                                data: [1, 2, 3, 4, 2, 3, 5],
+                                label: "Proposals Submitted",
+                                data: usageData.map(d => d.count),
+                                backgroundColor: "#00AEEF",
                                 borderColor: "#00AEEF",
-                                fill: false,
-                                tension: 0.1,
+                                order: 2,
                             },
                         ],
                     },
                     options: {
                         plugins: {
-                            legend: {
-                                display: false, // Hide the legend
-                            },
+                            legend: { display: false },
                         },
                         scales: {
-                            x: {
-                                display: false, // Hide x-axis labels since we removed the days array
-                            },
-                            y: {
-                                beginAtZero: false,
-                                max: 6,
-                            },
+                            x: { display: false },
+                            y: { beginAtZero: false, max: 6 },
                         },
                     },
                 });
@@ -92,7 +101,7 @@ export default function Dashboard() {
                 chartInstanceRef.current.destroy();
             }
         };
-    }, []);
+    }, [usageData]);
 
     return (
         <>
@@ -100,7 +109,7 @@ export default function Dashboard() {
                 <div className="dashboardPageHeader">
                     <h1 className="dashboardPageTitle">Dashboard</h1>
                     <div className="proposalLeftWrapper">
-                        <p className="proposalLeftText">10 proposals left</p>
+                        <p className="proposalLeftText">{user?.proposalLeft} proposals left</p>
                     </div>
                 </div>
                 <div className="sectionWrapper">

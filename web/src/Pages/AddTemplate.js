@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Navbar from "../Components/Navbar";
+import DashNav from "../Components/DashNav";
 import { Button, TextField, Autocomplete } from "@mui/material";
 import RichTextArea from "../Components/RichTextArea";
 import { Link } from "react-router-dom";
@@ -68,7 +68,7 @@ export default function AddTemplate() {
 
     return (
         <>
-            <Navbar />
+            <DashNav />
             <div className="max-width px-5">
                 <div className="headingAndButton">
                     <div className="page-header">

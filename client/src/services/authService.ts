@@ -1,5 +1,4 @@
 import axiosInstance from "./axiosInstance";
-import axios from "axios";
 
 const API_URL = "/api/auth";
 
@@ -37,6 +36,26 @@ const getUser = async (): Promise<User | null> => {
   }
 };
 
+const checkUpworkId = async (upworkId: string): Promise<{ value: boolean, message: string }> => {
+  try {
+    const response = await axiosInstance.post(`${API_URL}/check-upwork-id`, {
+      upworkId: upworkId,
+    });
+    return response.data;
+  } catch (error) {
+    return {
+      value: false,
+      message: "Please upgrade your account to get access to all features",
+    };
+  }
+};
+
+const logout = async (): Promise<void> => {
+  return new Promise((resolve) => {
+    chrome.storage.local.remove([TOKEN_KEY], resolve);
+  });
+};
+
 // Listen for messages from the web app
 chrome.runtime.onMessageExternal.addListener(
   (request, sender, sendResponse) => {
@@ -52,6 +71,8 @@ chrome.runtime.onMessageExternal.addListener(
 const authService = {
   getUser,
   setToken,
+  checkUpworkId,
+  logout,
 };
 
 export default authService;

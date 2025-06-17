@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Navbar from "../Components/Navbar";
+import DashNav from "../Components/DashNav";
 import { Button } from "@mui/material";
 import penIcon from "../Assets/images/pen-icon.svg";
 import copyIcon from "../Assets/images/copy-icon.svg";
@@ -56,7 +56,7 @@ export default function Profiles() {
 
     return (
         <>
-            <Navbar />
+            <DashNav />
             <div className="max-width px-5">
                 <div className="headingAndButton">
                     <div className="page-header">

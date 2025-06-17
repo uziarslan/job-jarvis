@@ -3,7 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import "./styles.css";
 import Sidebar from "./components/Sidebar";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import type { Route } from "./types";
 import TemplatesPage from "./components/templates/TemplatesPage";
 import JobsPage from "./components/jobs/JobsPage";
@@ -15,6 +15,7 @@ import { useAuth } from "./hooks/useAuth";
 import LoginPage from "./components/auth/LoginPage";
 import ScrapeProfilePage from "./components/scrape/ScrapeProfilePage";
 import Settings from "./components/settings/settings";
+import Upgrade from "./components/auth/Upgrade";
 
 let theme = createTheme({
   palette: {
@@ -35,8 +36,9 @@ theme = responsiveFontSizes(theme);
 
 function AppContent() {
   const [route, setRoute] = useState<Route>("Dashboard");
-  const { user, isLoading } = useAuth();
+  const { user, isLoading, upgrade } = useAuth();
   const [showSidebar, setShowSidebar] = useState(true);
+  const [localUpworkId, setLocalUpworkId] = useState<string | null>(null);
 
   useEffect(() => {
     chrome.storage.sync.get(SAVED_SEARCHES_KEY, (result) => {
@@ -50,11 +52,21 @@ function AppContent() {
   }, []);
 
   useEffect(() => {
-    if (!user || (user && !user.profiles?.length)) {
+    if (
+      upgrade ||
+      !user ||
+      (user && (!user.upworkId || user.upworkId.length === 0))
+    ) {
       setShowSidebar(false);
     } else {
       setShowSidebar(true);
     }
+  }, [user, upgrade]);
+
+  useEffect(() => {
+    chrome.storage.local.get('upworkId', (result) => {
+      setLocalUpworkId(result.upworkId || null);
+    });
   }, [user]);
 
   function renderPage() {
@@ -66,7 +78,11 @@ function AppContent() {
       return <LoginPage />;
     }
 
-    if (user && !user.profiles?.length) {
+    if (upgrade.value === true) {
+      return <Upgrade error={upgrade.message} />;
+    }
+
+    if (user && !user.upworkId?.length) {
       return <ScrapeProfilePage />;
     }
 

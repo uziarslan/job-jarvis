@@ -1,18 +1,48 @@
-import React from "react";
-import Navbar from "../Components/Navbar";
+import React, { useState, useEffect } from "react";
 import { Button } from "@mui/material";
 import { Link } from "react-router-dom"
 import trashIcon from "../Assets/images/trash-icon.svg";
+import { useParams } from "react-router-dom";
+import axiosInstance from "../services/axiosInstance";
+import DashNav from "../Components/DashNav";
+
+function formatDate(dateString) {
+    return new Date(dateString).toLocaleString('en-US', {
+        month: '2-digit',
+        day: '2-digit',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true
+    });
+}
 
 export default function DetailHistory() {
+    const { id } = useParams();
+    const [proposal, setProposal] = useState({});
+
+    useEffect(() => {
+        const fetchProposal = async () => {
+            try {
+                const { status, data } = await axiosInstance.get(`/api/v1/history/${id}`);
+                if (status === 200) {
+                    setProposal(data);
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        fetchProposal();
+    }, [id]);
 
     return (
         <>
-            <Navbar />
+            <DashNav />
             <div className="max-width px-5">
                 <div className="headingAndButton">
                     <div className="page-header">
-                        <h1 className="page-title">MERN Stack Developer Needed for Interactive Dashboard with AI Integration</h1>
+                        <h1 className="page-title">{proposal?.jobTitle}</h1>
                         <ul className="breadCrumbs">
                             <Link to="/history">
                                 <p>History</p>
@@ -32,42 +62,37 @@ export default function DetailHistory() {
                 <div className="sideBySide">
                     <div className="inputsHeadingAndBodyContainer">
                         <div className="headingWithDate">
-                            <h2 className="historyHeading">MERN Stack Developer Needed for Interactive Dashboard with AI Integration</h2>
-                            <p className="historyDate">Submitted: 03/23/2025, 3:55:01 am</p>
+                            <h2 className="historyHeading">{proposal?.jobTitle}</h2>
+                            <p className="historyDate">Submitted: {formatDate(proposal?.createdAt)}</p>
                         </div>
                         <div className="p-4">
-                            <p>
-                                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-                            </p>
+                            {proposal?.content?.split('\n').map((line, idx) => (
+                                <p key={idx}>{line}</p>
+                            ))}
                         </div>
                     </div>
                     <div className="jobdetails">
                         <div className="jobTitleAndLink">
-                            <h2>MERN Stack Developer Needed for Interactive Dashboard with AI Integration</h2>
+                            <h2>{proposal?.jobTitle}</h2>
                             <button className="viewOnUpworkButton">View on Upwork</button>
                         </div>
                         <div className="dateForPosted">
                             <p className="staticHeading">Posted</p>
-                            <p className="variableDate">Mar 22, 2025</p>
+                            <p className="variableDate">{proposal?.jobPosted}</p>
                         </div>
                         <div className="jobDescriptionWrapper">
                             <h2 className="jobDescriptionHeading">Job Description</h2>
                             <div className="position-relative">
-                                <p className="jobDiscriptionText">We are seeking an experienced MERN stack developer to create an interactive dashboard featuring AI agent integration. The ideal candidate should have a strong understanding of MongoDB, Express.js, React, and Node.js, along with experience in developing user-friendly interfaces and integrating AI functionalities. Your primary responsibility will be to design and implement a responsive dashboard that provides real-time data visualization and a seamless user experience. If you are passionate about cutting-edge technologies and have a proven track record in dashboard development, we would love to hear from you! Current progress: Frontend and prototype is 70% ready the rest should be carried by developers. Timeline: 3 weeks ***Please share relevant experience***
+                                <p className="jobDiscriptionText">{proposal?.jobDescription}
                                 </p>
                                 <div className="showMoreBg"></div>
                             </div>
                             <button className="showMoreBtn">Show More</button>
                         </div>
                         <div className="tagsWrapper">
-                            <div className="customTags">React</div>
-                            <div className="customTags">Web Development</div>
-                            <div className="customTags">React</div>
-                            <div className="customTags">Web Decelopment</div>
-                            <div className="customTags">React</div>
-                            <div className="customTags">Web Development</div>
-                            <div className="customTags">React</div>
-                            <div className="customTags">Web Decelopment</div>
+                            {proposal?.jobSkills?.map((tag) => (
+                                <div className="customTags">{tag}</div>
+                            ))}
                         </div>
                     </div>
                 </div>

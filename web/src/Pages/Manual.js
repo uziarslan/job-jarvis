@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Navbar from "../Components/Navbar";
+import DashNav from "../Components/DashNav";
 import { Button, TextField } from "@mui/material";
 
 export default function Manual() {
@@ -40,7 +40,7 @@ export default function Manual() {
 
     return (
         <>
-            <Navbar />
+            <DashNav />
             <div className="max-width px-5">
                 <div className="headingAndButton">
                     <div className="page-header">

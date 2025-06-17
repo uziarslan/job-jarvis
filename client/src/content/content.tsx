@@ -45,6 +45,18 @@ function injectNavbarContent() {
       return;
     }
 
+    // Look for an anchor with href matching "/freelancers/~[id]"
+    const profileAnchor = Array.from(document.querySelectorAll("a[href^='/freelancers/~']"))
+      .find(a => /^\/freelancers\/~[a-zA-Z0-9]+$/.test(a.getAttribute('href') || ''));
+    const profileUrl = (profileAnchor instanceof HTMLAnchorElement) ? profileAnchor.href : undefined;
+    if (profileUrl) {
+      const upworkId = profileUrl.match(/~[a-zA-Z0-9]+/)?.[0]?.replace('~', '');
+      if (upworkId) {
+        // @ts-ignore
+        chrome.storage.local.set({ upworkId });
+      }
+    }
+
     // Check if our elements already exist to prevent duplicates
     if (navbar.querySelector('[data-cy-id="job-jarvis"]') || body.querySelector('.extensionButton')) {
       return;
@@ -599,22 +611,15 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.type === "SCRAPE_MODAL") {
     (async () => {
       try {
-
-        const waitForSection = async (selector: string, timeout: number) => {
-          const pollInterval = 100;
-          const maxAttempts = timeout / pollInterval;
-          let attempts = 0;
-
-          while (attempts < maxAttempts) {
+        const waitForSection = async (selector: string) => {
+          while (true) {
             const element = document.querySelector(selector);
             if (element && element.children.length > 0) return element;
-            await new Promise(res => setTimeout(res, pollInterval));
-            attempts++;
+            await new Promise(res => setTimeout(res, 100)); // Poll every 100ms
           }
-          return null;
         };
 
-        const targetCardsContainer = await waitForSection('#published > div > div.air3-grid-container.mt-6x', 8000) as HTMLElement;
+        const targetCardsContainer = await waitForSection('#published > div > div.air3-grid-container.mt-6x') as HTMLElement;
 
         if (!targetCardsContainer || targetCardsContainer.children.length === 0) {
           location.reload();

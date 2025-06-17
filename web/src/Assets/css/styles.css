@@ -3,6 +3,12 @@
     color: #000;
 }
 
+.user-img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+}
+
 .top-layer {
     min-height: 100vh;
 }
@@ -140,7 +146,7 @@ button span {
     font-weight: 600;
     font-size: 0.70rem;
     color: #637381;
-    margin: 0;
+    margin: 0 !important;
     display: -webkit-box;
     -webkit-line-clamp: 1;
     line-clamp: 1;
@@ -891,6 +897,8 @@ button span {
     display: flex;
     justify-content: center;
     margin-top: 72px;
+    position: relative;
+    z-index: 1;
 }
 
 .gurantee-heading {
@@ -1067,6 +1075,8 @@ footer {
     background-color: #000000;
     padding: 40px 90px;
     margin-top: 65px;
+    position: relative;
+    z-index: 1;
 }
 
 .footer-container {
@@ -1284,6 +1294,67 @@ footer {
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
+}
+
+.cancelAnytime {
+    font-weight: 400;
+    font-size: 1rem;
+    letter-spacing: 0%;
+    text-align: center;
+    color: #202020;
+}
+
+.alongWith-container {
+    position: relative;
+    z-index: 1;
+}
+
+.alongWith-heading {
+    margin-bottom: 45px;
+}
+
+.alongWith-heading h2 {
+    font-weight: 600;
+    font-size: 2.4rem;
+    letter-spacing: 3%;
+    text-align: center;
+    text-transform: capitalize;
+    max-width: 632px;
+    margin: 0 auto;
+}
+
+.alongWith-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.alongWith-content-item {
+    padding: 21px 35.5px 24px 35.5px;
+    border: 1px solid #DBD9D9;
+    border-radius: 12px;
+    max-width: 635px;
+    width: 100%;
+}
+
+.alongWith-Heading {
+    font-weight: 600;
+    font-size: 1.2rem;
+    letter-spacing: 3%;
+    text-transform: capitalize;
+    margin: 0;
+    margin-bottom: 18px;
+}
+
+.alongWith-Description,
+.alongWith-List {
+    font-weight: 300;
+    font-size: 0.9rem;
+    letter-spacing: 3%;
+    text-transform: capitalize;
+    color: #202020;
+    margin: 0;
 }
 
 @media(max-width: 850px) {
