@@ -53,7 +53,7 @@ function AppContent() {
 
   useEffect(() => {
     if (
-      upgrade ||
+      upgrade.value === true ||
       !user ||
       (user && (!user.upworkId || user.upworkId.length === 0))
     ) {
